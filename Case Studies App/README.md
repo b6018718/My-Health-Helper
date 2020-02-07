@@ -1,3 +1,0 @@
-﻿# Case Studies App
-
-

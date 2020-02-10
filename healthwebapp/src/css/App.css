@@ -43,3 +43,16 @@
     transform: rotate(360deg);
   }
 }
+
+.Title{
+  font-size: larger;
+  font-weight: bold;
+}
+
+.Form{
+  text-align: left;
+}
+
+.Button{
+  text-align: center;
+}

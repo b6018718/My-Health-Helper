@@ -25,7 +25,7 @@ function App() {
      <Route path='/HealthCareProfessional/My-Patient-List' exact component ={PatientList} />
      <Route path='/HealthCareProfessional/Patient-Details' exact component ={PatientDetails} />{/* need to pass in patient ID */}
      <Route path='/Register' exact component ={Register} />
-      <Route path='/' render={() => <div> Error 404: page not found :(</div>}/>
+     <Route path='/' render={() => <div> Error 404: page not found :(</div>}/>
     </Switch>
     </BrowserRouter>
     /*

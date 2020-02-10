@@ -14,22 +14,20 @@ import {Register} from "./Webpages/register";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-      <Switch>
-      <Route path='/' exact component ={Login} />
-      <Route path='/Patient/Homepage' exact component ={PatientHome} />
-      <Route path='/Patient/Food-Intake' exact component ={PatientFoodIntake} />
-      <Route path='/Patient/Exercise' exact component ={PatientExercise} />
-      <Route path='/Patient/MyDetails' exact component ={PatientDetails} /> {/* need to pass in patient ID */}
-      <Route path='/HealthCareProfessional/Homepage' exact component ={DoctorHome} />
-      <Route path='/HealthCareProfessional/My-Patient-List' exact component ={PatientList} />
-      <Route path='/HealthCareProfessional/Patient-Details' exact component ={PatientDetails} />{/* need to pass in patient ID */}
-      <Route path='/Register' exact component ={Register} />
-        <Route path='/' render={() => <div> Error 404: page not found :(</div>}/>
-      </Switch>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+    <Switch>
+     <Route path='/' exact component ={Login} />
+     <Route path='/Patient/Homepage' exact component ={PatientHome} />
+     <Route path='/Patient/Food-Intake' exact component ={PatientFoodIntake} />
+     <Route path='/Patient/Exercise' exact component ={PatientExercise} />
+     <Route path='/Patient/MyDetails' exact component ={PatientDetails} /> {/* need to pass in patient ID */}
+     <Route path='/HealthCareProfessional/Homepage' exact component ={DoctorHome} />
+     <Route path='/HealthCareProfessional/My-Patient-List' exact component ={PatientList} />
+     <Route path='/HealthCareProfessional/Patient-Details' exact component ={PatientDetails} />{/* need to pass in patient ID */}
+     <Route path='/Register' exact component ={Register} />
+     <Route path='/' render={() => <div> Error 404: page not found :(</div>}/>
+    </Switch>
+    </BrowserRouter>
     /*
     <div className="App">
       <header className="App-header">

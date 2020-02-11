@@ -14,7 +14,6 @@ import UnauthenticatedRoute from "./unauthenticedRoute";
 
 function Routes({ appProps }) {
     return (
-        <BrowserRouter>
             <Switch>
                 <UnauthenticatedRoute path='/' exact component ={Login} appProps={{ appProps }} />
                 <AuthenticedRoute path='/Patient/Homepage' exact component ={PatientHome} appProps={{ appProps }} />
@@ -25,10 +24,8 @@ function Routes({ appProps }) {
                 <AuthenticedRoute path='/HealthCareProfessional/My-Patient-List' exact component ={PatientList} appProps={{ appProps }} />
                 <AuthenticedRoute path='/HealthCareProfessional/Patient-Details' exact component ={PatientDetails} appProps={{ appProps }} />
                 <AuthenticedRoute path='/Register' exact component ={Register} appProps={{ appProps }} />
-
                 <Route path='/' render={() => <div> Error 404: page not found :(</div>} />
             </Switch>
-        </BrowserRouter>
     );
   }
   

@@ -18,6 +18,8 @@ export default function Login(props){
         var rand = Math.random(0, 1);
         // 3. Redirect
         props.appProps.userHasAuthenticated(true);
+        props.appProps.isDoctor = false;
+        props.appProps.userIsAuthenticed = true;
         props.history.push('/Patient/Homepage');
     }
 

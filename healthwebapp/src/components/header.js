@@ -9,9 +9,9 @@ export default function Header(props){
         e.preventDefault();
         props.appProps.userHasAuthenticated(false);
     }
-
+    console.log(props)
     return(
-        <span>
+        <>
             {props.appProps.isAuthenticated ?
                 <Navbar bg="primary" variant="dark">
                     <Navbar.Brand >My Health Helper</Navbar.Brand>
@@ -48,15 +48,37 @@ export default function Header(props){
                 </Navbar>
 
                 :
-                <div>
-                    <Navbar bg="primary" variant="dark">
-                        <Navbar.Brand href="/">My Health Helper</Navbar.Brand>
-                        <Nav className="mr-auto">
-                        </Nav>
-                    </Navbar>
-                </div>
+                <>
+                    {!props.appProps.registering ?
+                        <>
+                        <Navbar bg="primary" variant="dark">
+                            <Navbar.Brand>My Health Helper</Navbar.Brand>
+                            <Nav className="mr-auto">
+                            </Nav>
+                            <Form inline>
+                                <LinkContainer to="/register" activeClassName="">
+                                    <Button onClick="" variant="outline-light">Register</Button>
+                                </LinkContainer>
+                            </Form>
+                        </Navbar>
+                        </>
+                        :
+                        <>
+                        <Navbar bg="primary" variant="dark">
+                            <Navbar.Brand>My Health Helper</Navbar.Brand>
+                            <Nav className="mr-auto">
+                            </Nav>
+                            <Form inline>
+                                <LinkContainer to="/" activeClassName="">
+                                    <Button onClick="" variant="outline-light">Log on</Button>
+                                </LinkContainer>
+                            </Form>
+                        </Navbar>
+                        </>
+                    }
+                </>
             }
-        </span>
+        </>
     );
 
 }

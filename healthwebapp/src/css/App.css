@@ -56,3 +56,30 @@
 .Button{
   text-align: center;
 }
+
+.Paragraph{
+  text-align: left;
+  padding-bottom: 2%;
+}
+
+.Modules{
+  float: left;
+  width: 100%;
+  height: 100px;
+
+  
+}
+.ModuleLinkContainer{
+  vertical-align: middle;
+  text-align: center;
+  height: 100%;
+}
+
+.ModuleButton{
+  margin: 1%;
+  height: 100%;
+  width:  18%;
+  vertical-align: middle;
+  text-align: center;
+  
+}

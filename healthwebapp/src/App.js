@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import './css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/header';
-
 import Routes from './components/routes';
 import { BrowserRouter } from "react-router-dom";
 

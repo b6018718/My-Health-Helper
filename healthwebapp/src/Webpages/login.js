@@ -8,6 +8,11 @@ export default function Login(props){
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
 
+    // Use effect, activates when the component is rendered in the DOM
+    React.useEffect(() => {
+        props.appProps.isRegistering(false);
+    }, [props.appProps.registering]);
+
     function handleSubmit(event){
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
 
@@ -15,7 +20,7 @@ export default function Login(props){
         // 1. Authenticate
         
         // 2. Check permissions
-        var rand = Math.random(0, 1);
+
         // 3. Redirect
         props.appProps.userHasAuthenticated(true);
 
@@ -39,7 +44,7 @@ export default function Login(props){
                 <Form.Label>Email address</Form.Label>
                 <Form.Control type="email" placeholder="Enter email" onChange={e => setEmail(e.target.value)} />
                 <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
+                If you don't already have an account, register one <Link to="/register">here</Link>.
                 </Form.Text>
             </Form.Group>
 

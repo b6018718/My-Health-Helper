@@ -18,9 +18,17 @@ export default function Login(props){
         var rand = Math.random(0, 1);
         // 3. Redirect
         props.appProps.userHasAuthenticated(true);
-        props.appProps.isDoctor = false;
+
+        // STUB -- Change this to make the server return if the doctor is a patient or a doctor
+        var doctor = false;
+        props.appProps.userHasVerifiedDoctor(doctor);
+
+
         props.appProps.userIsAuthenticed = true;
-        props.history.push('/Patient/Homepage');
+        if(doctor)
+            props.history.push('/HealthCareProfessional/Homepage');
+        else
+            props.history.push('/Patient/Homepage');
     }
 
     return (

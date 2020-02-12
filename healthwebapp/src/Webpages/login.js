@@ -1,12 +1,15 @@
 import * as React from "react";
 import {Link} from "react-router-dom"
 //interface Props{}
-import {Button, Form} from "react-bootstrap";
+import {Button, Form, Toast} from "react-bootstrap";
 import '../css/Login.css';
 
 export default function Login(props){
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [showFailMessage, setFailMessage] = React.useState(false);
+
+    const toggleFailMessage = () => setFailMessage(!showFailMessage);
 
     // Use effect, activates when the component is rendered in the DOM
     React.useEffect(() => {
@@ -15,26 +18,29 @@ export default function Login(props){
 
     function handleSubmit(event){
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
+        // Back end code https://dev.to/captainpandaz/a-socket-io-tutorial-that-isn-t-a-chat-app-with-react-js-58jh 
 
         event.preventDefault();
-        // 1. Authenticate
-        
-        // 2. Check permissions
 
-        // 3. Redirect
-        props.appProps.userHasAuthenticated(true);
-
-        // STUB -- Change this to make the server return if the doctor is a patient or a doctor
-        var doctor = false;
-        props.appProps.userHasVerifiedDoctor(doctor);
-
-
-        props.appProps.userIsAuthenticed = true;
-        if(doctor)
-            props.history.push('/HealthCareProfessional/Homepage');
-        else
-            props.history.push('/Patient/Homepage');
+        // Send details to the server
+        props.appProps.socket.emit("logIn", {email: email, password: password});
     }
+
+    // Calculates result from the back end
+    props.appProps.socket.on("logInResult", function(data){
+        props.appProps.userHasAuthenticated(data.result);
+
+        props.appProps.userHasVerifiedDoctor(data.doctor);
+
+        if(data.result){
+            if(data.doctor)
+                props.history.push('/HealthCareProfessional/Homepage');
+            else
+                props.history.push('/Patient/Homepage');
+        } else {
+            setFailMessage(true);
+        }
+    });
 
     return (
     <div className="Login">  
@@ -58,7 +64,16 @@ export default function Login(props){
                 </Button>
             </div>
         </Form>
-        {/* <Link to="/Patient/Homepage">Example Link To Patient Homepage</Link> */}
+        {showFailMessage ?
+            <Toast className="Toast" show={showFailMessage} onClose={toggleFailMessage}>
+                <Toast.Header>
+                <strong className="mr-auto">Log In Error</strong>
+                </Toast.Header>
+                <Toast.Body>Log in failed</Toast.Body>
+            </Toast>
+            :
+            <></>
+        }
     
      </div>);
 }

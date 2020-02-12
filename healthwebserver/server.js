@@ -48,10 +48,11 @@ io.on("connection", socket => {
     console.log("User attempted to log in");
     if(data.email == 'anthonydranfield@hotmail.co.uk' && data.password == 'Password1'){
       console.log("User successfully logged in")
-      authenticated = false;
+      authenticated = true;
       socket.emit("logInResult", {result: true, doctor: true});
     } else {
       console.log("User failed to log in");
+      authenticated = false;
       socket.emit("logInResult", {result: false, doctor: false});
     }
   });

@@ -6,3 +6,9 @@
     padding-top: 1%;
 }
 
+.Toast{
+    position: absolute;
+    top: 20%;
+    right: 5%;
+    width: 30%;
+}

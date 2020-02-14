@@ -1,6 +1,6 @@
 import * as React from "react";
 //interface Props{}
-import {Button, Form, Nav, Navbar, FormControl, NavItem, Dropdown, DropdownButton, ButtonGroup} from "react-bootstrap";
+import {Button, Form, Nav, Navbar, FormControl, NavItem, Dropdown, DropdownButton, ButtonGroup, Image} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import "../css/header.css";
 
@@ -15,8 +15,8 @@ export default function Header(props){
         <span>
             {props.appProps.isAuthenticated ? //(If someone is signed in)
                 <Navbar bg="primary" variant="dark" role="navigation">
-                    <img src="../images/logo.png" width="30" height="30" alt="logo"></img>
-                    <Navbar.Brand href="#">>My Health Helper</Navbar.Brand>                    
+                    <Image src={require('../images/logo.png')}  alt="logo"></Image>
+                    <Navbar.Brand href="#"> >My Health Helper</Navbar.Brand>                    
                         
                     <Nav className="mr-auto">
                    

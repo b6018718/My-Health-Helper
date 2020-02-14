@@ -45,15 +45,18 @@ io.on("connection", socket => {
     });
 
     // Sign up goes here
-    logIn(data, socket);
+     logIn(data, socket);
   });
 
   socket.on("disconnect", () => console.log("Client disconnected"))
 
-  function logIn(data, socket){
+  async function logIn(data, socket){
     console.log("User attempted to log in");
-
-      if(data.email == 'anthonydranfield@hotmail.co.uk' && data.password == 'Password1'){
+    console.log(data.password);
+    
+var databaseUser = await User.findOne({email: data.email}).exec();
+console.log(databaseUser.password);
+      if(Bcrypt.compareSync(data.password,databaseUser.password)){
         console.log("User successfully logged in")
         authenticated = true;
         socket.emit("logInResult", {result: true, doctor: true});

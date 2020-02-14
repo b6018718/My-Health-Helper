@@ -76,12 +76,16 @@
 
 .ModuleButton{
   margin: 1%;
-  height: 100%;
-  width:  18%;
-  vertical-align: middle;
-  text-align: center;  
+  height: auto;
+  width:  auto;
 }
 
+.LargeText{
+  vertical-align: middle;
+  align-content: center;
+  text-align: center;  
+  font-size: x-large;
+}
 .NotificationButton{
   float: right;
   margin: 0.5%; 

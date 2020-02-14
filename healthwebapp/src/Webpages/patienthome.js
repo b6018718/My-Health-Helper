@@ -10,10 +10,6 @@ export const PatientHome = () => {
     {   
         console.log("Device registered successfully!")
     }
-    function clickRegisterDoctor()
-    {   
-        console.log("Doctor registered successfully!")
-    }
     return (
     <div className="Home">
         <div class="container">
@@ -22,23 +18,23 @@ export const PatientHome = () => {
             <div className="Paragraph">Please select the module you want to use from the list below. The register doctor module allows you to select the doctors who you want to see your health records. The record diet module allows you to record the food you are eating and the record exercise module allows you to record any exercise you've done. The my details module allows you to view the data you have entered into My Health Helper. Finally, the register external device module allows you to register a compatible Bluetooth device that can automatically send data to My Health Helper </div>
             
             <div class = "row"> <div className="Modules">
-                    <LinkContainer to="/Patient/Food-Intake" className="ModuleLinkContainer">
+                    <LinkContainer to="/Patient/Food-Intake">
                     <Button variant="primary" type="submit" className="ModuleButton" >
-                        Record diet
+                       <span className="LargeText"> Record diet </span>
                     </Button>
                     </LinkContainer>
                     <LinkContainer to="/Patient/Exercise" className="ModuleLinkContainer">
                     <Button variant="primary" type="submit" className="ModuleButton">
-                        Record exercise
+                    <span className="LargeText">Record exercise</span>
                     </Button>
                     </LinkContainer>
                     <LinkContainer to="/Patient/MyDetails" className="ModuleLinkContainer">
                     <Button variant="primary" type="submit" className="ModuleButton" >
-                        My Details
+                    <span className="LargeText"> My Details</span>
                     </Button>
                     </LinkContainer>
                     <Button variant="primary" type="submit" className="ModuleButton" onClick={ clickRegisterDevice()}>
-                        Register External Device
+                    <span className="LargeText"> Register External Device</span>
                     </Button>
                 </div> </div>
 

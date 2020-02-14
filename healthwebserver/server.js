@@ -3,6 +3,7 @@ app= express(),
 bodyParser = require ('body-parser'),
 mongoose = require("mongoose"),
 cors = require('cors');
+const Bcrypt = require("bcryptjs");
 blogRoutes = express.Router();
 
 const http = require('http');
@@ -20,27 +21,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.set("port", port);
 
-/*try{
-  mongoose.connect(
-    "mongodb://localhost:27017/healthappdb",
-    { useNewUrlParser: true }
-  );
-  mongoose.set("useCreateIndex", true);
-  mongoose.set('useFindAndModify', false);
-} catch (e){
-  console.log("Connection failed");
-}
-const db = mongoose.connection;
-
-db.once("open", () => {
-  console.log("Successfully connected to MongoDB using Mongoose!");
-});*/
-
-
-//app.listen(app.get("port"), () => {
-  //console.log(`MyBlog Express Server running at http://localhost:${app.get("port")}`)
-//});
-
 io.on("connection", socket => {
   console.log("Client connected");
 
@@ -57,7 +37,7 @@ io.on("connection", socket => {
     console.log(data.surname);
     console.log(data.email);
     console.log(data.password);
-
+    data.password = Bcrypt.hashSync(data.password,10);
     connect.then(db => {
       console.log("connected correctly to the server");
       let user = new User(data);
@@ -65,15 +45,18 @@ io.on("connection", socket => {
     });
 
     // Sign up goes here
-    logIn(data, socket);
+     logIn(data, socket);
   });
 
   socket.on("disconnect", () => console.log("Client disconnected"))
 
-  function logIn(data, socket){
+  async function logIn(data, socket){
     console.log("User attempted to log in");
-
-      if(data.email == 'anthonydranfield@hotmail.co.uk' && data.password == 'Password1'){
+    console.log(data.password);
+    
+var databaseUser = await User.findOne({email: data.email}).exec();
+console.log(databaseUser.password);
+      if(Bcrypt.compareSync(data.password,databaseUser.password)){
         console.log("User successfully logged in")
         authenticated = true;
         socket.emit("logInResult", {result: true, doctor: data.doctor});

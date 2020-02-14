@@ -18,29 +18,28 @@ export default function Register(props){
 
     function handleSubmit(event){
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
-
         event.preventDefault();
-        // 1. Authenticate
-        
-        // 2. Check permissions
         var doctor;
         if(event.target.value == 'patient')
             doctor = false;
         else
             doctor = true;
+        // 1. Authenticate
+        props.appProps.socket.emit("signUp", {email: email, password: password, forename: forename, surname: surname, doctor: doctor});
+        // 2. Check permissions
+    }
 
-        // 3. Redirect
+    props.appProps.socket.on("logInResult", function(data){ 
+
         props.appProps.userHasAuthenticated(true);
+        props.appProps.userHasVerifiedDoctor(data.doctor);
 
-        // STUB -- Change this to make the server return if the doctor is a patient or a doctor
-        props.appProps.userHasVerifiedDoctor(doctor);
-
-
-        if(doctor)
+        if(data.doctor)
             props.history.push('/HealthCareProfessional/Homepage');
         else
             props.history.push('/Patient/Homepage');
-    }
+    });
+    
 
     return (
     <div className="Login">  
@@ -50,7 +49,7 @@ export default function Register(props){
                 <Col>
                     <Form.Group controlId="formForename">
                         <Form.Label>Forename</Form.Label>
-                        <Form.Control type="text" placeholder="Forename" onChange={e => setEmail(e.target.value)} />
+                        <Form.Control type="text" placeholder="Forename" onChange={e => setForename(e.target.value)} />
                         <Form.Text className="text-muted">
                         </Form.Text>
                     </Form.Group>
@@ -58,7 +57,7 @@ export default function Register(props){
                 <Col>
                     <Form.Group controlId="formSurname">
                         <Form.Label>Surname</Form.Label>
-                        <Form.Control type="text" placeholder="Surname" onChange={e => setEmail(e.target.value)} />
+                        <Form.Control type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)} />
                         <Form.Text className="text-muted">
                         </Form.Text>
                     </Form.Group>

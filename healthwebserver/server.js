@@ -3,6 +3,7 @@ app= express(),
 bodyParser = require ('body-parser'),
 mongoose = require("mongoose"),
 cors = require('cors');
+const Bcrypt = require("bcryptjs");
 blogRoutes = express.Router();
 
 const http = require('http');
@@ -36,7 +37,7 @@ io.on("connection", socket => {
     console.log(data.surname);
     console.log(data.email);
     console.log(data.password);
-
+    data.password = Bcrypt.hashSync(data.password,10);
     connect.then(db => {
       console.log("connected correctly to the server");
       let user = new User(data);

@@ -19,7 +19,7 @@ export default function Register(props){
         props.appProps.isRegistering(true);
     }, [props.appProps.registering]);
 
-    props.appProps.socket.emit("getAllDoctors", {} );
+    props.appProps.socket.emit("getAllDoctors", {});
     props.appProps.socket.on("getAllDoctorsResults", function (data){
         console.log(data);
     });
@@ -42,23 +42,21 @@ export default function Register(props){
         props.appProps.userHasAuthenticated(data.result);
         if(data.result){
             props.appProps.userHasVerifiedDoctor(data.doctor);
-
-
-        if(data.doctor)
-            props.history.push('/HealthCareProfessional/Homepage');
-        else
-        {
-            props.appProps.passUserFirstName(forename);
-            props.appProps.passUserLastName(surname);
-            props.appProps.passUserEmail(email);
-            props.appProps.passUserPassword(password);
-            props.history.push('/register/Select-Doctor'); 
-        }
+            if(data.doctor) {
+                props.history.push('/HealthCareProfessional/Homepage');
+            } else {
+                props.appProps.passUserFirstName(forename);
+                props.appProps.passUserLastName(surname);
+                props.appProps.passUserEmail(email);
+                props.appProps.passUserPassword(password);
+                props.history.push('/register/Select-Doctor');
+            }
         //props.history.push('/Patient/Homepage');
-    }else {
+        } else {
             setFailMessage(true);
             setErrorMessage(data.message);
         }
+    });
 
 
     return (
@@ -115,6 +113,7 @@ export default function Register(props){
             <></>
         }
     
-     </div>);
+     </div>
+    );
 }
 

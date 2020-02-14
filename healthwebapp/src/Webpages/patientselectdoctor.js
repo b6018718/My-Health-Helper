@@ -44,18 +44,19 @@ export default function Register(props){
 return(
     <div className = "selectDoctor">
         <br></br>
-         <div className="Title">Please select your doctor from the list below:</div>
+        <div className="docContain">
+        <div className="Title">Please select your doctor from the list below:</div>
 
-        <div className = "list-group">
-
-            {doctorList}
+            <div className = "list-group">
+                {doctorList}
             </div>
- 
-         <br></br>
-
-<Button className="registerButton" variant="primary" type="submit" onClick={handleSubmit} value="patient">
-                    Register as Patient
-                </Button>
+    
+            <br></br>
+            
+            <Button className="registerButton" variant="primary" type="submit" onClick={handleSubmit} value="patient">
+                        Register as Patient
+            </Button>
+        </div>
     </div>
 )
 }

@@ -8,6 +8,7 @@ export default function Login(props){
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [showFailMessage, setFailMessage] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
 
     const toggleFailMessage = () => setFailMessage(!showFailMessage);
 
@@ -30,15 +31,17 @@ export default function Login(props){
     props.appProps.socket.on("logInResult", function(data){
         props.appProps.userHasAuthenticated(data.result);
 
-        props.appProps.userHasVerifiedDoctor(data.doctor);
 
         if(data.result){
+            props.appProps.userHasVerifiedDoctor(data.doctor);
+
             if(data.doctor)
                 props.history.push('/HealthCareProfessional/Homepage');
             else
                 props.history.push('/Patient/Homepage');
         } else {
             setFailMessage(true);
+            setErrorMessage(data.message);
         }
     });
 
@@ -69,7 +72,7 @@ export default function Login(props){
                 <Toast.Header>
                 <strong className="mr-auto">Log In Error</strong>
                 </Toast.Header>
-                <Toast.Body>Log in failed</Toast.Body>
+                <Toast.Body>{errorMessage}</Toast.Body>
             </Toast>
             :
             <></>

@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Link} from "react-router-dom"
 //interface Props{}
-import {Button, Form, Col, Row} from "react-bootstrap";
+import {Button, Form, Col, Row, Toast} from "react-bootstrap";
 import '../css/Login.css';
 import '../css/Register.css';
 
@@ -10,44 +10,56 @@ export default function Register(props){
     const [password, setPassword] = React.useState("");
     const [forename, setForename] = React.useState("");
     const [surname, setSurname] = React.useState("");
+    const [showFailMessage, setFailMessage] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
+
+    const toggleFailMessage = () => setFailMessage(!showFailMessage);
     //props.addProps.isRegistering(true);
     React.useEffect(() => {
         props.appProps.isRegistering(true);
     }, [props.appProps.registering]);
 
+    props.appProps.socket.emit("getAllDoctors", {} );
+    props.appProps.socket.on("getAllDoctorsResults", function (data){
+        console.log(data);
+    });
 
     function handleSubmit(event){
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
-
         event.preventDefault();
-        // 1. Authenticate
-        
-        // 2. Check permissions
         var doctor;
         if(event.target.value == 'patient')
             doctor = false;
         else
             doctor = true;
+        // 1. Authenticate
+        props.appProps.socket.emit("signUp", {email: email, password: password, forename: forename, surname: surname, doctor: doctor});
+        // 2. Check permissions
+    }
 
-        // 3. Redirect
-        props.appProps.userHasAuthenticated(true);
+    props.appProps.socket.on("logInResult", function(data){ 
 
-        // STUB -- Change this to make the server return if the doctor is a patient or a doctor
-        props.appProps.userHasVerifiedDoctor(doctor);
+        props.appProps.userHasAuthenticated(data.result);
+        if(data.result){
+            props.appProps.userHasVerifiedDoctor(data.doctor);
 
 
-        if(doctor)
+        if(data.doctor)
             props.history.push('/HealthCareProfessional/Homepage');
         else
         {
-            props.appProps.passUserFirstName("Steve");
-            props.appProps.passUserLastName("Jones");
-            props.appProps.passUserEmail("stevejones@mymail.com");
-            props.appProps.passUserPassword("password");
+            props.appProps.passUserFirstName(forename);
+            props.appProps.passUserLastName(surname);
+            props.appProps.passUserEmail(email);
+            props.appProps.passUserPassword(password);
             props.history.push('/register/Select-Doctor'); 
         }
         //props.history.push('/Patient/Homepage');
-    }
+    }else {
+            setFailMessage(true);
+            setErrorMessage(data.message);
+        }
+
 
     return (
     <div className="Login">  
@@ -57,7 +69,7 @@ export default function Register(props){
                 <Col>
                     <Form.Group controlId="formForename">
                         <Form.Label>Forename</Form.Label>
-                        <Form.Control type="text" placeholder="Forename" onChange={e => setEmail(e.target.value)} />
+                        <Form.Control type="text" placeholder="Forename" onChange={e => setForename(e.target.value)} />
                         <Form.Text className="text-muted">
                         </Form.Text>
                     </Form.Group>
@@ -65,7 +77,7 @@ export default function Register(props){
                 <Col>
                     <Form.Group controlId="formSurname">
                         <Form.Label>Surname</Form.Label>
-                        <Form.Control type="text" placeholder="Surname" onChange={e => setEmail(e.target.value)} />
+                        <Form.Control type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)} />
                         <Form.Text className="text-muted">
                         </Form.Text>
                     </Form.Group>
@@ -92,7 +104,16 @@ export default function Register(props){
                 </Button>
             </div>
         </Form>
-        {/* <Link to="/Patient/Homepage">Example Link To Patient Homepage</Link> */}
+        {showFailMessage ?
+            <Toast className="Toast" show={showFailMessage} onClose={toggleFailMessage}>
+                <Toast.Header>
+                <strong className="mr-auto">Log In Error</strong>
+                </Toast.Header>
+                <Toast.Body>{errorMessage}</Toast.Body>
+            </Toast>
+            :
+            <></>
+        }
     
      </div>);
 }

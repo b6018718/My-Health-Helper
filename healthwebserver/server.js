@@ -31,41 +31,50 @@ io.on("connection", socket => {
     logIn(data, socket);
   });
 
-  socket.on("signUp", (data) => {
+  socket.on("signUp", async (data) => {
     console.log("User attempted to sign up");
-    console.log(data.forename);
-    console.log(data.surname);
-    console.log(data.email);
-    console.log(data.password);
-    data.password = Bcrypt.hashSync(data.password,10);
-    connect.then(db => {
-      console.log("connected correctly to the server");
-      let user = new User(data);
-      user.save();
-    });
 
-    // Sign up goes here
-     logIn(data, socket);
+    var databaseUser = await User.findOne({email: data.email}).exec();
+    if(!databaseUser){
+      // Email available
+      let tempPassword = data.password;
+      data.password = Bcrypt.hashSync(data.password,10);
+      await connect.then(db => {
+        console.log("connected correctly to the server");
+        let user = new User(data);
+        user.save();
+      });
+      data.password = tempPassword;
+      // Sign up goes here
+      logIn(data, socket);
+    } else {
+      logInFailed(socket, "Account already exists");
+    }
+    
   });
 
   socket.on("disconnect", () => console.log("Client disconnected"))
 
   async function logIn(data, socket){
     console.log("User attempted to log in");
-    console.log(data.password);
-    
-var databaseUser = await User.findOne({email: data.email}).exec();
-console.log(databaseUser.password);
-      if(Bcrypt.compareSync(data.password,databaseUser.password)){
+    var databaseUser = await User.findOne({email: data.email}).exec();
+    if(databaseUser){
+      if(Bcrypt.compareSync(data.password, databaseUser.password)){
         console.log("User successfully logged in")
         authenticated = true;
-        socket.emit("logInResult", {result: true, doctor: data.doctor});
-  
+        socket.emit("logInResult", {result: true, doctor: data.doctor, message: "Success"});
       } else {
-        console.log("User failed to log in");
-        authenticated = false;
-        socket.emit("logInResult", {result: false, doctor: false});
+        logInFailed(socket, "Password incorrect");
       }
+    } else {
+      logInFailed(socket, "User does not exist");
+    }
+  }
+
+  function logInFailed (socket, message){
+    console.log(message);
+    authenticated = false;
+    socket.emit("logInResult", {result: false, doctor: false, message: message});
   }
 })
 

@@ -20,27 +20,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.set("port", port);
 
-/*try{
-  mongoose.connect(
-    "mongodb://localhost:27017/healthappdb",
-    { useNewUrlParser: true }
-  );
-  mongoose.set("useCreateIndex", true);
-  mongoose.set('useFindAndModify', false);
-} catch (e){
-  console.log("Connection failed");
-}
-const db = mongoose.connection;
-
-db.once("open", () => {
-  console.log("Successfully connected to MongoDB using Mongoose!");
-});*/
-
-
-//app.listen(app.get("port"), () => {
-  //console.log(`MyBlog Express Server running at http://localhost:${app.get("port")}`)
-//});
-
 io.on("connection", socket => {
   console.log("Client connected");
 

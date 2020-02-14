@@ -1,0 +1,14 @@
+.Login{
+    width: 30%;
+    text-align: center;
+    margin: auto;
+    height: auto;
+    padding-top: 1%;
+}
+
+.Toast{
+    position: absolute;
+    top: 20%;
+    right: 5%;
+    width: 30%;
+}

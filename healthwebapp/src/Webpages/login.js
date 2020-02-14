@@ -1,0 +1,80 @@
+import * as React from "react";
+import {Link} from "react-router-dom"
+//interface Props{}
+import {Button, Form, Toast} from "react-bootstrap";
+import '../css/Login.css';
+
+export default function Login(props){
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [showFailMessage, setFailMessage] = React.useState(false);
+
+    const toggleFailMessage = () => setFailMessage(!showFailMessage);
+
+    // Use effect, activates when the component is rendered in the DOM
+    React.useEffect(() => {
+        props.appProps.isRegistering(false);
+    }, [props.appProps.registering]);
+
+    function handleSubmit(event){
+        // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
+        // Back end code https://dev.to/captainpandaz/a-socket-io-tutorial-that-isn-t-a-chat-app-with-react-js-58jh 
+
+        event.preventDefault();
+
+        // Send details to the server
+        props.appProps.socket.emit("logIn", {email: email, password: password});
+    }
+
+    // Calculates result from the back end
+    props.appProps.socket.on("logInResult", function(data){
+        props.appProps.userHasAuthenticated(data.result);
+
+        props.appProps.userHasVerifiedDoctor(data.doctor);
+
+        if(data.result){
+            if(data.doctor)
+                props.history.push('/HealthCareProfessional/Homepage');
+            else
+                props.history.push('/Patient/Homepage');
+        } else {
+            setFailMessage(true);
+        }
+    });
+
+    return (
+    <div className="Login">  
+        <div className="Title">My Health Helper</div>
+        <Form className="Form" onSubmit={handleSubmit}>
+            <Form.Group controlId="formBasicEmail">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control type="email" placeholder="Enter email" onChange={e => setEmail(e.target.value)} />
+                <Form.Text className="text-muted">
+                If you don't already have an account, register one <Link to="/register">here</Link>.
+                </Form.Text>
+            </Form.Group>
+
+            <Form.Group controlId="formBasicPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+            </Form.Group>
+            <div className="Button">
+                <Button variant="primary" type="submit">
+                    Submit
+                </Button>
+            </div>
+        </Form>
+        {showFailMessage ?
+            <Toast className="Toast" show={showFailMessage} onClose={toggleFailMessage}>
+                <Toast.Header>
+                <strong className="mr-auto">Log In Error</strong>
+                </Toast.Header>
+                <Toast.Body>Log in failed</Toast.Body>
+            </Toast>
+            :
+            <></>
+        }
+    
+     </div>);
+}
+

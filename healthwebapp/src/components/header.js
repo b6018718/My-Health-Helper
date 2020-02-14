@@ -44,8 +44,7 @@ export default function Header(props){
                                     <Dropdown.Item href="#/action-1">Notification 1</Dropdown.Item>
                                     <Dropdown.Item href="#/action-2">A Warning</Dropdown.Item>
                                     <Dropdown.Item href="#/action-3">Notification 2</Dropdown.Item>
-                                </Dropdown.Menu></Dropdown>
-                                
+                                </Dropdown.Menu></Dropdown>                          
                                 
                                 
                                 
@@ -59,9 +58,17 @@ export default function Header(props){
                                 <LinkContainer to="/HealthCareProfessional/My-Patient-List">
                                     <Nav.Link>My Patients</Nav.Link>
                                 </LinkContainer>
-                                <Button variant="primary" type="button" className="NotificationButton" variant="dark">
-                                <Nav.Link>Notifications <span class="badge badge-light">113</span></Nav.Link>
-                                </Button>
+                                <Dropdown as={ButtonGroup}>
+                                <Button type="button" className="NotificationButton" variant="light" >
+                                    <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">113</span>
+                                    </Button>
+                                <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
+                                <Dropdown.Menu>
+                                    <Dropdown.Item href="#/action-1">Notification 1</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-2">A Warning</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-3">Notification 2</Dropdown.Item>
+                                </Dropdown.Menu></Dropdown>
+                                
                             </Nav>
 
                         

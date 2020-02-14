@@ -16,6 +16,7 @@ export default function Header(props){
                 <Navbar bg="primary" variant="dark">
                     <Navbar.Brand >My Health Helper</Navbar.Brand>
                     <Nav className="mr-auto">
+                   
                         {!props.appProps.isDoctor ?
                             <Nav>
                                 <LinkContainer to="/Patient/Homepage">
@@ -30,19 +31,27 @@ export default function Header(props){
                                 <LinkContainer to="/Patient/MyDetails">
                                     <Nav.Link>My Details</Nav.Link>
                                 </LinkContainer>
+                                <Button variant="primary" type="button" className="NotificationButton" variant="light" >
+                                <Nav.Link><span class="NotificationText">Notifications</span><span class="badge badge-dark">113</span></Nav.Link>
+                                </Button>
                             </Nav>
                             :
                             <Nav>
                                 <LinkContainer to="/HealthCareProfessional/Homepage">
-                                    <Nav.Link>Home Page</Nav.Link>
+                                    <Nav.Link>Home</Nav.Link>
                                 </LinkContainer>
                                 <LinkContainer to="/HealthCareProfessional/My-Patient-List">
                                     <Nav.Link>My Patients</Nav.Link>
                                 </LinkContainer>
+                                <Button variant="primary" type="button" className="NotificationButton" variant="dark">
+                                <Nav.Link>Notifications <span class="badge badge-light">113</span></Nav.Link>
+                                </Button>
                             </Nav>
+
+                        
                         }
                     </Nav>
-                    <Form inline>
+                    <Form inline>                        
                         <Button onClick={logOut} variant="outline-light">Log out</Button>
                     </Form>
                 </Navbar>

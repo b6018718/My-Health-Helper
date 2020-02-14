@@ -39,7 +39,14 @@ export default function Register(props){
         if(doctor)
             props.history.push('/HealthCareProfessional/Homepage');
         else
-            props.history.push('/Patient/Homepage');
+        {
+            props.appProps.passUserFirstName("Steve");
+            props.appProps.passUserLastName("Jones");
+            props.appProps.passUserEmail("stevejones@mymail.com");
+            props.appProps.passUserPassword("password");
+            props.history.push('/register/Select-Doctor'); 
+        }
+        //props.history.push('/Patient/Homepage');
     }
 
     return (

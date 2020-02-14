@@ -8,6 +8,7 @@ import {PatientExercise} from "../Webpages/patientexercise";
 import {PatientFoodIntake} from "../Webpages/patientfoodintake";
 import {PatientList} from "../Webpages/patientlist"
 import Register from "../Webpages/register";
+import SelectDoctor from "..//Webpages/patientselectdoctor"
 import AppliedRoute from "./appliedRoute";
 import AuthenticedRoute from "./authenticedRoute";
 import UnauthenticatedRoute from "./unauthenticedRoute";
@@ -17,6 +18,7 @@ function Routes({ appProps }) {
         <Switch>
             <UnauthenticatedRoute path='/' exact component ={Login} appProps={{ appProps }} />
             <UnauthenticatedRoute path='/register' exact component ={Register} appProps={{ appProps }} />
+            <UnauthenticatedRoute path='/register/Select-Doctor' exact component = {SelectDoctor} appProps={{appProps}} />
             <AuthenticedRoute path='/Patient/Homepage' exact component ={PatientHome} appProps={{ appProps }} />
             <AuthenticedRoute path='/Patient/Food-Intake' exact component ={PatientFoodIntake} appProps={{ appProps }} />
             <AuthenticedRoute path='/Patient/Exercise' exact component ={PatientExercise} appProps={{ appProps }} />

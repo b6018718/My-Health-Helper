@@ -33,7 +33,6 @@ io.on("connection", socket => {
 
   socket.on("signUp", async (data) => {
     console.log("User attempted to sign up");
-
     var databaseUser = await User.findOne({email: data.email}).exec();
     if(!databaseUser){
       // Email available
@@ -50,8 +49,12 @@ io.on("connection", socket => {
     } else {
       logInFailed(socket, "Account already exists");
     }
-    
   });
+
+  socket.on("getAllDoctors", async (data) => {
+    let doctors = await User.find({doctor: true}).exec();
+    socket.emit("getAllDoctorsResults", {doctors: doctors});
+  })
 
   socket.on("disconnect", () => console.log("Client disconnected"))
 
@@ -77,7 +80,5 @@ io.on("connection", socket => {
     socket.emit("logInResult", {result: false, doctor: false, message: message});
   }
 })
-
-
 
 server.listen(port, () => console.log(`Health App Server running at http://localhost:${port}`));

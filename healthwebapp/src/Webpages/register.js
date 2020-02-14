@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Link} from "react-router-dom"
 //interface Props{}
-import {Button, Form, Col, Row} from "react-bootstrap";
+import {Button, Form, Col, Row, Toast} from "react-bootstrap";
 import '../css/Login.css';
 import '../css/Register.css';
 
@@ -10,6 +10,10 @@ export default function Register(props){
     const [password, setPassword] = React.useState("");
     const [forename, setForename] = React.useState("");
     const [surname, setSurname] = React.useState("");
+    const [showFailMessage, setFailMessage] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
+
+    const toggleFailMessage = () => setFailMessage(!showFailMessage);
     //props.addProps.isRegistering(true);
     React.useEffect(() => {
         props.appProps.isRegistering(true);
@@ -31,13 +35,19 @@ export default function Register(props){
 
     props.appProps.socket.on("logInResult", function(data){ 
 
-        props.appProps.userHasAuthenticated(true);
-        props.appProps.userHasVerifiedDoctor(data.doctor);
+        props.appProps.userHasAuthenticated(data.result);
+        if(data.result){
+            props.appProps.userHasVerifiedDoctor(data.doctor);
 
-        if(data.doctor)
-            props.history.push('/HealthCareProfessional/Homepage');
-        else
-            props.history.push('/Patient/Homepage');
+            if(data.doctor)
+                props.history.push('/HealthCareProfessional/Homepage');
+            else
+                props.history.push('/Patient/Homepage');
+        } else {
+            setFailMessage(true);
+            setErrorMessage(data.message);
+        }
+        
     });
     
 
@@ -84,7 +94,16 @@ export default function Register(props){
                 </Button>
             </div>
         </Form>
-        {/* <Link to="/Patient/Homepage">Example Link To Patient Homepage</Link> */}
+        {showFailMessage ?
+            <Toast className="Toast" show={showFailMessage} onClose={toggleFailMessage}>
+                <Toast.Header>
+                <strong className="mr-auto">Log In Error</strong>
+                </Toast.Header>
+                <Toast.Body>{errorMessage}</Toast.Body>
+            </Toast>
+            :
+            <></>
+        }
     
      </div>);
 }

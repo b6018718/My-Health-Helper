@@ -12,13 +12,13 @@ export default function Header(props){
     }
 
     return(
-        <span>
+        <span >
             {props.appProps.isAuthenticated ? //(If someone is signed in)
                 <Navbar bg="primary" variant="dark" role="navigation">
                     <Image src={require('../images/logo.png')}  alt="logo"></Image>
                     <Navbar.Brand href="#"> >My Health Helper</Navbar.Brand>                    
                         
-                    <Nav className="mr-auto">
+                    <Nav className="mr-auto" >
                    
                         {!props.appProps.isDoctor ?
                             <Nav>
@@ -36,7 +36,7 @@ export default function Header(props){
                                 </LinkContainer>
 
                                 <Dropdown as={ButtonGroup}>
-                                <Button type="button" className="NotificationButton" variant="light" >
+                                <Button type="button" className="NotificationButton" variant="light" className="pull-right">
                                     <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">113</span>
                                     </Button>
                                 <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />

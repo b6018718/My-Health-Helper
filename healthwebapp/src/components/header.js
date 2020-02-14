@@ -1,5 +1,4 @@
 import * as React from "react";
-//interface Props{}
 import {Button, Form, Nav, Navbar, FormControl, NavItem} from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import "../css/header.css";

@@ -38,13 +38,18 @@ io.on("connection", socket => {
       // Email available
       let tempPassword = data.password;
       data.password = Bcrypt.hashSync(data.password,10);
+      // Save user to the database
       await connect.then(db => {
         console.log("connected correctly to the server");
         let user = new User(data);
         user.save();
       });
+      // Emit the new doctor to any pages looking at doctors
+      if(data.doctor)
+        emitAllDoctors();
+      // Reset the password to the un encrypted version
       data.password = tempPassword;
-      // Sign up goes here
+      // Log the user into the system
       logIn(data, socket);
     } else {
       logInFailed(socket, "Account already exists");
@@ -52,11 +57,19 @@ io.on("connection", socket => {
   });
 
   socket.on("getAllDoctors", async (data) => {
-    let doctors = await User.find({doctor: true}).exec();
-    socket.emit("getAllDoctorsResults", {doctors: doctors});
+    emitAllDoctors(socket, false);
   })
 
   socket.on("disconnect", () => console.log("Client disconnected"))
+
+  async function emitAllDoctors(socket, emitToAllSockets){
+    let doctors = await User.find({doctor: true}, {forename: 1, _id: 1, email: 1, surname: 1}).exec();
+    // Echo data back or send to every socket on the network
+    if(emitToAllSockets)
+      socket.emit("getAllDoctorsResults", {doctors: doctors});
+    else
+      socket.broadcast.emit("getAllDoctorsResults", {doctors: doctors});
+  }
 
   async function logIn(data, socket){
     console.log("User attempted to log in");

@@ -19,6 +19,10 @@ export default function Register(props){
         props.appProps.isRegistering(true);
     }, [props.appProps.registering]);
 
+    props.appProps.socket.emit("getAllDoctors", {} );
+    props.appProps.socket.on("getAllDoctorsResults", function (data){
+        console.log(data);
+    });
 
     function handleSubmit(event){
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html

@@ -1,0 +1,11 @@
+.selectDoctor{
+    width: 50%;
+    text-align: center;
+    margin: auto;
+    height: auto;
+    padding-top: 1%;
+}
+.overflow-scrolling {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}

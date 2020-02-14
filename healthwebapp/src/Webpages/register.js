@@ -43,17 +43,23 @@ export default function Register(props){
         if(data.result){
             props.appProps.userHasVerifiedDoctor(data.doctor);
 
-            if(data.doctor)
-                props.history.push('/HealthCareProfessional/Homepage');
-            else
-                props.history.push('/Patient/Homepage');
-        } else {
+
+        if(data.doctor)
+            props.history.push('/HealthCareProfessional/Homepage');
+        else
+        {
+            props.appProps.passUserFirstName(forename);
+            props.appProps.passUserLastName(surname);
+            props.appProps.passUserEmail(email);
+            props.appProps.passUserPassword(password);
+            props.history.push('/register/Select-Doctor'); 
+        }
+        //props.history.push('/Patient/Homepage');
+    }else {
             setFailMessage(true);
             setErrorMessage(data.message);
         }
-        
-    });
-    
+
 
     return (
     <div className="Login">  

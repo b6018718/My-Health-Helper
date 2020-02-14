@@ -49,7 +49,7 @@ export default function Register(props){
                 <Col>
                     <Form.Group controlId="formForename">
                         <Form.Label>Forename</Form.Label>
-                        <Form.Control type="text" placeholder="Forename" onChange={e => setEmail(e.target.value)} />
+                        <Form.Control type="text" placeholder="Forename" onChange={e => setForename(e.target.value)} />
                         <Form.Text className="text-muted">
                         </Form.Text>
                     </Form.Group>
@@ -57,7 +57,7 @@ export default function Register(props){
                 <Col>
                     <Form.Group controlId="formSurname">
                         <Form.Label>Surname</Form.Label>
-                        <Form.Control type="text" placeholder="Surname" onChange={e => setEmail(e.target.value)} />
+                        <Form.Control type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)} />
                         <Form.Text className="text-muted">
                         </Form.Text>
                     </Form.Group>

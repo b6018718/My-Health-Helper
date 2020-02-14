@@ -48,7 +48,7 @@ io.on("connection", socket => {
   var authenticated = false;
 
   socket.on("logIn", (data) => {
-    logIn(data);
+    logIn(data, socket);
   });
 
   socket.on("signUp", (data) => {
@@ -65,14 +65,14 @@ io.on("connection", socket => {
     });
 
     // Sign up goes here
-    logIn(data);
+    logIn(data, socket);
   });
 
   socket.on("disconnect", () => console.log("Client disconnected"))
 
-  function logIn(data){
+  function logIn(data, socket){
     console.log("User attempted to log in");
-    
+
       if(data.email == 'anthonydranfield@hotmail.co.uk' && data.password == 'Password1'){
         console.log("User successfully logged in")
         authenticated = true;

@@ -8,7 +8,6 @@ export default function Header(props){
         e.preventDefault();
         props.appProps.userHasAuthenticated(false);
     }
-    console.log(props)
     return(
         <>
             {props.appProps.isAuthenticated ?

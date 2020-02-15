@@ -7,6 +7,8 @@ import Routes from './components/routes';
 import { BrowserRouter } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 
+import SocketContext from './components/socket';
+
 function userHasVerifiedDoctor(bool){
   this.setState({ isDoctor: bool});
 }
@@ -35,11 +37,12 @@ function passUserPassword(password)
 this.setState({ nAccPassword: password});
 }
 
+const socket = socketIOClient("http://127.0.0.1:5000");
+
 function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isDoctor, userHasVerifiedDoctor ] = useState(false);
   const [registering, isRegistering] = useState(false);
-  const socket = socketIOClient("http://127.0.0.1:5000");
   //const [patientAccountDetails, passUserAccount] = useState({firstname:"tmp1", lastname:"tmp2", email:"tmp3", password:"tmp"})
   const [nAccFirstName,passUserFirstName] = useState("")
   const [nAccLastName,passUserLastName] = useState("")
@@ -51,10 +54,12 @@ function App(props) {
 
   return (
     <div className="App">
-      <BrowserRouter>
-        <Header appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering, socket,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword }} />
-        <Routes appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering, socket,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword}} />
-      </BrowserRouter>
+      <SocketContext.Provider value={socket}>
+        <BrowserRouter>
+          <Header appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword }} />
+          <Routes appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword}} />
+        </BrowserRouter>
+      </SocketContext.Provider>
     </div>
   );
 }

@@ -5,7 +5,10 @@ import {Button, Form, Col, Row, Toast} from "react-bootstrap";
 import '../css/Login.css';
 import '../css/Register.css';
 
-export default function Register(props){
+// Socket provider
+import SocketContext from '../components/socket'
+
+function RegisterWithoutSocket(props){
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [forename, setForename] = React.useState("");
@@ -19,45 +22,49 @@ export default function Register(props){
         props.appProps.isRegistering(true);
     }, [props.appProps.registering]);
 
-    props.appProps.socket.emit("getAllDoctors", {});
-    props.appProps.socket.on("getAllDoctorsResults", function (data){
-        console.log(data);
-    });
+    React.useEffect(() => {
+        props.socket.on("logInResult", function(data){ 
+            loading = false;
+    
+            props.appProps.userHasAuthenticated(data.result);
+            if(data.result){
+                props.appProps.userHasVerifiedDoctor(data.doctor);
+                if(data.doctor) {
+                    props.history.push('/HealthCareProfessional/Homepage');
+                } else {
+                    props.history.push('/register/Select-Doctor');
+                }
+            } else {
+                setFailMessage(true);
+                setErrorMessage(data.message);
+            }
+        });
+        return () => {
+            props.socket.off("logInResult");
+        };
+    }, []);
+
+    var loading;
 
     function handleSubmit(event){
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
         event.preventDefault();
-        var doctor;
-        if(event.target.value == 'patient')
-            doctor = false;
-        else
-            doctor = true;
-        // 1. Authenticate
-        props.appProps.socket.emit("signUp", {email: email, password: password, forename: forename, surname: surname, doctor: doctor});
-        // 2. Check permissions
-    }
 
-    props.appProps.socket.on("logInResult", function(data){ 
+        if(!loading){
+            loading = true;
+            var doctor = true;
+            if(event.target.value == 'patient')
+                doctor = false;
 
-        props.appProps.userHasAuthenticated(data.result);
-        if(data.result){
-            props.appProps.userHasVerifiedDoctor(data.doctor);
-            if(data.doctor) {
-                props.history.push('/HealthCareProfessional/Homepage');
-            } else {
-                props.appProps.passUserFirstName(forename);
-                props.appProps.passUserLastName(surname);
-                props.appProps.passUserEmail(email);
-                props.appProps.passUserPassword(password);
-                props.history.push('/register/Select-Doctor');
-            }
-        //props.history.push('/Patient/Homepage');
-        } else {
-            setFailMessage(true);
-            setErrorMessage(data.message);
+            props.appProps.passUserFirstName(forename);
+            props.appProps.passUserLastName(surname);
+            props.appProps.passUserEmail(email);
+            props.appProps.passUserPassword(password);
+
+            props.socket.emit("signUp",
+            {email: email, password: password, forename: forename, surname: surname, doctor: doctor});
         }
-    });
-
+    }
 
     return (
     <div className="Login">  
@@ -117,3 +124,10 @@ export default function Register(props){
     );
 }
 
+const Register = props => (
+    <SocketContext.Consumer>
+        {socket => <RegisterWithoutSocket {...props} socket={socket} />}
+    </SocketContext.Consumer>
+)
+
+export default Register;

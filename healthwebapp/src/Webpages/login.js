@@ -4,7 +4,10 @@ import {Link} from "react-router-dom"
 import {Button, Form, Toast} from "react-bootstrap";
 import '../css/Login.css';
 
-export default function Login(props){
+// Socket provider
+import SocketContext from '../components/socket'
+
+function LoginWithoutSocket(props){
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [showFailMessage, setFailMessage] = React.useState(false);
@@ -17,6 +20,30 @@ export default function Login(props){
         props.appProps.isRegistering(false);
     }, [props.appProps.registering]);
 
+    React.useEffect(() => {
+        // Calculates result from the back end
+        props.socket.on("logInResult", function(data){
+            props.appProps.userHasAuthenticated(data.result);
+            if(data.result){
+                props.appProps.userHasVerifiedDoctor(data.doctor);
+                // Set details
+                props.appProps.passUserFirstName(data.forename);
+                props.appProps.passUserLastName(data.surname);
+
+                if(data.doctor)
+                    props.history.push('/HealthCareProfessional/Homepage');
+                else
+                    props.history.push('/Patient/Homepage');
+            } else {
+                setFailMessage(true);
+                setErrorMessage(data.message);
+            }
+        });
+        return () => {
+            props.socket.off("logInResult");
+        };
+    }, []);
+
     function handleSubmit(event){
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
         // Back end code https://dev.to/captainpandaz/a-socket-io-tutorial-that-isn-t-a-chat-app-with-react-js-58jh 
@@ -24,26 +51,8 @@ export default function Login(props){
         event.preventDefault();
 
         // Send details to the server
-        props.appProps.socket.emit("logIn", {email: email, password: password});
+        props.socket.emit("logIn", {email: email, password: password});
     }
-
-    // Calculates result from the back end
-    props.appProps.socket.on("logInResult", function(data){
-        props.appProps.userHasAuthenticated(data.result);
-
-
-        if(data.result){
-            props.appProps.userHasVerifiedDoctor(data.doctor);
-
-            if(data.doctor)
-                props.history.push('/HealthCareProfessional/Homepage');
-            else
-                props.history.push('/Patient/Homepage');
-        } else {
-            setFailMessage(true);
-            setErrorMessage(data.message);
-        }
-    });
 
     return (
     <div className="Login">  
@@ -81,3 +90,10 @@ export default function Login(props){
      </div>);
 }
 
+const Login = props => (
+    <SocketContext.Consumer>
+        {socket => <LoginWithoutSocket {...props} socket={socket} />}
+    </SocketContext.Consumer>
+)
+
+export default Login;

@@ -3,45 +3,79 @@ import {Link} from "react-router-dom"
 //interface Props{}
 import {Button, Form, Col, Row} from "react-bootstrap";
 //import '../css/Login.css';
-import '../css/PatientSelectDoctor.css'
+import '../css/PatientSelectDoctor.css';
 import '../css/Login.css';
 import '../css/Register.css';
-import OverflowScrolling from 'react-overflow-scrolling'
-import * as ScrollArea from "react-scrollbar";
+import SocketContext from '../components/socket'
 
-export default function Register(props){
+
+function SelectDoctorWithoutSocket(props){
+    // Initialise doctor list
+    const [doctorList, setDoctorList] = React.useState("");
+    const [idSelected, setSelectedId] = React.useState("");
+
+    React.useEffect(() => {
+        props.socket.emit("getAllDoctors", {});
+        
+        props.socket.on("getAllDoctorsResults", function (data){
+            console.log(data)
+            setDoctorList(addDoctorList(data));
+        });
+
+        return () => {
+            props.socket.off("getAllDoctorsResults");
+        };
+    }, []);
+
+    React.useEffect(() => {
+        props.socket.on("updateAssignedDoctorResult", function(data){ 
+            props.history.push('/Patient/Homepage');
+        });
+
+        return () => {
+            props.socket.off("updateAssignedDoctorResult");
+        };
+    }, []);
 
     
-    function addDoctorList(doctorList)
+    function addDoctorList(data)
     {
-        var i;
+        var i = 0;
         var buttonArray =[];
-        for (i = 0; i < 100; i++){
-        buttonArray.push(addButtonToList("New doctor: " + i.toString()));
+        for(let doctor of data){
+            buttonArray.push(addButtonToList(doctor, i));
+            i++;
         }
         return buttonArray;
     }
-    function addButtonToList(btnText, inc)
+
+    function addButtonToList(doctor, inc)
     {
-        var button = (<button type="button" key={inc} className="list-group-item list-group-item-action">{btnText}</button>)
+        var button = (<button type="button" key={inc} onClick={doctorClicked} value={doctor._id} className="list-group-item list-group-item-action">{`${doctor.forename} ${doctor.surname}`}</button>)
         return button;
         //document.getElementById("doctorList").appendChild(button);
     }
-    const doctorList = addDoctorList("Test")
+
+    function doctorClicked(event){
+        var buttonList = event.target.parentNode.childNodes;
+        for (let button of buttonList){
+            button.classList.remove("active");
+        }
+
+        var button = event.target;
+        setSelectedId(button.value);
+        button.classList.add("active");
+    }
+
     function handleSubmit(event){
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
+        if(idSelected != ""){
+            props.socket.emit("updateAssignedDoctor", idSelected);
+        }
+    }
 
-        console.log(props.appProps.nAccFirstName)
-        console.log(props.appProps.nAccLastName)
-        console.log(props.appProps.nAccEmail)
-        console.log(props.appProps.nAccPassword)
-            //props.history.push('/Patient/Homepage');
-    }//"list-group-item list-group-item-action active"
-    /*        <button type="button" class="list-group-item list-group-item-action active">
-    Cras justo odio
-  </button>
-  <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button> */
-return(
+
+    return(
     <div className = "selectDoctor">
         <br></br>
         <div className="docContain">
@@ -58,5 +92,13 @@ return(
             </Button>
         </div>
     </div>
-)
+    )
 }
+
+const SelectDoctor = props => (
+    <SocketContext.Consumer>
+        {socket => <SelectDoctorWithoutSocket {...props} socket={socket} />}
+    </SocketContext.Consumer>
+)
+
+export default SelectDoctor;

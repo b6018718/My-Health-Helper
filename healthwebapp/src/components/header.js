@@ -34,6 +34,7 @@ export default function Header(props){
                                     <Nav.Link>My Details</Nav.Link>
                                 </LinkContainer>
 
+
                                 <Dropdown as={ButtonGroup}>
                                 <Button type="button" className="NotificationButton" variant="light" className="pull-right">
                                     <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">1</span>

@@ -94,3 +94,12 @@
 .NotificationText{
   color:#000000;
 }
+
+.DropdownImage{
+  width: 90%;
+  height: 90%;
+  vertical-align: middle;
+  text-align: center;
+  padding-left:15%;
+  margin-top: 3%;
+}

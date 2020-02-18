@@ -28,6 +28,9 @@ export default function Header(props){
                                 <LinkContainer to="/Patient/MyDetails">
                                     <Nav.Link>My Details</Nav.Link>
                                 </LinkContainer>
+                                <LinkContainer to='/register/Select-Doctor'>
+                                    <Nav.Link>Change My Doctor</Nav.Link>
+                                </LinkContainer>
                             </Nav>
                             :
                             <Nav>

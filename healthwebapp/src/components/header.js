@@ -33,7 +33,9 @@ export default function Header(props){
                                 <LinkContainer to="/Patient/MyDetails">
                                     <Nav.Link>My Details</Nav.Link>
                                 </LinkContainer>
-
+                                <LinkContainer to='/register/Select-Doctor'>
+                                    <Nav.Link>Change My Doctor</Nav.Link>
+                                </LinkContainer>
                                 <Dropdown as={ButtonGroup}>
                                 <Button type="button" className="NotificationButton" variant="light" className="pull-right">
                                     <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">113</span>
@@ -44,10 +46,6 @@ export default function Header(props){
                                     <Dropdown.Item href="#/action-2">A Warning</Dropdown.Item>
                                     <Dropdown.Item href="#/action-3">Notification 2</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>                          
-                                
-                                
-                                
-                                
                             </Nav>
                             : //if they are a doctor, change the header buttons
                             <Nav>

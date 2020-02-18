@@ -15,15 +15,24 @@ function SelectDoctorWithoutSocket(props){
     const [idSelected, setSelectedId] = React.useState("");
 
     React.useEffect(() => {
-        props.socket.emit("getAllDoctors", {});
+        props.socket.emit("getMyDoctor", {});
+        //props.socket.emit("getAllDoctors", {});
         
         props.socket.on("getAllDoctorsResults", function (data){
             console.log(data)
             setDoctorList(addDoctorList(data));
         });
-
         return () => {
             props.socket.off("getAllDoctorsResults");
+        };
+    }, []);
+
+    React.useEffect(() => {
+        props.socket.on("getMyDoctorResults", function (data){
+            setDoctorList(addDoctorList(data));
+        });
+        return () => {
+            props.socket.off("getMyDoctorResults");
         };
     }, []);
 
@@ -40,18 +49,25 @@ function SelectDoctorWithoutSocket(props){
     
     function addDoctorList(data)
     {
+        console.log(data)
         var i = 0;
         var buttonArray =[];
-        for(let doctor of data){
-            buttonArray.push(addButtonToList(doctor, i));
+        var doctors = data.doctors;
+        for(let doctor of doctors){
+            buttonArray.push(addButtonToList(doctor, i, data.idAssignedDoctor));
             i++;
         }
         return buttonArray;
     }
 
-    function addButtonToList(doctor, inc)
+    function addButtonToList(doctor, inc, assignedId)
     {
-        var button = (<button type="button" key={inc} onClick={doctorClicked} value={doctor._id} className="list-group-item list-group-item-action">{`${doctor.forename} ${doctor.surname}`}</button>)
+        if(assignedId != null && assignedId == doctor._id){
+            var button = (<button type="button" key={inc} onClick={doctorClicked} value={doctor._id} className="list-group-item list-group-item-action active">{`${doctor.forename} ${doctor.surname}`}</button>)
+        
+        } else {
+            var button = (<button type="button" key={inc} onClick={doctorClicked} value={doctor._id} className="list-group-item list-group-item-action">{`${doctor.forename} ${doctor.surname}`}</button>)
+        }
         return button;
         //document.getElementById("doctorList").appendChild(button);
     }
@@ -84,11 +100,11 @@ function SelectDoctorWithoutSocket(props){
             <div className = "list-group">
                 {doctorList}
             </div>
-    
+
             <br></br>
             
             <Button className="registerButton" variant="primary" type="submit" onClick={handleSubmit} value="patient">
-                        Register as Patient
+                        Select Doctor
             </Button>
         </div>
     </div>

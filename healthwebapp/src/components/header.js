@@ -15,7 +15,7 @@ export default function Header(props){
             {props.appProps.isAuthenticated ? //(If someone is signed in)
                 <Navbar bg="primary" variant="dark" role="navigation">
                     <Image src={require('../images/logo.png')}  alt="logo"></Image>
-                    <Navbar.Brand href="#"> >My Health Helper</Navbar.Brand>                    
+                    <Navbar.Brand href="#">&nbsp; My Health Helper</Navbar.Brand>                    
                         
                     <Nav className="mr-auto" >
                    
@@ -82,7 +82,8 @@ export default function Header(props){
                     {!props.appProps.registering ?
                         <>
                         <Navbar bg="primary" variant="dark">
-                            <Navbar.Brand>My Health Helper</Navbar.Brand>
+                            <Image src={require('../images/logo.png')}  alt="logo"></Image>
+                            <Navbar.Brand>&nbsp; My Health Helper</Navbar.Brand>
                             <Nav className="mr-auto">
                             </Nav>
                             <Form inline>
@@ -95,7 +96,8 @@ export default function Header(props){
                         :
                         <>
                         <Navbar bg="primary" variant="dark">
-                            <Navbar.Brand>My Health Helper</Navbar.Brand>
+                            <Image src={require('../images/logo.png')}  alt="logo"></Image>
+                            <Navbar.Brand>&nbsp; My Health Helper</Navbar.Brand>
                             <Nav className="mr-auto">
                             </Nav>
                             <Form inline>

@@ -6,7 +6,7 @@ import {DoctorHome} from "../Webpages/doctorhome";
 import {PatientDetails} from "../Webpages/patientdetails";
 import {PatientExercise} from "../Webpages/patientexercise";
 import {PatientFoodIntake} from "../Webpages/patientfoodintake";
-import {PatientList} from "../Webpages/patientlist"
+import PatientList from "../Webpages/patientlist"
 import Register from "../Webpages/register";
 import SelectDoctor from "..//Webpages/patientselectdoctor"
 import AppliedRoute from "./appliedRoute";

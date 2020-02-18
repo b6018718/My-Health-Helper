@@ -15,7 +15,7 @@ export default function Header(props){
             {props.appProps.isAuthenticated ? //(If someone is signed in)
                 <Navbar bg="primary" variant="dark" role="navigation">
                     <Image src={require('../images/logo.png')}  alt="logo"></Image>
-                    <Navbar.Brand href="#"> >My Health Helper</Navbar.Brand>                    
+                    <Navbar.Brand href="#">&nbsp; My Health Helper</Navbar.Brand>                    
                         
                     <Nav className="mr-auto" >
                    
@@ -33,7 +33,9 @@ export default function Header(props){
                                 <LinkContainer to="/Patient/MyDetails">
                                     <Nav.Link>My Details</Nav.Link>
                                 </LinkContainer>
-
+                                <LinkContainer to='/register/Select-Doctor'>
+                                    <Nav.Link>Change My Doctor</Nav.Link>
+                                </LinkContainer>
                                 <Dropdown as={ButtonGroup}>
                                 <Button type="button" className="NotificationButton" variant="light" className="pull-right">
                                     <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">113</span>
@@ -44,10 +46,6 @@ export default function Header(props){
                                     <Dropdown.Item href="#/action-2">A Warning</Dropdown.Item>
                                     <Dropdown.Item href="#/action-3">Notification 2</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>                          
-                                
-                                
-                                
-                                
                             </Nav>
                             : //if they are a doctor, change the header buttons
                             <Nav>
@@ -84,7 +82,8 @@ export default function Header(props){
                     {!props.appProps.registering ?
                         <>
                         <Navbar bg="primary" variant="dark">
-                            <Navbar.Brand>My Health Helper</Navbar.Brand>
+                            <Image src={require('../images/logo.png')}  alt="logo"></Image>
+                            <Navbar.Brand>&nbsp; My Health Helper</Navbar.Brand>
                             <Nav className="mr-auto">
                             </Nav>
                             <Form inline>
@@ -97,7 +96,8 @@ export default function Header(props){
                         :
                         <>
                         <Navbar bg="primary" variant="dark">
-                            <Navbar.Brand>My Health Helper</Navbar.Brand>
+                            <Image src={require('../images/logo.png')}  alt="logo"></Image>
+                            <Navbar.Brand>&nbsp; My Health Helper</Navbar.Brand>
                             <Nav className="mr-auto">
                             </Nav>
                             <Form inline>

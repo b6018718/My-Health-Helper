@@ -38,7 +38,7 @@ io.on("connection", socket => {
     // Sanitize data
     data = deepSanitize(data);
     if(!data.email || !data.password || !data.forename || !data.surname){
-      logInFailed(socket, "Fields are empty");
+      logInFailed(socket, "Fields are empty", data);
       return;
     }
 
@@ -62,7 +62,7 @@ io.on("connection", socket => {
       // Log the user into the system
       logIn(data, socket);
     } else {
-      logInFailed(socket, "Account already exists");
+      logInFailed(socket, "Account already exists", data);
     }
   });
 
@@ -75,7 +75,21 @@ io.on("connection", socket => {
     data = sanitize(data);
     await User.findOneAndUpdate({_id: userId}, {idAssignedDoctor: data});
     socket.emit("updateAssignedDoctorResult", "Success!");
-  })
+  });
+
+  socket.on("getMyDoctor", async function (data){
+    console.log("Attempting to get patients doctor")
+    if(authenticated){
+      var databaseUser = await User.findOne({_id: userId}).exec();
+      console.log(databaseUser);
+      if(databaseUser.idAssignedDoctor != null){
+        let doctors = await User.find({doctor: true}, {forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
+        socket.emit("getMyDoctorResults", {doctors: doctors, idAssignedDoctor: databaseUser.idAssignedDoctor });
+      } else {
+        emitAllDoctors(socket, false);
+      }
+    }
+  });
 
   socket.on("disconnect", () => console.log("Client disconnected"))
 
@@ -84,9 +98,9 @@ io.on("connection", socket => {
       let doctors = await User.find({doctor: true}, {forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
       // Echo data back or send to every socket on the network
       if(!emitToAllSockets){
-        socket.emit("getAllDoctorsResults", doctors);
+        socket.emit("getAllDoctorsResults", {doctors: doctors});
       } else {
-        socket.broadcast.emit("getAllDoctorsResults", doctors);
+        socket.broadcast.emit("getAllDoctorsResults", {doctors: doctors});
       }
     }
   }
@@ -95,10 +109,9 @@ io.on("connection", socket => {
     console.log("User attempted to log in");
     //Sanitise data
     data = deepSanitize(data);
-
     // Check email exists
     if(!data.email || !data.password){
-      logInFailed(socket, "Fields are empty");
+      logInFailed(socket, "Fields are empty", data);
       return;
     }
 
@@ -109,16 +122,17 @@ io.on("connection", socket => {
         console.log("User successfully logged in")
         authenticated = true;
         userId = databaseUser._id;
-        socket.emit("logInResult", {result: true, doctor: data.doctor, forename: databaseUser.forename, surname: databaseUser.surname, message: "Success"});
+        socket.emit("logInResult", {result: true, doctor: databaseUser.doctor, forename: databaseUser.forename, surname: databaseUser.surname, message: "Success"});
       } else {
-        logInFailed(socket, "Password incorrect");
+        logInFailed(socket, "Password incorrect", data);
       }
     } else {
-      logInFailed(socket, "User does not exist");
+      logInFailed(socket, "User does not exist", data);
     }
   }
 
-  function logInFailed (socket, message){
+  function logInFailed (socket, message, data){
+    console.log(data);
     console.log(message);
     authenticated = false;
     socket.emit("logInResult", {result: false, doctor: false, message: message});

@@ -23,6 +23,7 @@ function LoginWithoutSocket(props){
     React.useEffect(() => {
         // Calculates result from the back end
         props.socket.on("logInResult", function(data){
+            console.log(data)
             props.appProps.userHasAuthenticated(data.result);
             if(data.result){
                 props.appProps.userHasVerifiedDoctor(data.doctor);

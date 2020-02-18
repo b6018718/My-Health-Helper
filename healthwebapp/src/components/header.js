@@ -36,13 +36,11 @@ export default function Header(props){
 
                                 <Dropdown as={ButtonGroup}>
                                 <Button type="button" className="NotificationButton" variant="light" className="pull-right">
-                                    <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">113</span>
+                                    <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">1</span>
                                     </Button>
                                 <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                 <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">Notification 1</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">A Warning</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-3">Notification 2</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-1">Welcome to the Patient Hub!</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>                          
                                 
                                 
@@ -59,13 +57,11 @@ export default function Header(props){
                                 </LinkContainer>
                                 <Dropdown as={ButtonGroup}>
                                 <Button type="button" className="NotificationButton" variant="light" >
-                                    <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">113</span>
+                                    <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">1</span>
                                     </Button>
                                 <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                 <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">Notification 1</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">A Warning</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-3">Notification 2</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-1">Welcome back, Doctor.</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>
                                 
                             </Nav>

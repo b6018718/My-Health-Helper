@@ -33,15 +33,11 @@ export const PatientHome = (props) => {
                     <span className="LargeText"> My Details</span>
                     </Button>
                     </LinkContainer>
-                    <Button variant="primary" type="submit" className="ModuleButton" > onClick={ clickRegisterDevice}>
+                    <Button variant="primary" type="submit" className="ModuleButton"> onClick={ clickRegisterDevice}>
                     Register External Device
                     </Button>
                 </div> </div>
-
-                <div class = "row"> 
-                <div className="Paragraph"> Warnings: Lorem ipsum da </div>
                 </div>
             </div>
-        </div>  
     )
 };

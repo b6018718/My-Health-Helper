@@ -3,11 +3,15 @@ import {Button,  Dropdown, Image, ButtonGroup} from "react-bootstrap";
 
 //interface Props{}
 
-export const PatientFoodIntake = () => {
+export const PatientFoodIntake = (props) => {
+       
+
     return (
+       
         <div class="container">
             <div className="Title">  Food Logger  </div>
             <div className="Paragraph">Please add a food input.</div>
+            <div className="EditableText" id="Food">Today's Food: </div>
             <div className="row">
                 <div>  
                 
@@ -18,16 +22,21 @@ export const PatientFoodIntake = () => {
                                 <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                 <Dropdown.Menu>
                                     <Image src={require('../images/cheeseSandwich.png')} className="DropdownImage"></Image>
-                                    <Dropdown.Item href="#/action-1">Cheese Sandwich</Dropdown.Item>
+                                    <Dropdown.Item onClick={()=>addFood('Cheese Sandwich')}>Cheese Sandwich</Dropdown.Item>
                                     --------
                                     <Image src={require('../images/kitKat.png')} className="DropdownImage"></Image>
-                                    <Dropdown.Item href="#/action-2">KitKat</Dropdown.Item>
+                                    <Dropdown.Item onClick={()=>addFood('KitKat')}>KitKat</Dropdown.Item>
                                     --------
                                     <Image src={require('../images/sausageRoll.png')} className="DropdownImage"></Image>
-                                    <Dropdown.Item href="#/action-3">Sausage Roll</Dropdown.Item>
+                                    <Dropdown.Item onClick={()=>addFood('Sausage Roll')}>Sausage Roll</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>        
   
             </div>
         </div> </div>
         )
          };
+
+         function addFood(food){          
+            document.getElementById("Food").textContent += '\r\n';  
+            document.getElementById("Food").textContent += food;
+      }

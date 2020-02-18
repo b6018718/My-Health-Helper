@@ -103,3 +103,9 @@
   padding-left:15%;
   margin-top: 3%;
 }
+
+.EditableText{
+  text-align: left;
+  padding-bottom: 2%;
+  white-space: pre-line
+}

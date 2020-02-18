@@ -55,3 +55,42 @@
 .Button{
   text-align: center;
 }
+
+.Paragraph{
+  text-align: left;
+  padding-bottom: 2%;
+}
+
+.Modules{
+  float: left;
+  width: 100%;
+  height: 100px;  
+}
+
+.ModuleLinkContainer{
+  vertical-align: middle;
+  text-align: center;
+  height: 100%;
+}
+
+.ModuleButton{
+  margin: 1%;
+  height: auto;
+  width:  auto;
+}
+
+.LargeText{
+  vertical-align: middle;
+  align-content: center;
+  text-align: center;  
+  font-size: x-large;
+}
+.NotificationButton{
+  float: right;
+  margin: 0.5%; 
+
+}
+
+.NotificationText{
+  color:#000000;
+}

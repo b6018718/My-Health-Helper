@@ -122,7 +122,7 @@ io.on("connection", socket => {
         console.log("User successfully logged in")
         authenticated = true;
         userId = databaseUser._id;
-        socket.emit("logInResult", {result: true, doctor: data.doctor, forename: databaseUser.forename, surname: databaseUser.surname, message: "Success"});
+        socket.emit("logInResult", {result: true, doctor: databaseUser.doctor, forename: databaseUser.forename, surname: databaseUser.surname, message: "Success"});
       } else {
         logInFailed(socket, "Password incorrect", data);
       }

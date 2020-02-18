@@ -38,7 +38,7 @@ export default function Header(props){
                                 </LinkContainer>
                                 <Dropdown as={ButtonGroup}>
                                 <Button type="button" className="NotificationButton" variant="light" className="pull-right">
-                                    <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">113</span>
+                                    <span class="NotificationText">Notifications</span><span className="badge badge-danger ml-2">113</span>
                                     </Button>
                                 <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                 <Dropdown.Menu>

@@ -23,6 +23,10 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.set("port", port);
 
+var allSockets = [];
+var fingerPrickSubscribers = [];
+
+
 io.on("connection", socket => {
   console.log("Client connected");
 
@@ -81,7 +85,6 @@ io.on("connection", socket => {
     console.log("Attempting to get patients doctor")
     if(authenticated){
       var databaseUser = await User.findOne({_id: userId}).exec();
-      console.log(databaseUser);
       if(databaseUser.idAssignedDoctor != null){
         let doctors = await User.find({doctor: true}, {forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
         socket.emit("getMyDoctorResults", {doctors: doctors, idAssignedDoctor: databaseUser.idAssignedDoctor });
@@ -91,7 +94,28 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("disconnect", () => console.log("Client disconnected"))
+  socket.on("disconnect", () => {
+    allSockets = allSockets.filter(socket => socket.id != userId);
+  })
+
+  socket.on("subscribeToFingerPrick", async function(data){
+    fingerPrickSubscribers.push(userId);
+  });
+
+  socket.on("unSubscribeFingerPrick", async function(data){
+    fingerPrickSubscribers = fingerPrickSubscribers.filter(id => userId.toString().localeCompare(id.toString()) != 0)
+  });
+
+  socket.on("checkIfSubscribed", async function(data){
+    var subscribed = false;
+    var user = fingerPrickSubscribers.find(sub => userId.toString().localeCompare(sub.toString()) == 0);
+    if(user){
+      socket.emit("checkIfSubscribedResults", {result: true});
+    } else {
+    //if(!subscribed){
+      socket.emit("checkIfSubscribedResults", {result: false});
+    }
+  });
 
   async function emitAllDoctors(socket, emitToAllSockets){
     if(authenticated){
@@ -121,7 +145,7 @@ io.on("connection", socket => {
       if(Bcrypt.compareSync(data.password, databaseUser.password)){
         console.log("User successfully logged in")
         authenticated = true;
-        userId = databaseUser._id;
+        setUserId(databaseUser._id, socket);
         socket.emit("logInResult", {result: true, doctor: databaseUser.doctor, forename: databaseUser.forename, surname: databaseUser.surname, message: "Success"});
       } else {
         logInFailed(socket, "Password incorrect", data);
@@ -129,6 +153,11 @@ io.on("connection", socket => {
     } else {
       logInFailed(socket, "User does not exist", data);
     }
+  }
+
+  function setUserId(id, socket){
+    userId = id;
+    allSockets.push({id: id, socket: socket});
   }
 
   function logInFailed (socket, message, data){
@@ -152,3 +181,25 @@ io.on("connection", socket => {
 })
 
 server.listen(port, () => console.log(`Health App Server running at http://localhost:${port}`));
+
+setInterval(updateFingerPrickInfo, 10000);
+
+
+async function updateFingerPrickInfo(){
+  console.log("Updating finger prick")
+  console.log(fingerPrickSubscribers);
+  for(let id of fingerPrickSubscribers){
+    console.log("User found")
+    var user = await User.findOne({_id: id}).exec();
+    user.fingerPrick.push({millimolesPerLitre: getRndInteger(1, 10)});
+    await user.save();
+
+    socketContainer = allSockets.find(soc => user._id.toString().localeCompare(soc.id.toString()) == 0);
+    if(socketContainer)
+      socketContainer.socket.emit("fingerPrickData", user.fingerPrick);
+  }
+}
+
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
+}

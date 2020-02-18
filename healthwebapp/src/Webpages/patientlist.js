@@ -10,16 +10,26 @@ import SocketContext from '../components/socket'
 function SelectPatientDetailsWithoutSocket(props){
     const [patientList, setPatientList] = React.useState("");
     const [idSelected, setSelectedId] = React.useState("");
+    
+    
     React.useEffect(() => {
-        props.socket.emit("getAllDoctors", {});
-        
-        props.socket.on("getAllDoctorsResults", function (data){
+        props.socket.emit("getMyPatients", {});
+        props.socket.on("getMyPatientsResults", function (data){
             console.log(data)
             setPatientList(addPatientList(data));
         });
 
         return () => {
-            props.socket.off("getAllDoctorsResults");
+            props.socket.off("getMyPatientsResults");
+        };
+    }, []);
+
+    React.useEffect(() => {
+        props.socket.on("getMyPatientsResults", function (data){
+            setPatientList(addPatientList(data));
+        });
+        return () => {
+            props.socket.off("getMyPatientsResults");
         };
     }, []);
 
@@ -27,9 +37,19 @@ function SelectPatientDetailsWithoutSocket(props){
     {
         var i = 0;
         var buttonArray =[];
-        for(let patient of data){
-            buttonArray.push(addButtonToList(patient, i));
-            i++;
+        var patients = data.myPatients;
+        console.log(patients.length);
+        console.log(patients.length == 0);
+        if (patients.length == 0)
+        {
+            console.log("Went into no patients message");
+            buttonArray.push(<p className="Paragraph">No patients have selected you as their registered docotor. If you believe any of your patients are using this app, and that they should be sharing their data with you, please tell your patient to select you as their registered doctor for their account.</p>)
+        }else
+        {
+            for(let patient of patients){
+                buttonArray.push(addButtonToList(patient, i));
+                i++;
+            }
         }
         return buttonArray;
     }

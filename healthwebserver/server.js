@@ -105,6 +105,19 @@ io.on("connection", socket => {
     }
   }
 
+  socket.on("getMyPatients", async (data) => {
+    emitMyPatients(socket);
+  });
+
+  async function emitMyPatients(socket)
+  {
+    if(authenticated)
+    {
+      let myPatients = await User.find({idAssignedDoctor: userId},{forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
+      socket.emit("getMyPatientsResults",{myPatients: myPatients});
+    }
+  }
+
   async function logIn(data, socket){
     console.log("User attempted to log in");
     //Sanitise data

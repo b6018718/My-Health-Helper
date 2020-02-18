@@ -28,7 +28,11 @@ const userSchema  =  new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: false
-        }
+        },
+        fingerPrick: [{
+            time: {type: Date, default: Date.now},
+            millimolesPerLitre: {type: Number}
+        }]
     },
     { timestamps: true }
 );

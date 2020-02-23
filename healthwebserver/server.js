@@ -142,6 +142,21 @@ io.on("connection", socket => {
     }
   }
 
+  socket.on("getMyPatientRecord",async(data)=>{
+    emitMyPatientRecord(socket);
+  })
+
+  async function emitMyPatientRecord(data, socket){
+    let registeredDoctorID = await User.findOne({_id: userId},{_id: 1, idAssignedDoctor: 1}).exec();
+    let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1 }).exec()
+    //need to check if doctor is actually assigned?
+    console.log(registeredDoctor)
+    //console.log(registeredDoctorID)
+    //console.log(registeredDoctor.idAssignedDoctor)
+    socket.emit("getMyPatientRecordResults",{myDoctor: registeredDoctor})
+  }
+  
+
   async function logIn(data, socket){
     console.log("User attempted to log in");
     //Sanitise data

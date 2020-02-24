@@ -36,6 +36,11 @@ function passUserPassword(password)
 this.setState({ nAccPassword: password});
 }
 
+function setCurrentSelectedPatient(patientID)
+{
+  this.setState({currentSelectedPatient: patientID})
+}
+
 const socket = socketIOClient("http://127.0.0.1:5000");
 
 function App(props) {
@@ -47,6 +52,7 @@ function App(props) {
   const [nAccLastName,passUserLastName] = useState("")
   const [nAccEmail,passUserEmail] = useState("")
   const [nAccPassword,passUserPassword] = useState("")
+  const [currentSelectedPatient,setCurrentSelectedPatient] = useState("")
   
   //How to send data to the backend
   //socket.emit("log_in", {username: "Ant"});
@@ -55,8 +61,8 @@ function App(props) {
     <div className="App">
       <SocketContext.Provider value={socket}>
         <BrowserRouter>
-          <Header appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword }} />
-          <Routes appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword}} />
+          <Header appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword,currentSelectedPatient,setCurrentSelectedPatient }} />
+          <Routes appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword,currentSelectedPatient,setCurrentSelectedPatient}} />
         </BrowserRouter>
       </SocketContext.Provider>
     </div>

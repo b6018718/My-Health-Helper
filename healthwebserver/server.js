@@ -143,17 +143,30 @@ io.on("connection", socket => {
   }
 
   socket.on("getMyPatientRecord",async(data)=>{
-    emitMyPatientRecord(socket);
+    let isDoctor = await User.findOne({_id: userId},{_id: 1, doctor: 1}).exec();
+    console.log(data)
+    console.log(isDoctor)
+    if(isDoctor.doctor)
+    {
+     console.log(data.selectedPatientID)
+     console.log("doctor request patient data")
+    emitMyPatientRecord(socket,data.selectedPatientID)
+    }
+    else
+    {
+      console.log("patient request their data")
+    emitMyPatientRecord(socket,userId);
+    }
   })
 
-  async function emitMyPatientRecord(data, socket){
-    let registeredDoctorID = await User.findOne({_id: userId},{_id: 1, idAssignedDoctor: 1}).exec();
-    let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1 }).exec()
-    //need to check if doctor is actually assigned?
-    console.log(registeredDoctor)
-    //console.log(registeredDoctorID)
-    //console.log(registeredDoctor.idAssignedDoctor)
-    socket.emit("getMyPatientRecordResults",{myDoctor: registeredDoctor})
+  async function emitMyPatientRecord(socket, selectedPatientID){
+    console.log(selectedPatientID)
+    let patientDetails = await User.findOne({_id: selectedPatientID},{_id: 1, forename: 1, surname: 1, email:1}).exec();
+    let bloodSugarReadings = await User.findOne({_id: selectedPatientID},{_id: 0, fingerPrick: 1}).exec();
+    let registeredDoctorID = await User.findOne({_id: selectedPatientID},{_id: 1, idAssignedDoctor: 1}).exec();
+    let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1,email: 1}).exec()
+   // console.log(bloodSugarReadings);
+    socket.emit("getMyPatientRecordResults",{registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings});
   }
   
 

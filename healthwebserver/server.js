@@ -142,20 +142,49 @@ io.on("connection", socket => {
     }
   }
 
-  socket.on("getMyPatientRecord",async(data)=>{
-    let isDoctor = await User.findOne({_id: userId},{_id: 1, doctor: 1}).exec();
-    console.log(data)
-    console.log(isDoctor)
-    if(isDoctor.doctor)
+  socket.on("recordFoodDiary",async(data)=>{
+    if(authenticated)
     {
-     console.log(data.selectedPatientID)
-     console.log("doctor request patient data")
-    emitMyPatientRecord(socket,data.selectedPatientID)
+      data = deepSanitize(data)
+      console.log(data)
+      var user = await User.findOne({_id: userId}).exec();
+      for(let foodRecord of data)
+      {
+        user.foodRecord.push({foodname:foodRecord.name,calories:foodRecord.calories,foodgroup:foodRecord.group});
+      }
+      await user.save();
     }
-    else
+  })
+  socket.on("recordExerciseDiary",async(data)=>{
+    if(authenticated)
     {
-      console.log("patient request their data")
-      emitMyPatientRecord(socket,userId);
+      data = deepSanitize(data)
+      console.log(data)
+      var user = await User.findOne({_id: userId}).exec();
+      for(let exerciseRecord of data)
+      {
+        user.exercise.push({exercisename:exerciseRecord.exercisename,exercisetype:exerciseRecord.exercisetype,exercisedurationmins:exerciseRecord.exercisedurationmins});
+      }
+      await user.save();
+    }
+  })
+
+  socket.on("getMyPatientRecord",async(data)=>{
+    if(authenticated){
+      let isDoctor = await User.findOne({_id: userId},{_id: 1, doctor: 1}).exec();
+    // console.log(data)
+      //console.log(isDoctor)
+      if(isDoctor.doctor)
+      {
+      // console.log(data.selectedPatientID)
+      // console.log("doctor request patient data")
+      emitMyPatientRecord(socket,data.selectedPatientID)
+      }
+      else
+      {
+        //console.log("patient request their data")
+        emitMyPatientRecord(socket,userId);
+      }
     }
   })
 
@@ -165,8 +194,10 @@ io.on("connection", socket => {
     let bloodSugarReadings = await User.findOne({_id: selectedPatientID},{_id: 0, fingerPrick: 1}).exec();
     let registeredDoctorID = await User.findOne({_id: selectedPatientID},{_id: 1, idAssignedDoctor: 1}).exec();
     let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1,email: 1}).exec()
-   // console.log(bloodSugarReadings);
-    socket.emit("getMyPatientRecordResults",{registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings});
+    let exercise = await User.findOne({_id: selectedPatientID},{_id: 0, exercise: 1}).exec();
+    let foodDiary = await User.findOne({_id: selectedPatientID},{_id: 0, foodRecord: 1}).exec();
+    // console.log(bloodSugarReadings);
+    socket.emit("getMyPatientRecordResults",{registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings,exercise:exercise,foodDiary:foodDiary});
   }
   
 

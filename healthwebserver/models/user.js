@@ -32,7 +32,20 @@ const userSchema  =  new Schema(
         fingerPrick: [{
             time: {type: Date, default: Date.now},
             millimolesPerLitre: {type: Number}
+        }],
+        foodRecord: [{
+            time: {type: Date, default: Date.now},
+            foodname: {type: String},
+            calories: {type: Number},
+            foodgroup: {type: String}
+        }],
+        exercise: [{
+            time: {type: Date, default: Date.now},
+            exercisename: {type: String},
+            exercisetype: {type: Number},
+            exercisedurationmins: {type: String}
         }]
+
     },
     { timestamps: true }
 );

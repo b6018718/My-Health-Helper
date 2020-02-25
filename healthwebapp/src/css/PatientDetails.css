@@ -1,10 +1,14 @@
 .PatientDetails{
-    width: 80%;
+    width: 100%;
     text-align: center;
     margin: auto;
-    height: auto;
+    
     padding-top: 1%;
     background-color:	#f0f4f5;
+}
+.PatientDetailsContainer{
+    width:80%;
+
 }
 
 .SubTitle{

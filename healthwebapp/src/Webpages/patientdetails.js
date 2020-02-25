@@ -152,6 +152,7 @@ function DisplayPatientDetailsWithoutSocket(props)
 
     
     return (<div className = "PatientDetails">   
+            <div className = "PatientDetailsContainer">
             <div className="Title">{pageTitle}</div>
                 <div className = "Paragraph"> 
                     <div className = "SubTitle">Profile: </div>
@@ -167,6 +168,7 @@ function DisplayPatientDetailsWithoutSocket(props)
                         <br/>
                     <div className = "SubTitle">My exercise diary: </div>
                         <br/>
+                </div>
                 </div>
             </div>)
     

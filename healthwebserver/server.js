@@ -53,10 +53,10 @@ io.on("connection", socket => {
       let tempPassword = data.password;
       data.password = Bcrypt.hashSync(data.password,10);
       // Save user to the database
-      await connect.then(db => {
+      await connect.then(async function(db) {
         console.log("connected correctly to the server");
         let user = new User(data);
-        user.save();
+        await user.save();
       });
       // Emit the new doctor to any pages looking at doctors
       if(data.doctor)
@@ -155,7 +155,7 @@ io.on("connection", socket => {
     else
     {
       console.log("patient request their data")
-    emitMyPatientRecord(socket,userId);
+      emitMyPatientRecord(socket,userId);
     }
   })
 

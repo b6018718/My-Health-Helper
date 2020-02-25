@@ -1,11 +1,11 @@
 import * as React from "react"; 
 import {Button,  Dropdown, Image, ButtonGroup, Card} from "react-bootstrap";
 
+import SocketContext from '../components/socket'
+
 //interface Props{}
 
-export const PatientFoodIntake = (props) => {
-       
-
+function PatientFoodIntakeWithoutSocket (props) {
     return (
        
         <div class="container">
@@ -54,7 +54,15 @@ export const PatientFoodIntake = (props) => {
         )
          };
 
-         function addFood(food){          
-            document.getElementById("Food").textContent += '\r\n';  
-            document.getElementById("Food").textContent += food;
-      }
+function addFood(food){          
+    document.getElementById("Food").textContent += '\r\n';  
+    document.getElementById("Food").textContent += food;
+}
+
+const PatientFoodIntake = props => (
+    <SocketContext.Consumer>
+        {socket => <PatientFoodIntakeWithoutSocket {...props} socket={socket} />}
+    </SocketContext.Consumer>
+)
+
+export default PatientFoodIntake;

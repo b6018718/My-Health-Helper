@@ -194,8 +194,10 @@ io.on("connection", socket => {
     let bloodSugarReadings = await User.findOne({_id: selectedPatientID},{_id: 0, fingerPrick: 1}).exec();
     let registeredDoctorID = await User.findOne({_id: selectedPatientID},{_id: 1, idAssignedDoctor: 1}).exec();
     let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1,email: 1}).exec()
-   // console.log(bloodSugarReadings);
-    socket.emit("getMyPatientRecordResults",{registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings});
+    let exercise = await User.findOne({_id: selectedPatientID},{_id: 0, exercise: 1}).exec();
+    let foodDiary = await User.findOne({_id: selectedPatientID},{_id: 0, foodRecord: 1}).exec();
+    // console.log(bloodSugarReadings);
+    socket.emit("getMyPatientRecordResults",{registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings,exercise:exercise,foodDiary:foodDiary});
   }
   
 

@@ -23,6 +23,10 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.set("port", port);
 
+var allSockets = [];
+var fingerPrickSubscribers = [];
+
+
 io.on("connection", socket => {
   console.log("Client connected");
 
@@ -38,7 +42,7 @@ io.on("connection", socket => {
     // Sanitize data
     data = deepSanitize(data);
     if(!data.email || !data.password || !data.forename || !data.surname){
-      logInFailed(socket, "Fields are empty");
+      logInFailed(socket, "Fields are empty", data);
       return;
     }
 
@@ -49,10 +53,10 @@ io.on("connection", socket => {
       let tempPassword = data.password;
       data.password = Bcrypt.hashSync(data.password,10);
       // Save user to the database
-      await connect.then(db => {
+      await connect.then(async function(db) {
         console.log("connected correctly to the server");
         let user = new User(data);
-        user.save();
+        await user.save();
       });
       // Emit the new doctor to any pages looking at doctors
       if(data.doctor)
@@ -62,7 +66,7 @@ io.on("connection", socket => {
       // Log the user into the system
       logIn(data, socket);
     } else {
-      logInFailed(socket, "Account already exists");
+      logInFailed(socket, "Account already exists", data);
     }
   });
 
@@ -75,30 +79,104 @@ io.on("connection", socket => {
     data = sanitize(data);
     await User.findOneAndUpdate({_id: userId}, {idAssignedDoctor: data});
     socket.emit("updateAssignedDoctorResult", "Success!");
+  });
+
+  socket.on("getMyDoctor", async function (data){
+    console.log("Attempting to get patients doctor")
+    if(authenticated){
+      var databaseUser = await User.findOne({_id: userId}).exec();
+      if(databaseUser.idAssignedDoctor != null){
+        let doctors = await User.find({doctor: true}, {forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
+        socket.emit("getMyDoctorResults", {doctors: doctors, idAssignedDoctor: databaseUser.idAssignedDoctor });
+      } else {
+        emitAllDoctors(socket, false);
+      }
+    }
+  });
+
+  socket.on("disconnect", () => {
+    allSockets = allSockets.filter(socket => socket.id != userId);
   })
 
-  socket.on("disconnect", () => console.log("Client disconnected"))
+  socket.on("subscribeToFingerPrick", async function(data){
+    fingerPrickSubscribers.push(userId);
+  });
+
+  socket.on("unSubscribeFingerPrick", async function(data){
+    fingerPrickSubscribers = fingerPrickSubscribers.filter(id => userId.toString().localeCompare(id.toString()) != 0)
+  });
+
+  socket.on("checkIfSubscribed", async function(data){
+    var subscribed = false;
+    var user = fingerPrickSubscribers.find(sub => userId.toString().localeCompare(sub.toString()) == 0);
+    if(user){
+      socket.emit("checkIfSubscribedResults", {result: true});
+    } else {
+    //if(!subscribed){
+      socket.emit("checkIfSubscribedResults", {result: false});
+    }
+  });
 
   async function emitAllDoctors(socket, emitToAllSockets){
     if(authenticated){
       let doctors = await User.find({doctor: true}, {forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
       // Echo data back or send to every socket on the network
       if(!emitToAllSockets){
-        socket.emit("getAllDoctorsResults", doctors);
+        socket.emit("getAllDoctorsResults", {doctors: doctors});
       } else {
-        socket.broadcast.emit("getAllDoctorsResults", doctors);
+        socket.broadcast.emit("getAllDoctorsResults", {doctors: doctors});
       }
     }
   }
+
+  socket.on("getMyPatients", async (data) => {
+    emitMyPatients(socket);
+  });
+
+  async function emitMyPatients(socket)
+  {
+    if(authenticated)
+    {
+      let myPatients = await User.find({idAssignedDoctor: userId},{forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
+      socket.emit("getMyPatientsResults",{myPatients: myPatients});
+    }
+  }
+
+  socket.on("getMyPatientRecord",async(data)=>{
+    let isDoctor = await User.findOne({_id: userId},{_id: 1, doctor: 1}).exec();
+    console.log(data)
+    console.log(isDoctor)
+    if(isDoctor.doctor)
+    {
+     console.log(data.selectedPatientID)
+     console.log("doctor request patient data")
+    emitMyPatientRecord(socket,data.selectedPatientID)
+    }
+    else
+    {
+      console.log("patient request their data")
+      emitMyPatientRecord(socket,userId);
+    }
+  })
+
+  async function emitMyPatientRecord(socket, selectedPatientID){
+    console.log(selectedPatientID)
+    let patientDetails = await User.findOne({_id: selectedPatientID},{_id: 1, forename: 1, surname: 1, email:1}).exec();
+    let bloodSugarReadings = await User.findOne({_id: selectedPatientID},{_id: 0, fingerPrick: 1}).exec();
+    let registeredDoctorID = await User.findOne({_id: selectedPatientID},{_id: 1, idAssignedDoctor: 1}).exec();
+    let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1,email: 1}).exec()
+   // console.log(bloodSugarReadings);
+    socket.emit("getMyPatientRecordResults",{registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings});
+  }
+  
 
   async function logIn(data, socket){
     console.log("User attempted to log in");
     //Sanitise data
     data = deepSanitize(data);
-
     // Check email exists
     if(!data.email || !data.password){
-      logInFailed(socket, "Fields are empty");
+      logInFailed(socket, "Fields are empty", data);
       return;
     }
 
@@ -108,17 +186,23 @@ io.on("connection", socket => {
       if(Bcrypt.compareSync(data.password, databaseUser.password)){
         console.log("User successfully logged in")
         authenticated = true;
-        userId = databaseUser._id;
-        socket.emit("logInResult", {result: true, doctor: data.doctor, forename: databaseUser.forename, surname: databaseUser.surname, message: "Success"});
+        setUserId(databaseUser._id, socket);
+        socket.emit("logInResult", {result: true, doctor: databaseUser.doctor, forename: databaseUser.forename, surname: databaseUser.surname, message: "Success"});
       } else {
-        logInFailed(socket, "Password incorrect");
+        logInFailed(socket, "Password incorrect", data);
       }
     } else {
-      logInFailed(socket, "User does not exist");
+      logInFailed(socket, "User does not exist", data);
     }
   }
 
-  function logInFailed (socket, message){
+  function setUserId(id, socket){
+    userId = id;
+    allSockets.push({id: id, socket: socket});
+  }
+
+  function logInFailed (socket, message, data){
+    console.log(data);
     console.log(message);
     authenticated = false;
     socket.emit("logInResult", {result: false, doctor: false, message: message});
@@ -138,3 +222,25 @@ io.on("connection", socket => {
 })
 
 server.listen(port, () => console.log(`Health App Server running at http://localhost:${port}`));
+
+setInterval(updateFingerPrickInfo, 10000);
+
+
+async function updateFingerPrickInfo(){
+  console.log("Updating finger prick")
+  console.log(fingerPrickSubscribers);
+  for(let id of fingerPrickSubscribers){
+    console.log("User found")
+    var user = await User.findOne({_id: id}).exec();
+    user.fingerPrick.push({millimolesPerLitre: getRndInteger(1, 10)});
+    await user.save();
+
+    socketContainer = allSockets.find(soc => user._id.toString().localeCompare(soc.id.toString()) == 0);
+    if(socketContainer)
+      socketContainer.socket.emit("fingerPrickData", user.fingerPrick);
+  }
+}
+
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
+}

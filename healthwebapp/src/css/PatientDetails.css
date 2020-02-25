@@ -1,0 +1,19 @@
+.PatientDetails{
+    width: 80%;
+    text-align: center;
+    margin: auto;
+    height: auto;
+    padding-top: 1%;
+    background-color:	#f0f4f5;
+}
+
+.SubTitle{
+    font-size: larger;
+    font-weight: bold;
+  }
+  .listGroupExtended{
+      max-height: 200px;
+      overflow-y:auto;
+      width:50%;
+      -webkit-overflow-scrolling: touch;
+  }

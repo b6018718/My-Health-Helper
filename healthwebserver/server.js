@@ -143,7 +143,6 @@ io.on("connection", socket => {
   }
 
   socket.on("recordFoodDiary",async(data)=>{
-    console.log("Inside diary")
     if(authenticated)
     {
       data = deepSanitize(data)
@@ -152,6 +151,19 @@ io.on("connection", socket => {
       for(let foodRecord of data)
       {
         user.foodRecord.push({foodname:foodRecord.name,calories:foodRecord.calories,foodgroup:foodRecord.group});
+      }
+      await user.save();
+    }
+  })
+  socket.on("recordExerciseDiary",async(data)=>{
+    if(authenticated)
+    {
+      data = deepSanitize(data)
+      console.log(data)
+      var user = await User.findOne({_id: userId}).exec();
+      for(let exerciseRecord of data)
+      {
+        user.exercise.push({exercisename:exerciseRecord.exercisename,exercisetype:exerciseRecord.exercisetype,exercisedurationmins:exerciseRecord.exercisedurationmins});
       }
       await user.save();
     }

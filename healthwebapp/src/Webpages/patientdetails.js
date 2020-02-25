@@ -17,6 +17,7 @@ function DisplayPatientDetailsWithoutSocket(props)
     //const [bloodSugarGraph,setBloodSugarGraph] = React.useState("");
     const [patientDetails,setPatientDetails] = React.useState("");
     const [bloodSugarModule, setBloodSugarModule] = React.useState("");
+    const [foodDiaryModule,setFoodDiaryModule] = React.useState("");
     const [pageTitle,setPageTitle]=React.useState("");
     React.useEffect(() => {
         if(props.appProps.isDoctor)
@@ -36,6 +37,7 @@ function DisplayPatientDetailsWithoutSocket(props)
             setPageTitle(createPageTitle(data.patientDetails));
             setPatientDoctor(data.registeredDoctor);
             setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings));
+            setFoodDiaryModule(createdFoodDiaryModule(data.foodDiary))
         });
 
         return () => {
@@ -150,6 +152,47 @@ function DisplayPatientDetailsWithoutSocket(props)
         }
     }
 
+    function  createdFoodDiaryModule(dataList)
+    {
+        if(dataList != null && dataList != "" && dataList.foodRecord !=[] && dataList.foodRecord.length != 0){
+            var foodDiaryList = createFoodDiaryList(dataList)
+           // var bloodSugarGraph = createBloodSugarGraph(dataList)
+            return(
+            <div>
+            <div className = "SubTitle">My food diary: </div>
+            <div class = "listGroupExtended ListGroup">
+                {foodDiaryList}
+            </div>
+            <br/>
+            
+            <i>Please note, you can zoom in and out of the graph and scroll along to view more detail</i>
+            <br/>
+            </div>
+            )
+        }
+        else{
+            return(<div></div>)
+        }
+    }
+    function createFoodDiaryList(foodDiaryData)
+    {
+        var i = 0;
+        var listItemArray =[];
+        var foodDiaryValues = foodDiaryData.foodRecord.reverse();
+        //console.log(bloodSugarData)
+        for(let foodDiaryValue of foodDiaryValues){
+            listItemArray.push(addItemToFoodDiaryList(foodDiaryValue));
+            i++;
+        }
+        return listItemArray;
+    }
+    function addItemToFoodDiaryList(data)
+    {
+    var date= new Date(data.time)
+    return(<ListGroup.Item>{data.calories}{" calories from a "}{data.foodname} recorded at: {date.toUTCString()} </ListGroup.Item>)   
+           
+    }
+
     
     return (<div className = "PatientDetails">   
             <div className = "PatientDetailsContainer">
@@ -164,8 +207,7 @@ function DisplayPatientDetailsWithoutSocket(props)
                     <div>Doctor's email: {patientDoctor.email}</div>
                     <br/>
                     {bloodSugarModule}
-                    <div className = "SubTitle">My diet: </div>
-                        <br/>
+                    {foodDiaryModule}
                     <div className = "SubTitle">My exercise diary: </div>
                         <br/>
                 </div>

@@ -9,7 +9,7 @@ import '../css/PatientFoodIntake.css';
 function PatientFoodIntakeWithoutSocket (props) {
     var sausageRoll = {calories: 362, name:"Sausage Roll", group:"Protein"};
     var cheeseSandwich = {calories: 261, name:"Cheese Sandwich", group:"Carbohydrates"};
-    var kitKat = {calories: 261, name:"KitKat", group:"Sugar"};
+    var kitKat = {calories: 108, name:"KitKat", group:"Sugar"};
 
     var foodList = [];
 
@@ -75,7 +75,7 @@ function PatientFoodIntakeWithoutSocket (props) {
             </div>
         </div>
         )
-        };
+    };
 
 const PatientFoodIntake = props => (
     <SocketContext.Consumer>

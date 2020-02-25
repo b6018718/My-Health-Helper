@@ -3,7 +3,6 @@ const  Schema  =  mongoose.Schema;
 
 const userSchema  =  new Schema(
     {
-
         forename: {
             type: String,
             required: true
@@ -42,8 +41,8 @@ const userSchema  =  new Schema(
         exercise: [{
             time: {type: Date, default: Date.now},
             exercisename: {type: String},
-            exercisetype: {type: Number},
-            exercisedurationmins: {type: String}
+            exercisetype: {type: String},
+            exercisedurationmins: {type: Number}
         }]
 
     },

@@ -16,3 +16,17 @@
     min-height: 30vh;
     height: auto;
 }
+
+.padButton{
+    margin: 1%;
+}
+
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.durationLabel{
+    margin-right: 2%;
+}

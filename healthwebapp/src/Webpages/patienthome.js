@@ -149,7 +149,6 @@ function PatientHomeWithoutSocket(props) {
                     <div className="Paragraph"> Warnings: Lorem ipsum da </div>
                 </div>
             </div>
-        </div>  
     )
 };
 

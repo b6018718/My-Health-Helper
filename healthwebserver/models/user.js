@@ -34,13 +34,13 @@ const userSchema  =  new Schema(
             millimolesPerLitre: {type: Number}
         }],
         foodRecord: [{
-            time: {type: Data, default: Date.now},
+            time: {type: Date, default: Date.now},
             foodname: {type: String},
             calories: {type: Number},
             foodgroup: {type: String}
         }],
         exercise: [{
-            time: {type: Data, default: Date.now},
+            time: {type: Date, default: Date.now},
             exercisename: {type: String},
             exercisetype: {type: Number},
             exercisedurationmins: {type: String}

@@ -143,6 +143,7 @@ io.on("connection", socket => {
   }
 
   socket.on("recordFoodDiary",async(data)=>{
+    console.log("Inside diary")
     if(authenticated)
     {
       data = deepSanitize(data)

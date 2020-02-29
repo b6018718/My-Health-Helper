@@ -9,6 +9,7 @@ import '../css/PatientDetails.css';
 import SocketContext from '../components/socket'
 import {Chart} from "react-google-charts"
 
+
 //interface Props{}
 function DisplayPatientDetailsWithoutSocket(props)
 {
@@ -156,12 +157,17 @@ function DisplayPatientDetailsWithoutSocket(props)
     {
         if(dataList != null && dataList != "" && dataList.foodRecord !=[] && dataList.foodRecord.length != 0){
             var foodDiaryList = createFoodDiaryList(dataList)
+            var dailyGraph =   dailyCalorieIntake(dataList)
            // var bloodSugarGraph = createBloodSugarGraph(dataList)
             return(
             <div>
             <div className = "SubTitle">My food diary: </div>
             <div class = "listGroupExtended ListGroup">
                 {foodDiaryList}
+            </div>
+            <br/>
+            <div>
+                {dailyGraph}
             </div>
             <br/>
             
@@ -191,6 +197,134 @@ function DisplayPatientDetailsWithoutSocket(props)
     var date= new Date(data.time)
     return(<ListGroup.Item>{data.calories}{" calories from a "}{data.foodname} recorded at: {date.toUTCString()} </ListGroup.Item>)   
            
+    }
+
+    function dailyCalorieIntake(data){
+        var recentTitle = 'Most recent diet vairety for: '
+        var dailyCalories = []
+        var mostRecentDate= new Date()
+        mostRecentDate.setYear(1)
+        var  mostRecentData = []
+        var values = data.foodRecord.reverse()
+        console.log(dailyCalories.length)
+        for(let value of values)
+        {
+            var dateTime= new Date(value.time)
+            var date = new Date(dateTime).setHours(0,0,0,0)
+            //console.log(dateTime)
+            //console.log(date)
+            var formatedDate = dateTime.toLocaleDateString()
+            //console.log(date)
+            //console.log(formatedDate)
+            var index = -1
+            var inc = 0
+            while(index == -1 && inc < dailyCalories.length)
+            {
+                if(formatedDate == dailyCalories[inc].date)
+                {
+                    index = inc
+                }
+                else
+                {
+                    inc++
+                }
+
+            }
+            if(index == -1)
+            {
+                dailyCalories.push({date: formatedDate,value: value.calories})
+            }
+            else
+            {
+                dailyCalories[index].value += value.calories
+            }
+            if(date > mostRecentDate)
+            {
+                mostRecentDate = date
+                mostRecentData = []
+                mostRecentData.push({group: value.foodgroup, count: 1})
+            }else
+            {
+                index = -1
+                inc = 0
+                while(index == -1 && inc < mostRecentData.length){
+                    //console.log(mostRecentData[inc].group.localeCompare(value.foodgroup)==0)
+                    if(mostRecentData[inc].group.localeCompare(value.foodgroup)==0)
+                    {
+                        index = inc
+                    }
+                    else
+                    {
+                        inc++
+                    }
+                }
+                if(index == -1)
+                {
+                    mostRecentData.push({group: value.foodgroup, count: 1})
+                }
+                else
+                {
+                    mostRecentData[index].count++
+                }
+            }
+           
+        }
+        //console.log(dailyCalories)
+        //console.log(mostRecentDate)
+        console.log(mostRecentData)
+        //return createDailyGraph(dailyCalories,"Daily Calorie Intake","Day","Calories")
+        var tempDate = new Date(mostRecentDate)
+        return createMostRecentCountGraph(mostRecentData,recentTitle.concat(tempDate.toLocaleDateString()))
+    }
+
+    function createMostRecentCountGraph(data,graphTitle)
+    {
+        var graphData = [["Group","Count"]]
+        for(let value of data){
+            graphData.push([value.group,value.count])
+        }
+        return (
+            <Chart
+            width={'500px'}
+            height={'300px'}
+            chartType="PieChart"
+            data = {graphData}
+            options = {{title:graphTitle,
+            is3D: true }}
+            />
+        )
+    }
+    function createDailyGraph(data,graphTitle,xAxisTitle,yAxisTitle){
+        var graphData=[]
+        graphData.push([xAxisTitle,yAxisTitle])
+        //console.log(bloodSugarData)
+        for(let value of data)
+        {
+            graphData.push([value.date,value.value])
+        }
+        return (
+            <Chart
+                chartType = "LineChart"
+                data={graphData}
+                width = "100%"
+                height="400px"
+                legendToggle
+                options={{
+
+                        title: graphTitle,
+                    
+                    explorer: {axis: 'horizontal', keepInBounds: true},
+
+                    hAxis: {
+                      title: xAxisTitle,
+                    },
+                    vAxis: {
+                      title: yAxisTitle,
+                    },
+                    pointSize: 5
+                  }}
+            />
+        )
     }
 
     

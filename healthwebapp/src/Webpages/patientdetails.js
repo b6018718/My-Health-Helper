@@ -38,7 +38,10 @@ function DisplayPatientDetailsWithoutSocket(props)
             setPageTitle(createPageTitle(data.patientDetails));
             setPatientDoctor(data.registeredDoctor);
             setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings));
-            setFoodDiaryModule(createdFoodDiaryModule(data.foodDiary))
+            setFoodDiaryModule(createListGraphModule(data.foodDiary
+                ,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: '
+                ,"foodname"," calories from a ","My food diary: "
+                ))
         });
 
         return () => {
@@ -153,15 +156,15 @@ function DisplayPatientDetailsWithoutSocket(props)
         }
     }
 
-    function  createdFoodDiaryModule(dataList)
+    function  createListGraphModule(dataList,dataSetName,dateName,valueName,groupingName,dTitle,dXaxis,dYaxis,recentTitle,itemName,message,moduleTitle)
     {
         if(dataList != null && dataList != "" && dataList.foodRecord !=[] && dataList.foodRecord.length != 0){
-            var list = createDataList(dataList,"foodRecord","calories","time","foodname"," calories from a ")
-            var graphs =   createModuleGraphs(dataList,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: ')
+            var list = createDataList(dataList,dataSetName,valueName,dateName,itemName,message)
+            var graphs =   createModuleGraphs(dataList,dataSetName,dateName,valueName,groupingName,dTitle,dXaxis,dYaxis,recentTitle)
            // var bloodSugarGraph = createBloodSugarGraph(dataList)
             return(
             <div>
-            <div className = "SubTitle">My food diary: </div>
+            <div className = "SubTitle">{moduleTitle}</div>
             <div class = "listGroupExtended ListGroup">
                 {list}
             </div>
@@ -281,8 +284,8 @@ function DisplayPatientDetailsWithoutSocket(props)
         }
         return (
             <Chart
-            width={'500px'}
-            height={'300px'}
+            width={'700px'}
+            height={'500px'}
             chartType="PieChart"
             data = {graphData}
             options = {{title:graphTitle,

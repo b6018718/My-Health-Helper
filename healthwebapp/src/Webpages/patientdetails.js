@@ -156,23 +156,20 @@ function DisplayPatientDetailsWithoutSocket(props)
     function  createdFoodDiaryModule(dataList)
     {
         if(dataList != null && dataList != "" && dataList.foodRecord !=[] && dataList.foodRecord.length != 0){
-            var foodDiaryList = createFoodDiaryList(dataList)
-            var dailyGraph =   dailyCalorieIntake(dataList)
+            var list = createDataList(dataList,"foodRecord","calories","time","foodname"," calories from a ")
+            var graphs =   createModuleGraphs(dataList,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: ')
            // var bloodSugarGraph = createBloodSugarGraph(dataList)
             return(
             <div>
             <div className = "SubTitle">My food diary: </div>
             <div class = "listGroupExtended ListGroup">
-                {foodDiaryList}
+                {list}
             </div>
             <br/>
             <div>
-                {dailyGraph}
+                {graphs}
             </div>
-            <br/>
-            
-            <i>Please note, you can zoom in and out of the graph and scroll along to view more detail</i>
-            <br/>
+
             </div>
             )
         }
@@ -180,47 +177,41 @@ function DisplayPatientDetailsWithoutSocket(props)
             return(<div></div>)
         }
     }
-    function createFoodDiaryList(foodDiaryData)
+    function createDataList(dataList,dataName,valueName,dateName,itemName,message)
     {
         var i = 0;
         var listItemArray =[];
-        var foodDiaryValues = foodDiaryData.foodRecord.reverse();
+        var dataListValues = dataList[dataName].reverse();
         //console.log(bloodSugarData)
-        for(let foodDiaryValue of foodDiaryValues){
-            listItemArray.push(addItemToFoodDiaryList(foodDiaryValue));
+        for(let dataListValue of dataListValues){
+            listItemArray.push(addItemToDataList(dataListValue,valueName,dateName,itemName,message));
             i++;
         }
         return listItemArray;
     }
-    function addItemToFoodDiaryList(data)
+    function addItemToDataList(data,valueName,dateName,itemName,listMessage)
     {
-    var date= new Date(data.time)
-    return(<ListGroup.Item>{data.calories}{" calories from a "}{data.foodname} recorded at: {date.toUTCString()} </ListGroup.Item>)   
+    var date= new Date(data[dateName])
+    return(<ListGroup.Item>{data[valueName]}{listMessage}{data[itemName]} recorded at: {date.toUTCString()} </ListGroup.Item>)   
            
     }
 
-    function dailyCalorieIntake(data){
-        var recentTitle = 'Most recent diet vairety for: '
-        var dailyCalories = []
+    function createModuleGraphs(data,dataSetName,dateName,valueName,groupingName,dTitle,dXaxis,dYaxis,recentTitle){ 
+        var dailyValues = []
         var mostRecentDate= new Date()
         mostRecentDate.setYear(1)
         var  mostRecentData = []
-        var values = data.foodRecord.reverse()
-        console.log(dailyCalories.length)
+        var values = data[dataSetName].reverse()
         for(let value of values)
         {
-            var dateTime= new Date(value.time)
+            var dateTime= new Date(value[dateName])
             var date = new Date(dateTime).setHours(0,0,0,0)
-            //console.log(dateTime)
-            //console.log(date)
             var formatedDate = dateTime.toLocaleDateString()
-            //console.log(date)
-            //console.log(formatedDate)
             var index = -1
             var inc = 0
-            while(index == -1 && inc < dailyCalories.length)
+            while(index == -1 && inc < dailyValues.length)
             {
-                if(formatedDate == dailyCalories[inc].date)
+                if(formatedDate == dailyValues[inc].date)
                 {
                     index = inc
                 }
@@ -232,24 +223,23 @@ function DisplayPatientDetailsWithoutSocket(props)
             }
             if(index == -1)
             {
-                dailyCalories.push({date: formatedDate,value: value.calories})
+                dailyValues.push({date: formatedDate,value: value[valueName]})
             }
             else
             {
-                dailyCalories[index].value += value.calories
+                dailyValues[index].value += value[valueName]
             }
             if(date > mostRecentDate)
             {
                 mostRecentDate = date
                 mostRecentData = []
-                mostRecentData.push({group: value.foodgroup, count: 1})
+                mostRecentData.push({group: value[groupingName], count: 1})
             }else
             {
                 index = -1
                 inc = 0
                 while(index == -1 && inc < mostRecentData.length){
-                    //console.log(mostRecentData[inc].group.localeCompare(value.foodgroup)==0)
-                    if(mostRecentData[inc].group.localeCompare(value.foodgroup)==0)
+                    if(mostRecentData[inc].group.localeCompare(value[groupingName])==0)
                     {
                         index = inc
                     }
@@ -260,7 +250,7 @@ function DisplayPatientDetailsWithoutSocket(props)
                 }
                 if(index == -1)
                 {
-                    mostRecentData.push({group: value.foodgroup, count: 1})
+                    mostRecentData.push({group: value[groupingName], count: 1})
                 }
                 else
                 {
@@ -269,12 +259,18 @@ function DisplayPatientDetailsWithoutSocket(props)
             }
            
         }
-        //console.log(dailyCalories)
-        //console.log(mostRecentDate)
-        console.log(mostRecentData)
-        //return createDailyGraph(dailyCalories,"Daily Calorie Intake","Day","Calories")
         var tempDate = new Date(mostRecentDate)
-        return createMostRecentCountGraph(mostRecentData,recentTitle.concat(tempDate.toLocaleDateString()))
+        return (
+        <div>
+            {createDailyGraph(dailyValues,dTitle,dXaxis,dYaxis)}
+            <br/>      
+            <i>Please note, you can zoom in and out of the graph and scroll along to view more detail</i>
+            <br/>
+            <br/>
+            {createMostRecentCountGraph(mostRecentData,recentTitle.concat(tempDate.toLocaleDateString()))}
+            </div>
+        )
+            
     }
 
     function createMostRecentCountGraph(data,graphTitle)

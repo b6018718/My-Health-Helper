@@ -9,6 +9,7 @@ import '../css/PatientDetails.css';
 import SocketContext from '../components/socket'
 import {Chart} from "react-google-charts"
 
+
 //interface Props{}
 function DisplayPatientDetailsWithoutSocket(props)
 {
@@ -17,6 +18,8 @@ function DisplayPatientDetailsWithoutSocket(props)
     //const [bloodSugarGraph,setBloodSugarGraph] = React.useState("");
     const [patientDetails,setPatientDetails] = React.useState("");
     const [bloodSugarModule, setBloodSugarModule] = React.useState("");
+    const [foodDiaryModule,setFoodDiaryModule] = React.useState("");
+    const [exerciseDiaryModule,setExerciseDiaryModule] = React.useState("");
     const [pageTitle,setPageTitle]=React.useState("");
     React.useEffect(() => {
         if(props.appProps.isDoctor)
@@ -36,6 +39,18 @@ function DisplayPatientDetailsWithoutSocket(props)
             setPageTitle(createPageTitle(data.patientDetails));
             setPatientDoctor(data.registeredDoctor);
             setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings));
+            setFoodDiaryModule(createListGraphModule(data.foodDiary
+                ,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: '
+                ,"foodname"," calories from a ","My Food Diary: "
+                ))
+            setExerciseDiaryModule(createListGraphModule(data.exercise
+                ,"exercise","time","exercisedurationmins","exercisetype","Daily exericse duration: ","Day","Exercise duration(minutes)",'Most recent exercise vairety for: '
+                ,"exercisename"," min done by ","My Exercise Diary: "
+                )
+
+            )
+            
+                //My exercise diary: 
         });
 
         return () => {
@@ -114,28 +129,28 @@ function DisplayPatientDetailsWithoutSocket(props)
         var bloodSugarDataValues = bloodSugarData.fingerPrick.reverse();
         //console.log(bloodSugarData)
         for(let bloodSugarDataValue of bloodSugarDataValues){
-            listItemArray.push(addItemToBloodSugarList(bloodSugarDataValue));
+            listItemArray.push(addItemToBloodSugarList(bloodSugarDataValue, i));
             i++;
         }
         return listItemArray;
     }
-    function addItemToBloodSugarList(data)
+    function addItemToBloodSugarList(data,i)
     {
     var date= new Date(data.time)
     if(data.millimolesPerLitre <= 4 || data.millimolesPerLitre >= 8 )
         {
             if(data.millimolesPerLitre <= 3 || data.millimolesPerLitre >= 9 )
             {
-                return(<ListGroup.Item variant = "danger">{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>) 
+                return(<ListGroup.Item variant = "danger" key={i}>{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>) 
             }
             else
             {
-                return(<ListGroup.Item variant ="warning">{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>) 
+                return(<ListGroup.Item variant ="warning" key={i}>{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>) 
             }
         }
     else
         {
-        return(<ListGroup.Item>{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>)   
+        return(<ListGroup.Item key={i}>{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>)   
         }    
     }
     function createPageTitle(patientData){
@@ -148,6 +163,177 @@ function DisplayPatientDetailsWithoutSocket(props)
         {
             return "My patient record"
         }
+    }
+
+    function  createListGraphModule(dataList,dataSetName,dateName,valueName,groupingName,dTitle,dXaxis,dYaxis,recentTitle,itemName,message,moduleTitle)
+    {
+        if(dataList != null && dataList != "" && dataList[dataSetName] !=[] && dataList[dataSetName].length != 0){
+            var list = createDataList(dataList,dataSetName,valueName,dateName,itemName,message)
+            var graphs =   createModuleGraphs(dataList,dataSetName,dateName,valueName,groupingName,dTitle,dXaxis,dYaxis,recentTitle)
+           // var bloodSugarGraph = createBloodSugarGraph(dataList)
+            return(
+            <div>
+            <br/>
+            <div className = "SubTitle">{moduleTitle}</div>
+            <div class = "listGroupExtended ListGroup">
+                {list}
+            </div>
+            <br/>
+            <div>
+                {graphs}
+            </div>
+
+            </div>
+            )
+        }
+        else{
+            return(<div></div>)
+        }
+    }
+    function createDataList(dataList,dataName,valueName,dateName,itemName,message)
+    {
+        var i = 0;
+        var listItemArray =[];
+        var dataListValues = dataList[dataName].reverse();
+        //console.log(bloodSugarData)
+        for(let dataListValue of dataListValues){
+            listItemArray.push(addItemToDataList(dataListValue,valueName,dateName,itemName,message,i));
+            i++;
+        }
+        return listItemArray;
+    }
+    function addItemToDataList(data,valueName,dateName,itemName,listMessage,i)
+    {
+    var date= new Date(data[dateName])
+    return(<ListGroup.Item key={i}>{data[valueName]}{listMessage}{data[itemName]} recorded at: {date.toUTCString()} </ListGroup.Item>)   
+           
+    }
+
+    function createModuleGraphs(data,dataSetName,dateName,valueName,groupingName,dTitle,dXaxis,dYaxis,recentTitle){ 
+        var dailyValues = []
+        var mostRecentDate= new Date()
+        mostRecentDate.setYear(1)
+        var  mostRecentData = []
+        var values = data[dataSetName].reverse()
+        for(let value of values)
+        {
+            var dateTime= new Date(value[dateName])
+            var date = new Date(dateTime).setHours(0,0,0,0)
+            var formatedDate = dateTime.toLocaleDateString()
+            var index = -1
+            var inc = 0
+            while(index == -1 && inc < dailyValues.length)
+            {
+                if(formatedDate == dailyValues[inc].date)
+                {
+                    index = inc
+                }
+                else
+                {
+                    inc++
+                }
+
+            }
+            if(index == -1)
+            {
+                dailyValues.push({date: formatedDate,value: value[valueName]})
+            }
+            else
+            {
+                dailyValues[index].value += value[valueName]
+            }
+            if(date > mostRecentDate)
+            {
+                mostRecentDate = date
+                mostRecentData = []
+                mostRecentData.push({group: value[groupingName], count: 1})
+            }else
+            {
+                index = -1
+                inc = 0
+                while(index == -1 && inc < mostRecentData.length){
+                    if(mostRecentData[inc].group.localeCompare(value[groupingName])==0)
+                    {
+                        index = inc
+                    }
+                    else
+                    {
+                        inc++
+                    }
+                }
+                if(index == -1)
+                {
+                    mostRecentData.push({group: value[groupingName], count: 1})
+                }
+                else
+                {
+                    mostRecentData[index].count++
+                }
+            }
+           
+        }
+        var tempDate = new Date(mostRecentDate)
+        return (
+        <div>
+            {createDailyGraph(dailyValues,dTitle,dXaxis,dYaxis)}
+            <br/>      
+            <i>Please note, you can zoom in and out of the graph and scroll along to view more detail</i>
+            <br/>
+            <br/>
+            {createMostRecentCountGraph(mostRecentData,recentTitle.concat(tempDate.toLocaleDateString()))}
+            </div>
+        )
+            
+    }
+
+    function createMostRecentCountGraph(data,graphTitle)
+    {
+        var graphData = [["Group","Count"]]
+        for(let value of data){
+            graphData.push([value.group,value.count])
+        }
+        return (
+            <Chart
+            width={'700px'}
+            height={'500px'}
+            chartType="PieChart"
+            data = {graphData}
+            options = {{title:graphTitle,
+            is3D: true }}
+            />
+        )
+    }
+    function createDailyGraph(data,graphTitle,xAxisTitle,yAxisTitle){
+        var graphData=[]
+        graphData.push([xAxisTitle,yAxisTitle])
+        //console.log(bloodSugarData)
+        for(let value of data)
+        {
+            graphData.push([value.date,value.value])
+        }
+        return (
+            <Chart
+                chartType = "LineChart"
+                data={graphData}
+                width = "100%"
+                height="400px"
+                legendToggle
+                options={{
+
+                        title: graphTitle,
+                    
+                    explorer: {axis: 'horizontal', keepInBounds: true},
+
+                    hAxis: {
+                      title: xAxisTitle,
+                    },
+                    vAxis: {
+                      title: yAxisTitle,
+                    },
+                    pointSize: 5
+                  }}
+            />
+        )
     }
 
     
@@ -164,10 +350,8 @@ function DisplayPatientDetailsWithoutSocket(props)
                     <div>Doctor's email: {patientDoctor.email}</div>
                     <br/>
                     {bloodSugarModule}
-                    <div className = "SubTitle">My diet: </div>
-                        <br/>
-                    <div className = "SubTitle">My exercise diary: </div>
-                        <br/>
+                    {foodDiaryModule}
+                    {exerciseDiaryModule}
                 </div>
                 </div>
             </div>)

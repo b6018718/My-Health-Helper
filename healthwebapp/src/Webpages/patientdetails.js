@@ -19,6 +19,7 @@ function DisplayPatientDetailsWithoutSocket(props)
     const [patientDetails,setPatientDetails] = React.useState("");
     const [bloodSugarModule, setBloodSugarModule] = React.useState("");
     const [foodDiaryModule,setFoodDiaryModule] = React.useState("");
+    const [exerciseDiaryModule,setExerciseDiaryModule] = React.useState("");
     const [pageTitle,setPageTitle]=React.useState("");
     React.useEffect(() => {
         if(props.appProps.isDoctor)
@@ -40,8 +41,16 @@ function DisplayPatientDetailsWithoutSocket(props)
             setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings));
             setFoodDiaryModule(createListGraphModule(data.foodDiary
                 ,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: '
-                ,"foodname"," calories from a ","My food diary: "
+                ,"foodname"," calories from a ","My Food Diary: "
                 ))
+            setExerciseDiaryModule(createListGraphModule(data.exercise
+                ,"exercise","time","exercisedurationmins","exercisetype","Daily exericse duration: ","Day","Exercise duration(minutes)",'Most recent exercise vairety for: '
+                ,"exercisename"," min done by ","My Exercise Diary: "
+                )
+
+            )
+            
+                //My exercise diary: 
         });
 
         return () => {
@@ -120,28 +129,28 @@ function DisplayPatientDetailsWithoutSocket(props)
         var bloodSugarDataValues = bloodSugarData.fingerPrick.reverse();
         //console.log(bloodSugarData)
         for(let bloodSugarDataValue of bloodSugarDataValues){
-            listItemArray.push(addItemToBloodSugarList(bloodSugarDataValue));
+            listItemArray.push(addItemToBloodSugarList(bloodSugarDataValue, i));
             i++;
         }
         return listItemArray;
     }
-    function addItemToBloodSugarList(data)
+    function addItemToBloodSugarList(data,i)
     {
     var date= new Date(data.time)
     if(data.millimolesPerLitre <= 4 || data.millimolesPerLitre >= 8 )
         {
             if(data.millimolesPerLitre <= 3 || data.millimolesPerLitre >= 9 )
             {
-                return(<ListGroup.Item variant = "danger">{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>) 
+                return(<ListGroup.Item variant = "danger" key={i}>{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>) 
             }
             else
             {
-                return(<ListGroup.Item variant ="warning">{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>) 
+                return(<ListGroup.Item variant ="warning" key={i}>{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>) 
             }
         }
     else
         {
-        return(<ListGroup.Item>{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>)   
+        return(<ListGroup.Item key={i}>{data.millimolesPerLitre}{"mmol/L"} recorded at: {date.toUTCString()} </ListGroup.Item>)   
         }    
     }
     function createPageTitle(patientData){
@@ -158,12 +167,13 @@ function DisplayPatientDetailsWithoutSocket(props)
 
     function  createListGraphModule(dataList,dataSetName,dateName,valueName,groupingName,dTitle,dXaxis,dYaxis,recentTitle,itemName,message,moduleTitle)
     {
-        if(dataList != null && dataList != "" && dataList.foodRecord !=[] && dataList.foodRecord.length != 0){
+        if(dataList != null && dataList != "" && dataList[dataSetName] !=[] && dataList[dataSetName].length != 0){
             var list = createDataList(dataList,dataSetName,valueName,dateName,itemName,message)
             var graphs =   createModuleGraphs(dataList,dataSetName,dateName,valueName,groupingName,dTitle,dXaxis,dYaxis,recentTitle)
            // var bloodSugarGraph = createBloodSugarGraph(dataList)
             return(
             <div>
+            <br/>
             <div className = "SubTitle">{moduleTitle}</div>
             <div class = "listGroupExtended ListGroup">
                 {list}
@@ -187,15 +197,15 @@ function DisplayPatientDetailsWithoutSocket(props)
         var dataListValues = dataList[dataName].reverse();
         //console.log(bloodSugarData)
         for(let dataListValue of dataListValues){
-            listItemArray.push(addItemToDataList(dataListValue,valueName,dateName,itemName,message));
+            listItemArray.push(addItemToDataList(dataListValue,valueName,dateName,itemName,message,i));
             i++;
         }
         return listItemArray;
     }
-    function addItemToDataList(data,valueName,dateName,itemName,listMessage)
+    function addItemToDataList(data,valueName,dateName,itemName,listMessage,i)
     {
     var date= new Date(data[dateName])
-    return(<ListGroup.Item>{data[valueName]}{listMessage}{data[itemName]} recorded at: {date.toUTCString()} </ListGroup.Item>)   
+    return(<ListGroup.Item key={i}>{data[valueName]}{listMessage}{data[itemName]} recorded at: {date.toUTCString()} </ListGroup.Item>)   
            
     }
 
@@ -341,8 +351,7 @@ function DisplayPatientDetailsWithoutSocket(props)
                     <br/>
                     {bloodSugarModule}
                     {foodDiaryModule}
-                    <div className = "SubTitle">My exercise diary: </div>
-                        <br/>
+                    {exerciseDiaryModule}
                 </div>
                 </div>
             </div>)

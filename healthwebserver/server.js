@@ -25,7 +25,7 @@ app.set("port", port);
 
 var allSockets = [];
 var fingerPrickSubscribers = [];
-
+var userUpdateSubscribers = [];
 
 io.on("connection", socket => {
   console.log("Client connected");
@@ -95,6 +95,7 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
+    unsubPatientRecord(socket);
     allSockets = allSockets.filter(socket => socket.id != userId);
   })
 
@@ -153,6 +154,13 @@ io.on("connection", socket => {
         user.foodRecord.push({foodname:foodRecord.name,calories:foodRecord.calories,foodgroup:foodRecord.group});
       }
       await user.save();
+
+      // Real time updates
+      for (let sub of userUpdateSubscribers) {
+        if (stringEquals(user._id, sub.userId)) {
+          sub.socket.emit("realTimeFood", {foodRecord: user.foodRecord});        
+        }
+      }
     }
   })
   socket.on("recordExerciseDiary",async(data)=>{
@@ -166,6 +174,13 @@ io.on("connection", socket => {
         user.exercise.push({exercisename:exerciseRecord.exercisename,exercisetype:exerciseRecord.exercisetype,exercisedurationmins:exerciseRecord.exercisedurationmins});
       }
       await user.save();
+
+      // Real time updates
+      for (let sub of userUpdateSubscribers) {
+        if (stringEquals(user._id, sub.userId)) {
+          sub.socket.emit("realTimeExercise", {exercise: user.exercise});        
+        }
+      }
     }
   })
 
@@ -178,15 +193,25 @@ io.on("connection", socket => {
       {
       // console.log(data.selectedPatientID)
       // console.log("doctor request patient data")
-      emitMyPatientRecord(socket,data.selectedPatientID)
+        emitMyPatientRecord(socket,data.selectedPatientID);
+        subscribeToUserUpdate(socket, data.selectedPatientID);
       }
       else
       {
         //console.log("patient request their data")
         emitMyPatientRecord(socket,userId);
+        subscribeToUserUpdate(socket, userId);
       }
     }
   })
+
+  socket.on("unsubPatientRecord", async()=>{
+    unsubPatientRecord(socket);
+  });
+
+  async function unsubPatientRecord(socket){
+    userUpdateSubscribers = userUpdateSubscribers.filter(function (sub) {return (sub.socket != socket) });
+  }
 
   async function emitMyPatientRecord(socket, selectedPatientID){
     console.log(selectedPatientID)
@@ -256,7 +281,6 @@ server.listen(port, () => console.log(`Health App Server running at http://local
 
 setInterval(updateFingerPrickInfo, 10000);
 
-
 async function updateFingerPrickInfo(){
   console.log("Updating finger prick")
   console.log(fingerPrickSubscribers);
@@ -265,11 +289,32 @@ async function updateFingerPrickInfo(){
     var user = await User.findOne({_id: id}).exec();
     user.fingerPrick.push({millimolesPerLitre: getRndInteger(1, 10)});
     await user.save();
+    
+    // Emit real time data to subscribers
+    for (let sub of userUpdateSubscribers) {
+      if (stringEquals(user._id, sub.userId)) {
+        //console.log("Emitting real time to " + sub.userId)
+        sub.socket.emit("realTimeFingerPrickData", {fingerPrick: user.fingerPrick});        
+      }
+    }
 
-    socketContainer = allSockets.find(soc => user._id.toString().localeCompare(soc.id.toString()) == 0);
-    if(socketContainer)
-      socketContainer.socket.emit("fingerPrickData", user.fingerPrick);
+    //socketContainer = allSockets.find(soc => user._id.toString().localeCompare(soc.id.toString()) == 0);
+    //if(socketContainer)
+      //socketContainer.socket.emit("fingerPrickData", user.fingerPrick);
   }
+}
+
+function stringEquals(a,b){
+  a = a.toString();
+  b = b.toString();
+  if (a.length !== b.length) {
+       return false;
+  }
+  return a.localeCompare(b) === 0;
+}
+
+function subscribeToUserUpdate(socket, id){
+  userUpdateSubscribers.push({socket: socket, userId: id});
 }
 
 function getRndInteger(min, max) {

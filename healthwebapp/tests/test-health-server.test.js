@@ -24,23 +24,32 @@ var DrLogin = {
   password: 'Test'
 }
 
-var DrLoginNoPass = {
+var LoginWrongPass = {
   email: 'rooleyzee123@gmail.com',
-  password: ''
+  password: 'odiajsod'
 }
 
-var DrLoginPassincorrect = {
-  email: 'rooleyzee123@gmail.com',
+var LoginNoUser = {
+  email: 'rooleyz@gmail.com',
+  password: 'askdnasldknas'
+}
+var LoginNopassword = {
+  email: 'rooleyz@gmail.com',
   password: ''
 }
 
 var newPatienttest = {
-  email: 'rooleyzee123@gmail.com',
+  email: 'patient@gmail.com',
   password: 'Test',
   forename: 'Zak',
   surname: 'Rooley',
-  doctor: true
+  doctor: false
 };
+
+var PatientLogin = {
+  email: 'patient@gmail.com',
+  password: 'Test',
+}
 
 describe("Web Health app Server", function () {
 
@@ -67,11 +76,10 @@ describe("Web Health app Server", function () {
 
   });
 
-
-  //TEST two make a new doctor account
+  //TEST  make a new doctor account
   it('Make new doctor', done => {
     socket_1.on('logInResult', function (data) {
-      if (data.message = "message: success") { done(); }
+      if (data.message == "Success") { done(); }
     })
     socket_1.emit('signUp', newDoctortest);
   });
@@ -85,15 +93,42 @@ describe("Web Health app Server", function () {
     socket_1.emit('logIn', DrLogin);
   });
 
-  //TEST remove patient account
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
-    done();
+
+  //TEST  Login no password
+  it('Login no password', done => {
+    socket_1.on('logInResult', function (data) {
+
+      if (data.message == "Password incorrect") { done(); }
+    })
+    socket_1.emit('logIn', LoginWrongPass);
+  });
+
+  //TEST  Login missing data
+  it('Login no password', done => {
+    socket_1.on('logInResult', function (data) {
+
+      if (data.message == "Fields are empty") { done(); }
+    })
+    socket_1.emit('logIn', LoginNopassword);
+  });
+
+  //TEST  Login no user
+  it('Login no user', done => {
+    socket_1.on('logInResult', function (data) {
+
+      if (data.message == "User does not exist") { done(); }
+    })
+    socket_1.emit('logIn', LoginNoUser);
+  });
+
   });
   //TEST Make a new patient account
   it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
-    done();
+    socket_1.on('logInResult', function (data) {
+      if (data.message == "Success") { done(); }
+    })
+    socket_1.emit('signUp', newPatienttest);
+
   });
 
 

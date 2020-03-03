@@ -72,11 +72,7 @@ describe("Web Health app Server", function () {
   });
 
   //TEST connection test
-  it('Connection to server', done => {
-    if (socket_1.connected) {
-      done();
-    }
-  });
+  it('Connection to server', done => { if (socket_1.connected) { done();}});
 
   //TEST  make a new doctor account
   it('Make new doctor', done => {
@@ -125,7 +121,6 @@ describe("Web Health app Server", function () {
       if (data.message == "Success") { done(); }
     })
     socket_1.emit('signUp', newPatienttest);
-
   });
 
   //TEST Add food 
@@ -173,13 +168,11 @@ describe("Web Health app Server", function () {
         done();
       }
     });
-
     socket_1.on('logInResult', async function (data) {
       socket_1.emit("subscribeToFingerPrick", {});
       await sleep(500);
       socket_1.emit('checkIfSubscribed', {});
     });
-
     socket_1.emit('logIn', DrLogin);
   });
 
@@ -188,11 +181,9 @@ describe("Web Health app Server", function () {
     socket_1.on('checkIfSubscribedResults', function (data) {
       if (!data.result) { done(); }
     });
-
     socket_1.on('logInResult', function (data) {
       socket_1.emit('checkIfSubscribed', {});
     });
-
     socket_1.emit('logIn', DrLogin);
   });
 
@@ -201,13 +192,10 @@ describe("Web Health app Server", function () {
     socket_1.on('getAllDoctorsResults', function (data) {
       if (data.doctors) { done(); }
     });
-
     socket_1.on('logInResult', function (data) {
       socket_1.emit('getAllDoctors', {});
     });
-
     socket_1.emit('logIn', DrLogin);
-    
   });
 
   //TEST remove doctor account
@@ -219,8 +207,8 @@ describe("Web Health app Server", function () {
     socket_1.on('logInResult', function (data) {
       socket_1.emit('deleteAccount', {});
     })
-    
   });
+
   //TEST remove Patient account
   it('Remove Patient account', done => {
     socket_1.on('deleteAccountResults', function (data) {
@@ -230,8 +218,6 @@ describe("Web Health app Server", function () {
     socket_1.on('logInResult', function (data) {
       socket_1.emit('deleteAccount', {});
     })
-    
   });
-
 })
 

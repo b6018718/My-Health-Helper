@@ -2,9 +2,14 @@
   text-align: center;
   background-color:	#f0f4f5;
   width:100%;
-  height:100vh;
+  height: inherit;
   left:0;
   top:0;
+}
+
+body{
+  height: fit-content;
+  background-color:	#f0f4f5 !important;
 }
 
 .App-logo {
@@ -108,4 +113,10 @@
   text-align: left;
   padding-bottom: 2%;
   white-space: pre-line
+}
+
+@media screen and (min-width: 415px){
+  .site-container {
+    flex-direction: row;
+  }
 }

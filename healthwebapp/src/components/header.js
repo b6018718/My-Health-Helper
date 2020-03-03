@@ -13,10 +13,11 @@ export default function Header(props){
     return(
         <>
             {props.appProps.isAuthenticated ? //(If someone is signed in)
-                <Navbar bg="primary" variant="dark" role="navigation">
+                <Navbar bg="primary" expand="lg" variant="dark" role="navigation">
                     <Image src={require('../images/logo.png')}  alt="logo"></Image>
                     <Navbar.Brand href="#">&nbsp; My Health Helper</Navbar.Brand>                    
-                        
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto" >
                    
                         {!props.appProps.isDoctor ?
@@ -65,7 +66,7 @@ export default function Header(props){
                             </Nav>
                         }
                     </Nav>
-                    
+                    </Navbar.Collapse>
                     <Form inline>                        
                         <Button onClick={logOut} variant="outline-light">Log out</Button>
                     </Form>

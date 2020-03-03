@@ -56,8 +56,12 @@ it('Connection to server', done => {
 //TEST two make a new doctor account
   it('Make new doctor',done =>
   {
+    socket_1.on('logInResult',function(data){
+if(data.message = "message: success")
+{done();}
+    })
   socket_1.emit('signUp',newDoctortest);
-  done();
+  
   });
 
 

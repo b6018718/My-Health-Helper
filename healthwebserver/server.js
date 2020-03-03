@@ -72,6 +72,8 @@ io.on("connection", socket => {
     if(authenticated){
       await User.deleteOne({_id: userId});
       socket.emit("deleteAccountResults", "Success");
+      authenticated = false;
+      userId = "";
     }
   });
 

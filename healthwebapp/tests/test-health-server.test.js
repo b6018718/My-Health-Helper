@@ -95,7 +95,7 @@ describe("Web Health app Server", function () {
 
 
   //TEST  Login no password
-  it('Login no password', done => {
+  it('Login wrong password', done => {
     socket_1.on('logInResult', function (data) {
 
       if (data.message == "Password incorrect") { done(); }
@@ -104,7 +104,7 @@ describe("Web Health app Server", function () {
   });
 
   //TEST  Login missing data
-  it('Login no password', done => {
+  it('Login missing data', done => {
     socket_1.on('logInResult', function (data) {
 
       if (data.message == "Fields are empty") { done(); }

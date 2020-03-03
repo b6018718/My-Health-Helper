@@ -95,11 +95,47 @@ function RegisterWithoutSocket(props){
                 <Form.Text className="text-muted">
                 </Form.Text>
             </Form.Group>
-
             <Form.Group controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
             </Form.Group>
+            <Row>
+                <Col>
+                    <Form.Group controlId= "formBasicSex">
+                        <Form.Label>Sex</Form.Label>
+                        <Form.Control placeholder="--Please select--" onChange={e=> console.log(e.target.value)}/>
+                    </Form.Group>
+                </Col>
+                <Col>
+                    <Form.Group controlId= "formBasicDoB">
+                        <Form.Label>Date of Birth</Form.Label>
+                        <Form.Control placeholder= "DoB" onChange={e=> console.log(e.target.value)}/>
+                    </Form.Group>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <Form.Group controlId= "formBasicMobile">
+                        <Form.Label>Mobile</Form.Label>
+                        <Form.Control placeholder="mobile no" onChange={e=> console.log(e.target.value)}/>
+                    </Form.Group>
+                </Col>
+                <Col>
+                    <Form.Group controlId= "formBasicTelephone">
+                        <Form.Label>Telephone</Form.Label>
+                        <Form.Control placeholder="telephone no" onChange={e=> console.log(e.target.value)}/>
+                    </Form.Group>
+                </Col>
+            </Row>
+            <Form.Group controlId= "formBasicAddress">
+                <Form.Label>Address</Form.Label>
+                <Form.Control placeholder="Address" onChange={e=> console.log(e.target.value)}/>
+            </Form.Group>
+            <Form.Group controlId= "formBasicNHSNumber">
+                <Form.Label>NHS Number</Form.Label>
+                <Form.Control placeholder="123 123 1234" onChange={e=> console.log(e.target.value)}/>
+            </Form.Group>
+
             <div className="Button">
                 <Button className="registerButton" variant="primary" type="submit" onClick={handleSubmit} value="doctor">
                     Register as Doctor

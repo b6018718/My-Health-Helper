@@ -132,41 +132,41 @@ describe("Web Health app Server", function () {
 
 
   //TEST Add food 
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('Add food', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
   //TEST add exersise
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('add exersise', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
   //TEST add to blood sugar list
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('add to blood sugar list', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
 
   //TEST check blood sugar list
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('check blood sugar list', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
 
   //TEST Change assigned doctor
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('Change assigned doctor', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
 
   //TEST Get my doctor
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('Get my doctor', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 

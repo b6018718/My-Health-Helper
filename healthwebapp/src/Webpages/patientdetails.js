@@ -14,8 +14,6 @@ import {Chart} from "react-google-charts"
 function DisplayPatientDetailsWithoutSocket(props)
 {
     const [patientDoctor, setPatientDoctor] = React.useState("");
-    //const [bloodSugarList, setBloodSugarList] = React.useState("");
-    //const [bloodSugarGraph,setBloodSugarGraph] = React.useState("");
     const [patientDetails,setPatientDetails] = React.useState("");
     const [bloodSugarModule, setBloodSugarModule] = React.useState("");
     const [foodDiaryModule,setFoodDiaryModule] = React.useState("");
@@ -37,7 +35,18 @@ function DisplayPatientDetailsWithoutSocket(props)
             console.log(data)
             setPatientDetails(data.patientDetails);
             setPageTitle(createPageTitle(data.patientDetails));
-            setPatientDoctor(data.registeredDoctor);
+            console.log("doc details 1")
+            console.log(patientDoctor)
+            if(data.registeredDoctor == null)
+            {
+                setPatientDoctor({forename: "No doctor is registered,", surname: " please select a doctor using the change my doctor page",email:"N/A"})
+            }
+            else
+            {
+                setPatientDoctor(data.registeredDoctor);
+            }
+            console.log("doc details 2")
+            console.log(patientDoctor)
             setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings));
             setFoodDiaryModule(createListGraphModule(data.foodDiary
                 ,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: '

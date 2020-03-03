@@ -17,8 +17,6 @@ const connect  = require("./dbconnection");
 // Sanitize data
 var sanitize = require('mongo-sanitize');
 
-//app.use(cors());
-
 app.use(express.json());
 app.use(bodyParser.json());
 app.set("port", port);
@@ -40,7 +38,6 @@ io.on("connection", socket => {
 
   socket.on("signUp", async (data) => {
     // Sanitize data
-    console.log(data);
     data = deepSanitize(data);
     if(!data.email || !data.password || !data.forename || !data.surname){
       logInFailed(socket, "Fields are empty", data);
@@ -68,6 +65,13 @@ io.on("connection", socket => {
       logIn(data, socket);
     } else {
       logInFailed(socket, "Account already exists", data);
+    }
+  });
+
+  socket.on("deleteAccount", async (data) => {
+    if(authenticated){
+      await User.deleteOne({_id: userId});
+      socket.emit("deleteAccountResults", "Success");
     }
   });
 

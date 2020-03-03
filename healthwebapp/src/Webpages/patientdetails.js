@@ -42,19 +42,36 @@ function DisplayPatientDetailsWithoutSocket(props)
             setFoodDiaryModule(createListGraphModule(data.foodDiary
                 ,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: '
                 ,"foodname"," calories from a ","My Food Diary: "
-                ))
+                ));
             setExerciseDiaryModule(createListGraphModule(data.exercise
                 ,"exercise","time","exercisedurationmins","exercisetype","Daily exericse duration: ","Day","Exercise duration(minutes)",'Most recent exercise vairety for: '
                 ,"exercisename"," min done by ","My Exercise Diary: "
                 )
-
-            )
+            );
             
                 //My exercise diary: 
         });
 
+        props.socket.on("realTimeFingerPrickData", function (data){
+            setBloodSugarModule(createBloodSugarModule(data));
+        });
+
+        props.socket.on("realTimeFood", function (data){
+            setFoodDiaryModule(createListGraphModule(data,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: '
+            ,"foodname"," calories from a ","My Food Diary: "));
+        });
+
+        props.socket.on("realTimeExercise", function (data){
+            setExerciseDiaryModule(createListGraphModule(data, "exercise","time","exercisedurationmins","exercisetype","Daily exericse duration: ","Day","Exercise duration(minutes)",'Most recent exercise vairety for: '
+            ,"exercisename"," min done by ","My Exercise Diary: "));
+        });
+
         return () => {
             props.socket.off("getMyPatientRecordResults");
+            props.socket.off("realTimeFingerPrickData");
+            props.socket.off("realTimeFood");
+            props.socket.off("realTimeExercise");
+            props.socket.emit("unsubPatientRecord", {});
         };
         
             

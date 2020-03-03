@@ -99,7 +99,7 @@ describe("Web Health app Server", function () {
 
 
   //TEST  Login no password
-  it('Login no password', done => {
+  it('Login wrong password', done => {
     socket_1.on('logInResult', function (data) {
 
       if (data.message == "Password incorrect") { done(); }
@@ -108,7 +108,7 @@ describe("Web Health app Server", function () {
   });
 
   //TEST  Login missing data
-  it('Login no password', done => {
+  it('Login missing data', done => {
     socket_1.on('logInResult', function (data) {
 
       if (data.message == "Fields are empty") { done(); }
@@ -136,41 +136,41 @@ describe("Web Health app Server", function () {
 
 
   //TEST Add food 
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('Add food', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
   //TEST add exersise
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('add exersise', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
   //TEST add to blood sugar list
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('add to blood sugar list', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
 
   //TEST check blood sugar list
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('check blood sugar list', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
 
   //TEST Change assigned doctor
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('Change assigned doctor', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
 
   //TEST Get my doctor
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  it('Get my doctor', done => {
+    socket_1.emit('signUp', LoginNopassword);
     done();
   });
 

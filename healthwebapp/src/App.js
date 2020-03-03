@@ -58,7 +58,7 @@ function App(props) {
   //socket.emit("log_in", {username: "Ant"});
 
   return (
-    <div className="App">
+    <div className="App site-container">
       <SocketContext.Provider value={socket}>
         <BrowserRouter>
           <Header appProps={{ isAuthenticated, userHasAuthenticated, isDoctor, userHasVerifiedDoctor, registering, isRegistering,nAccFirstName,passUserFirstName,nAccLastName,passUserLastName,nAccEmail,passUserEmail,nAccPassword,passUserPassword,currentSelectedPatient,setCurrentSelectedPatient }} />

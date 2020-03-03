@@ -82,8 +82,6 @@ function DisplayPatientDetailsWithoutSocket(props)
             props.socket.off("realTimeExercise");
             props.socket.emit("unsubPatientRecord", {});
         };
-        
-            
     }, []);
 
     function  createBloodSugarModule(dataList)
@@ -128,7 +126,7 @@ function DisplayPatientDetailsWithoutSocket(props)
                 legendToggle
                 options={{
 
-                        title: 'Blood sugar levels over time:',
+                    title: 'Blood sugar levels over time:',
                     
                     explorer: {axis: 'horizontal', keepInBounds: true},
 
@@ -320,7 +318,7 @@ function DisplayPatientDetailsWithoutSocket(props)
         }
         return (
             <Chart
-            width={'700px'}
+            width={'100%'}
             height={'500px'}
             chartType="PieChart"
             data = {graphData}

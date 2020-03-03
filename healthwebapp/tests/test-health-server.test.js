@@ -83,14 +83,8 @@ describe("Web Health app Server", function () {
     done();
   });
 
-
-  //TEST one
-  it('Connection to server', done => {
-    if (socket_1.connected) {
-      done();
-    }
-
-  });
+  //TEST connection test
+  it('Connection to server', done => { if (socket_1.connected) { done();}});
 
   //TEST  make a new doctor account
   it('Make new doctor', done => {
@@ -103,7 +97,6 @@ describe("Web Health app Server", function () {
   //TEST Doctor Login
   it('Doctor Login', done => {
     socket_1.on('logInResult', function (data) {
-
       if (data.result) { done(); }
     })
     socket_1.emit('logIn', DrLogin);
@@ -113,7 +106,6 @@ describe("Web Health app Server", function () {
   //TEST  Login no password
   it('Login wrong password', done => {
     socket_1.on('logInResult', function (data) {
-
       if (data.message == "Password incorrect") { done(); }
     })
     socket_1.emit('logIn', LoginWrongPass);
@@ -122,7 +114,6 @@ describe("Web Health app Server", function () {
   //TEST  Login missing data
   it('Login missing data', done => {
     socket_1.on('logInResult', function (data) {
-
       if (data.message == "Fields are empty") { done(); }
     })
     socket_1.emit('logIn', LoginNopassword);
@@ -131,7 +122,6 @@ describe("Web Health app Server", function () {
   //TEST  Login no user
   it('Login no user', done => {
     socket_1.on('logInResult', function (data) {
-
       if (data.message == "User does not exist") { done(); }
     })
     socket_1.emit('logIn', LoginNoUser);
@@ -143,9 +133,7 @@ describe("Web Health app Server", function () {
       if (data.message == "Success") { done(); }
     })
     socket_1.emit('signUp', newPatienttest);
-
   });
-
 
   //TEST Add food 
   it('Add food', done => {
@@ -165,13 +153,11 @@ describe("Web Health app Server", function () {
     done();
   });
 
-
   //TEST check blood sugar list
   it('check blood sugar list', done => {
     socket_1.emit('signUp', LoginNopassword);
     done();
   });
-
 
   //TEST Change assigned doctor
   it('Change assigned doctor', done => {
@@ -180,7 +166,6 @@ describe("Web Health app Server", function () {
     
     done();
   });
-
 
   //TEST Get my doctor
   it('Get my doctor', done => {
@@ -218,13 +203,11 @@ describe("Web Health app Server", function () {
         done();
       }
     });
-
     socket_1.on('logInResult', async function (data) {
       socket_1.emit("subscribeToFingerPrick", {});
       await sleep(500);
       socket_1.emit('checkIfSubscribed', {});
     });
-
     socket_1.emit('logIn', DrLogin);
   });
 
@@ -233,11 +216,9 @@ describe("Web Health app Server", function () {
     socket_1.on('checkIfSubscribedResults', function (data) {
       if (!data.result) { done(); }
     });
-
     socket_1.on('logInResult', function (data) {
       socket_1.emit('checkIfSubscribed', {});
     });
-
     socket_1.emit('logIn', DrLogin);
   });
 
@@ -246,13 +227,10 @@ describe("Web Health app Server", function () {
     socket_1.on('getAllDoctorsResults', function (data) {
       if (data.doctors) { done(); }
     });
-
     socket_1.on('logInResult', function (data) {
       socket_1.emit('getAllDoctors', {});
     });
-
     socket_1.emit('logIn', DrLogin);
-    
   });
 
   //TEST remove doctor account
@@ -264,8 +242,17 @@ describe("Web Health app Server", function () {
     socket_1.on('logInResult', function (data) {
       socket_1.emit('deleteAccount', {});
     })
-    
   });
 
+  //TEST remove Patient account
+  it('Remove Patient account', done => {
+    socket_1.on('deleteAccountResults', function (data) {
+      if (data == "Success") { done(); }
+    })
+    socket_1.emit('logIn', PatientLogin);
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit('deleteAccount', {});
+    })
+  });
 })
 

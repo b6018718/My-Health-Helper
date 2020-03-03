@@ -26,9 +26,12 @@ function PatientExerciseWithoutSocket (props) {
     function reset(){
         document.getElementById("Exercise").textContent = "Today's Exercise:";
         exerciseList = [];
-        document.getElementById("swimmingTime").value = "";
-        document.getElementById("cyclingTime").value = "";
-        document.getElementById("yogaTime").value = "";
+        document.getElementById("swimmingTime").value = "00:00";
+        document.getElementById("cyclingTime").value = "00:00";
+        document.getElementById("yogaTime").value = "00:00";
+        document.getElementById("cycleTimeDisplay").innerHTML = "";
+        document.getElementById("yogaTimeDisplay").innerHTML = "";
+        document.getElementById("swimTimeDisplay").innerHTML = "";
     }
     
     function addExercise(exercise, time){
@@ -48,6 +51,22 @@ function PatientExerciseWithoutSocket (props) {
         }
     }
 
+    function handleChangeSwim(time){
+        var time = time.split(':');
+        var minutes = (+time[0]) * 60 + (+time[1]);
+        document.getElementById("swimTimeDisplay").innerHTML = `${minutes} minuites`;
+    }
+    function handleChangeCycle(time){
+        var time = time.split(':');
+        var minutes = (+time[0]) * 60 + (+time[1]);
+        document.getElementById("cycleTimeDisplay").innerHTML = `${minutes} minuites`;
+    }
+    function handleChangeYoga(time){
+        var time = time.split(':');
+        var minutes = (+time[0]) * 60 + (+time[1]);
+        document.getElementById("yogaTimeDisplay").innerHTML = `${minutes} minuites`;
+    }
+
     return (
         <div className="bgContainer">
             <div className="container topPad">
@@ -65,8 +84,14 @@ function PatientExerciseWithoutSocket (props) {
                                 Duration:
                             </Card.Text>
                             <FormGroup>
-                                <input type="time" name="time" id="swimmingTime" placeholder="time placeholder" required/>
+                                <input type="time" name="time" id="swimmingTime" placeholder="time placeholder" 
+                                defaultValue="00:00" onChange={() => handleChangeSwim(document.getElementById("swimmingTime").value)} required/>
                             </FormGroup>
+                        </div>
+                        <div>
+                            <Card.Text classname='timeDisplay' id='swimTimeDisplay'>
+                                
+                            </Card.Text>
                         </div>
                     <Button type="submit" variant="primary" onClick={()=>addExercise(swimming, document.getElementById("swimmingTime").value)}>Add {swimming.exercisename}</Button>
                     </Form>
@@ -83,8 +108,14 @@ function PatientExerciseWithoutSocket (props) {
                                 Duration:
                             </Card.Text>
                             <FormGroup>
-                                <input type="time" name="time" id="cyclingTime" placeholder="time placeholder" required/>
+                                <input type="time" name="time" id="cyclingTime" placeholder="time placeholder" 
+                                defaultValue="00:00" onChange={() => handleChangeCycle(document.getElementById("cyclingTime").value)} required/>
                             </FormGroup>
+                        </div>
+                        <div>
+                            <Card.Text classname='timeDisplay' id='cycleTimeDisplay'>
+                                
+                            </Card.Text>
                         </div>
                         <Button type="submit" variant="primary" onClick={()=>addExercise(cycling, document.getElementById("cyclingTime").value)}>Add {cycling.exercisename}</Button>
                     </Form>
@@ -101,8 +132,14 @@ function PatientExerciseWithoutSocket (props) {
                                 Duration:
                             </Card.Text>
                             <FormGroup>
-                                <input type="time" name="time" id="yogaTime" placeholder="time placeholder" required/>
+                                <input type="time" name="time" id="yogaTime" placeholder="time placeholder" 
+                                defaultValue="00:00" onChange={() => handleChangeYoga(document.getElementById("yogaTime").value)} required/>
                             </FormGroup>
+                        </div>
+                        <div>
+                            <Card.Text classname='timeDisplay' id='yogaTimeDisplay'>
+                                
+                            </Card.Text>
                         </div>
                         <Button type="submit" variant="primary" onClick={()=>addExercise(yoga, document.getElementById("yogaTime").value)}>Add {yoga.exercisename}</Button>
                     </Form>

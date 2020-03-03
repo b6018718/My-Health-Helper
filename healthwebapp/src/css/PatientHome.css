@@ -12,3 +12,16 @@
     height: auto;
     padding-top: 1%;
 }
+
+.rightSpinner{
+    float: right;
+}
+
+.tick{
+    float: right;
+    color: white;
+}
+
+.hide{
+    display: none;
+}

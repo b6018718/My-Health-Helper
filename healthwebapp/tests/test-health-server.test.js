@@ -68,12 +68,11 @@ describe("Web Health app Server", function () {
   });
 
 
-  //TEST one
+  //TEST connection test
   it('Connection to server', done => {
     if (socket_1.connected) {
       done();
     }
-
   });
 
   //TEST  make a new doctor account
@@ -87,7 +86,6 @@ describe("Web Health app Server", function () {
   //TEST Doctor Login
   it('Doctor Login', done => {
     socket_1.on('logInResult', function (data) {
-
       if (data.result) { done(); }
     })
     socket_1.emit('logIn', DrLogin);
@@ -97,7 +95,6 @@ describe("Web Health app Server", function () {
   //TEST  Login no password
   it('Login wrong password', done => {
     socket_1.on('logInResult', function (data) {
-
       if (data.message == "Password incorrect") { done(); }
     })
     socket_1.emit('logIn', LoginWrongPass);
@@ -106,7 +103,6 @@ describe("Web Health app Server", function () {
   //TEST  Login missing data
   it('Login missing data', done => {
     socket_1.on('logInResult', function (data) {
-
       if (data.message == "Fields are empty") { done(); }
     })
     socket_1.emit('logIn', LoginNopassword);
@@ -115,7 +111,6 @@ describe("Web Health app Server", function () {
   //TEST  Login no user
   it('Login no user', done => {
     socket_1.on('logInResult', function (data) {
-
       if (data.message == "User does not exist") { done(); }
     })
     socket_1.emit('logIn', LoginNoUser);
@@ -129,7 +124,6 @@ describe("Web Health app Server", function () {
     socket_1.emit('signUp', newPatienttest);
 
   });
-
 
   //TEST Add food 
   it('Add food', done => {
@@ -149,20 +143,17 @@ describe("Web Health app Server", function () {
     done();
   });
 
-
   //TEST check blood sugar list
   it('check blood sugar list', done => {
     socket_1.emit('signUp', LoginNopassword);
     done();
   });
 
-
   //TEST Change assigned doctor
   it('Change assigned doctor', done => {
     socket_1.emit('signUp', LoginNopassword);
     done();
   });
-
 
   //TEST Get my doctor
   it('Get my doctor', done => {

@@ -13,10 +13,11 @@ export default function Header(props){
     return(
         <>
             {props.appProps.isAuthenticated ? //(If someone is signed in)
-                <Navbar bg="primary" variant="dark" role="navigation">
+                <Navbar bg="primary" expand="lg" variant="dark" role="navigation">
                     <Image src={require('../images/logo.png')}  alt="logo"></Image>
                     <Navbar.Brand href="#">&nbsp; My Health Helper</Navbar.Brand>                    
-                        
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto" >
                    
                         {!props.appProps.isDoctor ?
@@ -38,13 +39,11 @@ export default function Header(props){
                                 </LinkContainer>
                                 <Dropdown as={ButtonGroup}>
                                 <Button type="button" className="NotificationButton" variant="light" className="pull-right">
-                                    <span class="NotificationText">Notifications</span><span className="badge badge-danger ml-2">113</span>
+                                    <span className="NotificationText">Notifications</span><span className="badge badge-danger ml-2">113</span>
                                     </Button>
                                 <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                 <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">Notification 1</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">A Warning</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-3">Notification 2</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-1">Welcome to the Patient Hub!</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>                          
                             </Nav>
                             : //if they are a doctor, change the header buttons
@@ -57,21 +56,17 @@ export default function Header(props){
                                 </LinkContainer>
                                 <Dropdown as={ButtonGroup}>
                                 <Button type="button" className="NotificationButton" variant="light" >
-                                    <span class="NotificationText">Notifications</span><span class="badge badge-danger ml-2">113</span>
+                                    <span className="NotificationText">Notifications</span><span className="badge badge-danger ml-2">1</span>
                                     </Button>
                                 <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                 <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">Notification 1</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">A Warning</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-3">Notification 2</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-1">Welcome back, Doctor.</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>
                                 
                             </Nav>
-
-                        
                         }
                     </Nav>
-                    
+                    </Navbar.Collapse>
                     <Form inline>                        
                         <Button onClick={logOut} variant="outline-light">Log out</Button>
                     </Form>

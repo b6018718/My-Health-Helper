@@ -2,9 +2,14 @@
   text-align: center;
   background-color:	#f0f4f5;
   width:100%;
-  height:100vh;
+  height: inherit;
   left:0;
   top:0;
+}
+
+body{
+  height: fit-content;
+  background-color:	#f0f4f5 !important;
 }
 
 .App-logo {
@@ -93,4 +98,25 @@
 
 .NotificationText{
   color:#000000;
+}
+
+.DropdownImage{
+  width: 90%;
+  height: 90%;
+  vertical-align: middle;
+  text-align: center;
+  padding-left:15%;
+  margin-top: 3%;
+}
+
+.EditableText{
+  text-align: left;
+  padding-bottom: 2%;
+  white-space: pre-line
+}
+
+@media screen and (min-width: 415px){
+  .site-container {
+    flex-direction: row;
+  }
 }

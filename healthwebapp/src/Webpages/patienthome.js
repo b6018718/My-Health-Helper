@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Button} from "react-bootstrap";
+import {Button, Modal, ListGroup, Spinner} from "react-bootstrap";
 import '../css/PatientHome.css';
 import { LinkContainer } from "react-router-bootstrap";
 
@@ -8,7 +8,12 @@ import SocketContext from '../components/socket'
 
 function PatientHomeWithoutSocket(props) {
     const [fingerPrickActivated, setFingerPrickActivated] = React.useState(false);
-    console.log(fingerPrickActivated);
+    const [showModal, setShowModal] = React.useState(false);
+    const [bluetoothSelected, setBluetoothSelected] = React.useState(false);
+
+    const handleClose = () => setShowModal(false);
+    const handleShow = () => setShowModal(true);
+
     function clickRegisterDevice(){
         if(!fingerPrickActivated){
             props.socket.emit("subscribeToFingerPrick", {});
@@ -16,6 +21,7 @@ function PatientHomeWithoutSocket(props) {
             props.socket.emit("unSubscribeFingerPrick", {});
         }
         setFingerPrickActivated(!fingerPrickActivated);
+        setBluetoothSelected(false);
     }
 
     React.useEffect(() => {
@@ -40,6 +46,29 @@ function PatientHomeWithoutSocket(props) {
             props.socket.off("fingerPrickData");
         };
     }, []);
+
+    var tick;
+    var spinner;
+    function bluetoothClicked(event){
+        setBluetoothSelected(false);
+        var buttonList = event.target.parentNode.childNodes;
+        for (let button of buttonList){
+            button.classList.remove("active");
+        }
+        
+        var button = event.target;
+        button.classList.add("active");
+
+        tick = event.target.childNodes[1];
+        spinner = event.target.childNodes[2];
+
+        spinner.classList.remove("hide");
+        setTimeout(function(){
+            spinner.classList.add("hide");
+            tick.classList.remove("hide");
+            setBluetoothSelected(true);
+        }, 3000);
+    }
 
     let name = `${props.appProps.nAccFirstName} ${props.appProps.nAccLastName}`;
     return (
@@ -75,7 +104,7 @@ function PatientHomeWithoutSocket(props) {
                         </>
                     :
                         <>
-                        <Button variant="primary" type="submit" className="ModuleButton" onClick={clickRegisterDevice}>
+                        <Button variant="primary" type="submit" className="ModuleButton" onClick={handleShow}>
                         <span className="LargeText">Register Finger Prick Device</span>
                         </Button>
                         </>
@@ -83,11 +112,44 @@ function PatientHomeWithoutSocket(props) {
                     </div>
                 </div>
 
+                <Modal show={showModal} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Select a Bluetooth Connection</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <ListGroup>
+                            <ListGroup.Item action onClick={bluetoothClicked}>
+                                One Plus ZR 27G: Bluetooth
+                                <span className='tick hide'>✓</span>
+                                <Spinner className='rightSpinner hide' animation="border" size='sm' />
+                            </ListGroup.Item>
+                            <ListGroup.Item action onClick={bluetoothClicked}>
+                                Samsung Galaxy M4 Edition: Bluetooth
+                                <span className='tick hide'>✓</span>
+                                <Spinner className='rightSpinner hide' animation="border" size='sm' />
+                            </ListGroup.Item>
+                            <ListGroup.Item action onClick={bluetoothClicked}>
+                                moto g(6) plus: Bluetooth
+                                <span className='tick hide'>✓</span>
+                                <Spinner className='rightSpinner hide' animation="border" size='sm' />
+                            </ListGroup.Item>
+                        </ListGroup>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" disabled={!bluetoothSelected} onClick={() => { clickRegisterDevice(); handleClose();}}>
+                        Establish Connection
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+
                 <div class = "row"> 
-                <div className="Paragraph"> Warnings: Lorem ipsum da </div>
+                    <div className="Paragraph"> Warnings: Lorem ipsum da </div>
                 </div>
             </div>
-        </div>  
+        </div>
     )
 };
 

@@ -66,6 +66,7 @@ function SelectPatientDetailsWithoutSocket(props){
         var button = event.target;
         //setSelectedId(button.value);
         console.log(button.value);//TODO pass to patient details/record page
+        props.appProps.setCurrentSelectedPatient(button.value);
         props.history.push('/HealthCareProfessional/Patient-Details');
     }
 

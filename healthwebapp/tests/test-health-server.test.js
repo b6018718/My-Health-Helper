@@ -71,7 +71,6 @@ describe("Web Health app Server", function () {
     done();
   });
 
-
   //TEST connection test
   it('Connection to server', done => {
     if (socket_1.connected) {
@@ -217,6 +216,17 @@ describe("Web Health app Server", function () {
       if (data == "Success") { done(); }
     })
     socket_1.emit('logIn', DrLogin);
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit('deleteAccount', {});
+    })
+    
+  });
+  //TEST remove Patient account
+  it('Remove Patient account', done => {
+    socket_1.on('deleteAccountResults', function (data) {
+      if (data == "Success") { done(); }
+    })
+    socket_1.emit('logIn', PatientLogin);
     socket_1.on('logInResult', function (data) {
       socket_1.emit('deleteAccount', {});
     })

@@ -85,19 +85,6 @@ describe("Web Health app Server", function () {
     socket_1.emit('logIn', DrLogin);
   });
 
-  //TEST remove doctor account
-  it('Remove Doctor account', done => {
-    socket_1.on('deleteAccountResults', function (data) {
-      if (data = "success") { done(); }
-    })
-    socket_1.emit('logIn', DrLogin);
-    socket_1.on('logInResult', function (data) {
-
-      socket_1.emit('deleteAccount', {});
-    })
-    
-  });
-
   //TEST remove patient account
   it('Make new patient', done => {
     socket_1.emit('signUp', newUsertest);
@@ -149,16 +136,63 @@ describe("Web Health app Server", function () {
     done();
   });
 
-  //TEST check if subbed to finger prick
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
+  //TEST check if subbed to finger prick, negative case
+  it('Check if finger prick subscribed', done => {
+    socket_1.on('checkIfSubscribedResults', function (data) {
+      if (data.result) {
+        done();
+      }
+    });
+
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit("subscribeToFingerPrick", {});
+      sleep(500);
+      socket_1.emit('checkIfSubscribed', {});
+    });
+
+    socket_1.emit('logIn', DrLogin);
+    done();
+  });
+
+  //TEST check if subbed to finger prick, negative case
+  it('Check if finger prick not subscribed', done => {
+    socket_1.on('checkIfSubscribedResults', function (data) {
+      if (!data.result) { done(); }
+    });
+
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit('checkIfSubscribed', {});
+    });
+
+    socket_1.emit('logIn', DrLogin);
     done();
   });
 
   //TEST list all doctors
-  it('Make new patient', done => {
-    socket_1.emit('signUp', newUsertest);
-    done();
+  it('List all doctors', done => {
+    socket_1.on('getAllDoctorsResults', function (data) {
+      if (data.doctors) { done(); }
+    });
+
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit('getAllDoctors', {});
+    });
+
+    socket_1.emit('logIn', DrLogin);
+    
+  });
+
+  //TEST remove doctor account
+  it('Remove Doctor account', done => {
+    socket_1.on('deleteAccountResults', function (data) {
+      if (data == "Success") { done(); }
+    })
+    socket_1.emit('logIn', DrLogin);
+    socket_1.on('logInResult', function (data) {
+
+      socket_1.emit('deleteAccount', {});
+    })
+    
   });
 
 })

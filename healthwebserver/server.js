@@ -228,7 +228,6 @@ io.on("connection", socket => {
     let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1,email: 1}).exec()
     let exercise = await User.findOne({_id: selectedPatientID},{_id: 0, exercise: 1}).exec();
     let foodDiary = await User.findOne({_id: selectedPatientID},{_id: 0, foodRecord: 1}).exec();
-    // console.log(bloodSugarReadings);
     socket.emit("getMyPatientRecordResults",{registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings,exercise:exercise,foodDiary:foodDiary});
   }
   

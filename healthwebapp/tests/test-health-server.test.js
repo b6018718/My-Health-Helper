@@ -130,16 +130,16 @@ describe("Web Health app Server", function () {
 
       socket_1.emit('deleteAccount', {});
     })
-    
-  });
- //TEST Make a new patient account
- it('Make new patient', done => {
-  socket_1.on('logInResult', function (data) {
-    if (data.message == "Success") { done(); }
-  })
-  socket_1.emit('signUp', newPatienttest);
 
-});
+  });
+  //TEST Make a new patient account
+  it('Make new patient', done => {
+    socket_1.on('logInResult', function (data) {
+      if (data.message == "Success") { done(); }
+    })
+    socket_1.emit('signUp', newPatienttest);
+
+  });
 
 
   //TEST remove patient account
@@ -153,7 +153,7 @@ describe("Web Health app Server", function () {
       socket_1.emit('deleteAccount', {});
     })
   });
- 
+
 
 
   //TEST Add food 

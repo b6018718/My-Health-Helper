@@ -1,18 +1,15 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import App from './App';
-var should = requre('should')
+var should = require('should')
 var io = require('socket.io-client')
-server = require('../server.js')
+server = require('../../healthwebserver/server.js')
 var socketURL = 'http://localhost:5000';
 
 
-//var options ={
-   // transports: ['websocket'],
-  //  'force new connection': true
+var options ={
+    transports: ['websocket'],
+    'force new connection': true
 //https://github.com/liamks/Testing-Socket.IO/blob/master/test/test-chat-server.js
 //http://liamkaufman.com/blog/2012/01/28/testing-socketio-with-mocha-should-and-socketio-client/
-//};
+};
 
 var newUsertest = { 
 email: 'rooleyzee123@gmail.com',

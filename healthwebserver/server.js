@@ -40,6 +40,7 @@ io.on("connection", socket => {
 
   socket.on("signUp", async (data) => {
     // Sanitize data
+    console.log(data);
     data = deepSanitize(data);
     if(!data.email || !data.password || !data.forename || !data.surname){
       logInFailed(socket, "Fields are empty", data);

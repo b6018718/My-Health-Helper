@@ -121,7 +121,6 @@ describe("Web Health app Server", function () {
     socket_1.emit('logIn', LoginNoUser);
   });
 
-  });
   //TEST Make a new patient account
   it('Make new patient', done => {
     socket_1.on('logInResult', function (data) {
@@ -224,7 +223,6 @@ describe("Web Health app Server", function () {
     })
     socket_1.emit('logIn', DrLogin);
     socket_1.on('logInResult', function (data) {
-
       socket_1.emit('deleteAccount', {});
     })
     

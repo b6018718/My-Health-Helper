@@ -20,31 +20,36 @@ doctor: true };
 
 describe("Web Health app Server",function(){
 
-//Test One Connect to server Check
-it('Connection to server', done => {
-        const client = io(socketURL);
-    
-        client.on('connect', () => {
-          client.close();
-          done();
-        });
-    });
-       
-//Test Two Make new doctor
-it('Should Make new doctor'),function(done)
-{
-var client = io.connect(socketURL,options)
-
-client.on('connect',function(data)
-{
-client.emit('signUp',newUsertest);
+let socket_1;
+beforeEach((done) =>{
+socket_1 = io.connect(socketURL,
+{forceNew: true, query: ''});
+socket_1.on ('connect',()=>{
 done();
 });
-}
-// Test Three Make a Patient
-//it('Test Three Make a Patient'),
-
-
 });
 
-// Test Four
+afterEach((done)=>
+{
+socket_1 && socket_1.connected && socket_1.disconnect();
+done();
+});
+
+//TEST one
+it('Connection to server', done => {
+  if(socket_1.connected)
+  {
+    done();
+  }
+    
+});
+
+//TEST two
+  it('Make new doctor',done =>
+  {
+  socket_1.emit('signUp',newUsertest);
+  done();
+  });
+
+})
+

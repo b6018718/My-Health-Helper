@@ -51,9 +51,21 @@ var PatientLogin = {
   password: 'Test',
 }
 
+var doctorId = '';
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function stringEquals(a,b){
+  a = a.toString();
+  b = b.toString();
+  if (a.length !== b.length) {
+       return false;
+  }
+  return a.localeCompare(b) === 0;
+}
+
 
 describe("Web Health app Server", function () {
 
@@ -164,14 +176,37 @@ describe("Web Health app Server", function () {
   //TEST Change assigned doctor
   it('Change assigned doctor', done => {
     socket_1.emit('signUp', LoginNopassword);
+
+    
     done();
   });
 
 
   //TEST Get my doctor
   it('Get my doctor', done => {
-    socket_1.emit('signUp', LoginNopassword);
-    done();
+    var doctorId = "";
+    socket_1.on('getAllDoctors', async function (data){
+      if(data.doctors.length > 0){
+        doctorId = data.doctors[0]._id;
+        socket_1.emit("updateAssignedDoctor", doctorId);
+        await sleep(100);
+        socket_1.emit("getMyDoctor", {});
+      }
+    });
+
+    socket_1.on('getMyDoctorResults', async function (data){
+      if(stringEquals(data.idAssignedDoctor, doctorId)){
+        socket_1.emit("updateAssignedDoctor", doctorId);
+      }
+    });
+
+    
+
+    socket_1.on('logInResult', async function (data) {
+      socket_1.emit('getAllDoctors', {});
+    });
+
+    socket_1.emit('logIn', PatientLogin);
   });
 
   //TEST check if subbed to finger prick, negative case

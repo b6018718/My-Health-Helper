@@ -51,6 +51,10 @@ var PatientLogin = {
   password: 'Test',
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 describe("Web Health app Server", function () {
 
   let socket_1;
@@ -172,20 +176,21 @@ describe("Web Health app Server", function () {
 
   //TEST check if subbed to finger prick, negative case
   it('Check if finger prick subscribed', done => {
-    socket_1.on('checkIfSubscribedResults', function (data) {
+    socket_1.on('checkIfSubscribedResults', async function (data) {
       if (data.result) {
+        socket_1.emit("unSubscribeFingerPrick", {});
+        await sleep(100);
         done();
       }
     });
 
-    socket_1.on('logInResult', function (data) {
+    socket_1.on('logInResult', async function (data) {
       socket_1.emit("subscribeToFingerPrick", {});
-      sleep(500);
+      await sleep(500);
       socket_1.emit('checkIfSubscribed', {});
     });
 
     socket_1.emit('logIn', DrLogin);
-    done();
   });
 
   //TEST check if subbed to finger prick, negative case
@@ -199,7 +204,6 @@ describe("Web Health app Server", function () {
     });
 
     socket_1.emit('logIn', DrLogin);
-    done();
   });
 
   //TEST list all doctors

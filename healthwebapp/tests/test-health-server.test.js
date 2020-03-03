@@ -147,30 +147,26 @@ describe("Web Health app Server", function () {
     done();
   });
 
-  //TEST add to blood sugar list
-  it('add to blood sugar list', done => {
-    socket_1.emit('signUp', LoginNopassword);
-    done();
-  });
 
   //TEST check blood sugar list
   it('check blood sugar list', done => {
-    socket_1.emit('signUp', LoginNopassword);
-    done();
-  });
+    socket_1.on("getMyPatientRecordResults", async function(data){
+      if(data.bloodSugarReadings){
+        done();
+      }
+    });
 
-  //TEST Change assigned doctor
-  it('Change assigned doctor', done => {
-    socket_1.emit('signUp', LoginNopassword);
+    socket_1.on('logInResult', async function (data) {
+      socket_1.emit('getMyPatientRecord', {});
+    });
 
-    
-    done();
+    socket_1.emit('logIn', PatientLogin);
   });
 
   //TEST Get my doctor
   it('Get my doctor', done => {
     var doctorId = "";
-    socket_1.on('getAllDoctors', async function (data){
+    socket_1.on('getAllDoctorsResults', async function (data){
       if(data.doctors.length > 0){
         doctorId = data.doctors[0]._id;
         socket_1.emit("updateAssignedDoctor", doctorId);
@@ -181,11 +177,9 @@ describe("Web Health app Server", function () {
 
     socket_1.on('getMyDoctorResults', async function (data){
       if(stringEquals(data.idAssignedDoctor, doctorId)){
-        socket_1.emit("updateAssignedDoctor", doctorId);
+        done();
       }
     });
-
-    
 
     socket_1.on('logInResult', async function (data) {
       socket_1.emit('getAllDoctors', {});

@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Button, Card, FormGroup, Form} from "react-bootstrap";
+import {Button, Card, FormGroup, Form, Toast} from "react-bootstrap";
 
 import SocketContext from '../components/socket';
 import '../css/PatientFoodIntake.css';
@@ -9,6 +9,9 @@ function PatientExerciseWithoutSocket (props) {
     var swimming = {exercisetype: "Mid", exercisename:"Swimming"};
     var yoga = {exercisetype: "Low", exercisename:"Yoga"};
     var walking = {exercisetype: "Low", exercisename:"Walking"};
+    const [showSuccessMessage, setSuccessMessage] = React.useState(false);
+
+    const toggleSuccessMessage = () => setSuccessMessage(!showSuccessMessage);
 
     var exerciseList = [];
 
@@ -16,6 +19,7 @@ function PatientExerciseWithoutSocket (props) {
         if(exerciseList.length != 0){
             props.socket.emit("recordExerciseDiary", exerciseList);
             reset();
+            setSuccessMessage(true);
         }
     }
 
@@ -114,6 +118,16 @@ function PatientExerciseWithoutSocket (props) {
                         <Button className="padButton" onClick={() => sendExerciseToDB()}>Submit Exercise</Button>
                     </div>
                 </div>
+                {showSuccessMessage ?
+                    <Toast className="Toast" show={showSuccessMessage} onClose={toggleSuccessMessage}>
+                    <Toast.Header>
+                        <strong className="mr-auto">Exercise submitted</strong>
+                    </Toast.Header>
+                    <Toast.Body>{`Exercise submitted successfully`}</Toast.Body>
+                </Toast>
+                :
+                <></>
+                 }
             </div>
         </div>
     )

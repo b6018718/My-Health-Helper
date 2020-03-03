@@ -43,7 +43,14 @@ const userSchema  =  new Schema(
             exercisename: {type: String},
             exercisetype: {type: String},
             exercisedurationmins: {type: Number}
-        }]
+        }],
+        DoB:{type:Date,required:false},
+        Address:{type:String,required:false},
+        MobileNo:{type:String,required:false},
+        TelephoneNo:{type:String,required:false},
+        NHSNumber:{type:String,required:false},
+        Sex:{type:String,required:false}
+
 
     },
     { timestamps: true }

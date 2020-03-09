@@ -2,11 +2,14 @@
   text-align: center;
   background-color:	#f0f4f5;
   width:100%;
-  height:100%;
-  position:fixed;
+  height: inherit;
   left:0;
   top:0;
-  overflow:hidden;
+}
+
+body{
+  height: fit-content;
+  background-color:	#f0f4f5 !important;
 }
 
 .App-logo {
@@ -56,4 +59,64 @@
 
 .Button{
   text-align: center;
+}
+
+.Paragraph{
+  text-align: left;
+  padding-bottom: 2%;
+}
+
+.Modules{
+  float: left;
+  width: 100%;
+  height: 100px;  
+}
+
+.ModuleLinkContainer{
+  vertical-align: middle;
+  text-align: center;
+  height: 100%;
+}
+
+.ModuleButton{
+  margin: 1%;
+  height: auto;
+  width:  auto;
+}
+
+.LargeText{
+  vertical-align: middle;
+  align-content: center;
+  text-align: center;  
+  font-size: x-large;
+}
+.NotificationButton{
+  float: right;
+  margin: 0.5%; 
+
+}
+
+.NotificationText{
+  color:#000000;
+}
+
+.DropdownImage{
+  width: 90%;
+  height: 90%;
+  vertical-align: middle;
+  text-align: center;
+  padding-left:15%;
+  margin-top: 3%;
+}
+
+.EditableText{
+  text-align: left;
+  padding-bottom: 2%;
+  white-space: pre-line
+}
+
+@media screen and (min-width: 415px){
+  .site-container {
+    flex-direction: row;
+  }
 }

@@ -1,0 +1,32 @@
+.topPad{
+    margin-top: 1%;
+}
+
+.bgContainer{
+    width: 100%;
+    background-color: #F0F4F5;
+}
+
+.foodBottom{
+    margin-top: 2%;
+    padding-bottom: 2%;
+}
+
+.foodList{
+    min-height: 30vh;
+    height: auto;
+}
+
+.padButton{
+    margin: 1%;
+}
+
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.durationLabel{
+    margin-right: 2%;
+}

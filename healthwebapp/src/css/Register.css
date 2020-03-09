@@ -1,5 +1,20 @@
 .registerButton{
     margin-right: 5%;
     margin-left: 5%;
+
+}
+
+.Login{
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+
+}
+
+.simpleBorder{
+    border-style: dashed;
+    border-color:  #bfbfbf;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-width: thin;
 }
 

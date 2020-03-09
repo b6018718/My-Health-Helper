@@ -23,6 +23,12 @@ const userSchema  =  new Schema(
             type: Boolean,
             required: true
         },
+        sex:{type:String,default:null},
+        DoB:{type:Date,default:null},
+        mobile:{type:String,default:null},
+        telephone:{type:String,default:null},
+        address:{type:String,default:null},
+        NHSnumber:{type:String,default:null},
         idAssignedDoctor:{
             type: Schema.Types.ObjectId,
             ref: 'User',
@@ -43,15 +49,7 @@ const userSchema  =  new Schema(
             exercisename: {type: String},
             exercisetype: {type: String},
             exercisedurationmins: {type: Number}
-        }],
-        DoB:{type:Date,required:false},
-        Address:{type:String,required:false},
-        MobileNo:{type:String,required:false},
-        TelephoneNo:{type:String,required:false},
-        NHSNumber:{type:String,required:false},
-        Sex:{type:String,required:false}
-
-
+        }]     
     },
     { timestamps: true }
 );

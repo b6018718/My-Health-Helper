@@ -75,30 +75,28 @@ function RegisterWithoutSocket(props){
             props.appProps.passUserLastName(surname);
             props.appProps.passUserEmail(email);
             props.appProps.passUserPassword(password);
-            if(sex == "Please select" || sex == null)
+            if(sex == "Please select")
             {
-                setErrorMessage("Please select your sex from the drop down list")
+                setSex(null)
+            }
+            
+            if(checkIsValidPhoneNumber(mobile) && (checkIsValidPhoneNumber(telephone))){
+                if(checkIsValidNHSNumber(NHSnumber)){       
+                    props.socket.emit("signUp",
+                    {email: email, password: password, forename: forename, surname: surname, doctor: doctor,
+                        sex: sex,DoB: DoB, mobile: mobile, telephone: telephone, address:address,NHSnumber: NHSnumber});
+                    }
+                else
+                    {
+                        setErrorMessage("Please check you have entered valid NHS Number")
+                        toggleFailMessage()
+                    }
+            }
+            else{
+                setErrorMessage("Please check you have entered a valid phone number for telephone and mobile number fields")
                 toggleFailMessage()
             }
-            else
-            {
-                if(checkIsValidPhoneNumber(mobile) && (checkIsValidPhoneNumber(telephone))){
-                    if(checkIsValidNHSNumber(NHSnumber)){       
-                        props.socket.emit("signUp",
-                        {email: email, password: password, forename: forename, surname: surname, doctor: doctor,
-                            sex: sex,DoB: DoB, mobile: mobile, telephone: telephone, address:address,NHSnumber: NHSnumber});
-                        }
-                    else
-                        {
-                            setErrorMessage("Please check you have entered valid NHS Number")
-                            toggleFailMessage()
-                        }
-                }
-                else{
-                    setErrorMessage("Please check you have entered a valid phone number for telephone and mobile number fields")
-                    toggleFailMessage()
-                }
-            }
+            
         }
     }
 
@@ -135,6 +133,8 @@ function RegisterWithoutSocket(props){
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
             </Form.Group>
+            <div>Additional demographic information for paitent registration:</div>
+            <div className="simpleBorder">
             <Row>
                 <Col>
                     <Form.Group controlId= "formBasicSex">
@@ -177,7 +177,7 @@ function RegisterWithoutSocket(props){
                 <Form.Label>NHS Number</Form.Label>
                 <Form.Control placeholder="123 123 1234" onChange={e=> setNHSnumber(e.target.value)} norequire/>
             </Form.Group>
-
+            </div>
             <div className="Button">
                 <Button className="registerButton" variant="primary" type="submit" onClick={handleSubmit} value="doctor">
                     Register as Doctor

@@ -50,12 +50,14 @@ io.on("connection", socket => {
     var databaseUser = await User.findOne({email: data.email}).exec();
     if(!databaseUser){
       // Email available
+      console.log(data)
       let tempPassword = data.password;
       data.password = Bcrypt.hashSync(data.password,10);
       // Save user to the database
       await connect.then(async function(db) {
         console.log("connected correctly to the server");
         let user = new User(data);
+        console.log(user)
         await user.save();
       });
       // Emit the new doctor to any pages looking at doctors
@@ -215,7 +217,7 @@ io.on("connection", socket => {
 
   async function emitMyPatientRecord(socket, selectedPatientID){
     console.log(selectedPatientID)
-    let patientDetails = await User.findOne({_id: selectedPatientID},{_id: 1, forename: 1, surname: 1, email:1}).exec();
+    let patientDetails = await User.findOne({_id: selectedPatientID},{_id: 1, forename: 1, surname: 1, email:1,sex:1,DoB:1,mobile:1,telephone:1,address:1,NHSnumber:1}).exec();
     let bloodSugarReadings = await User.findOne({_id: selectedPatientID},{_id: 0, fingerPrick: 1}).exec();
     let registeredDoctorID = await User.findOne({_id: selectedPatientID},{_id: 1, idAssignedDoctor: 1}).exec();
     let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1,email: 1}).exec()

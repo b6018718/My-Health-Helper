@@ -359,7 +359,28 @@ function DisplayPatientDetailsWithoutSocket(props)
             />
         )
     }
-
+    function handleNullDemographics(data)
+    {
+        if (data == null || data == "")
+        {
+            return "Not stated"
+        }
+        else
+        {
+            return data
+        }
+    }
+    function handleNullDate(date)
+    {
+        if(date != null)
+        {
+            return new Date(patientDetails.DoB).toLocaleDateString()
+        }
+        else
+        {
+            return null
+        }
+    }
     
     return (<div className = "PatientDetails">   
             <div className = "PatientDetailsContainer">
@@ -368,6 +389,12 @@ function DisplayPatientDetailsWithoutSocket(props)
                     <div className = "SubTitle">Profile: </div>
                     <div>Name: {patientDetails.forename} {patientDetails.surname}</div>
                     <div>Email: {patientDetails.email}</div>
+                    <div>Sex: {handleNullDemographics(patientDetails.sex)}</div>
+                    <div>Date of Birth: {handleNullDemographics(handleNullDate(patientDetails.DoB))}</div>
+                    <div>Telephone No: {handleNullDemographics(patientDetails.telephone)}</div>
+                    <div>Mobile No: {handleNullDemographics(patientDetails.mobile)}</div>
+                    <div>Address: {handleNullDemographics(patientDetails.address)}</div>
+                    <div>NHS Number: {handleNullDemographics(patientDetails.NHSnumber)}</div>
                     <br/>
                     <div className = "SubTitle">Registered doctor's details: </div>
                     <div>Registered doctor: {patientDoctor.forename} {patientDoctor.surname} </div>

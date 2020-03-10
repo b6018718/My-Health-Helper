@@ -43,7 +43,7 @@ function PatientExerciseWithoutSocket (props) {
             var minutes = (+time[0]) * 60 + (+time[1]);
             // Add text
             document.getElementById("Exercise").textContent += '\r\n';  
-            document.getElementById("Exercise").textContent += exercise.exercisename;
+            document.getElementById("Exercise").textContent += (exercise.exercisename + ": " + minutes + " minutes");
             // Add minutes to a new exercise object
             var exerciseClone = JSON.parse(JSON.stringify(exercise));
             exerciseClone["exercisedurationmins"] = minutes;

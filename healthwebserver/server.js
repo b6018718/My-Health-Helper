@@ -17,8 +17,6 @@ const connect  = require("./dbconnection");
 // Sanitize data
 var sanitize = require('mongo-sanitize');
 
-//app.use(cors());
-
 app.use(express.json());
 app.use(bodyParser.json());
 app.set("port", port);
@@ -28,7 +26,7 @@ var fingerPrickSubscribers = [];
 var userUpdateSubscribers = [];
 
 io.on("connection", socket => {
-  console.log("Client connected");
+  //console.log("Client connected");
 
   // Global backend variables
   var authenticated = false;
@@ -46,7 +44,7 @@ io.on("connection", socket => {
       return;
     }
 
-    console.log("User attempted to sign up");
+    //console.log("User attempted to sign up");
     var databaseUser = await User.findOne({email: data.email}).exec();
     if(!databaseUser){
       // Email available
@@ -55,7 +53,6 @@ io.on("connection", socket => {
       data.password = Bcrypt.hashSync(data.password,10);
       // Save user to the database
       await connect.then(async function(db) {
-        console.log("connected correctly to the server");
         let user = new User(data);
         console.log(user)
         await user.save();
@@ -72,6 +69,15 @@ io.on("connection", socket => {
     }
   });
 
+  socket.on("deleteAccount", async (data) => {
+    if(authenticated){
+      await User.deleteOne({_id: userId});
+      socket.emit("deleteAccountResults", "Success");
+      authenticated = false;
+      userId = "";
+    }
+  });
+
   socket.on("getAllDoctors", async (data) => {
     emitAllDoctors(socket, false);
   });
@@ -84,7 +90,7 @@ io.on("connection", socket => {
   });
 
   socket.on("getMyDoctor", async function (data){
-    console.log("Attempting to get patients doctor")
+    //console.log("Attempting to get patients doctor")
     if(authenticated){
       var databaseUser = await User.findOne({_id: userId}).exec();
       if(databaseUser.idAssignedDoctor != null){
@@ -149,7 +155,6 @@ io.on("connection", socket => {
     if(authenticated)
     {
       data = deepSanitize(data)
-      console.log(data)
       var user = await User.findOne({_id: userId}).exec();
       for(let foodRecord of data)
       {
@@ -169,7 +174,6 @@ io.on("connection", socket => {
     if(authenticated)
     {
       data = deepSanitize(data)
-      console.log(data)
       var user = await User.findOne({_id: userId}).exec();
       for(let exerciseRecord of data)
       {
@@ -223,13 +227,12 @@ io.on("connection", socket => {
     let registeredDoctor = await User.findOne({_id: registeredDoctorID.idAssignedDoctor},{_id: 1,forename: 1,surname: 1,email: 1}).exec()
     let exercise = await User.findOne({_id: selectedPatientID},{_id: 0, exercise: 1}).exec();
     let foodDiary = await User.findOne({_id: selectedPatientID},{_id: 0, foodRecord: 1}).exec();
-    // console.log(bloodSugarReadings);
     socket.emit("getMyPatientRecordResults",{registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings,exercise:exercise,foodDiary:foodDiary});
   }
   
 
   async function logIn(data, socket){
-    console.log("User attempted to log in");
+   // console.log("User attempted to log in");
     //Sanitise data
     data = deepSanitize(data);
     // Check email exists
@@ -242,7 +245,6 @@ io.on("connection", socket => {
     var databaseUser = await User.findOne({email: data.email}).exec();
     if(databaseUser){
       if(Bcrypt.compareSync(data.password, databaseUser.password)){
-        console.log("User successfully logged in")
         authenticated = true;
         setUserId(databaseUser._id, socket);
         socket.emit("logInResult", {result: true, doctor: databaseUser.doctor, forename: databaseUser.forename, surname: databaseUser.surname, message: "Success"});
@@ -260,8 +262,6 @@ io.on("connection", socket => {
   }
 
   function logInFailed (socket, message, data){
-    console.log(data);
-    console.log(message);
     authenticated = false;
     socket.emit("logInResult", {result: false, doctor: false, message: message});
   }

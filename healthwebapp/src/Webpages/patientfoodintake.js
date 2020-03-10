@@ -1,5 +1,5 @@
 import * as React from "react"; 
-import {Button,  Dropdown, Image, ButtonGroup, Card} from "react-bootstrap";
+import {Button,  Dropdown, Image, ButtonGroup, Card, Toast} from "react-bootstrap";
 
 import SocketContext from '../components/socket'
 import '../css/PatientFoodIntake.css';
@@ -10,13 +10,19 @@ function PatientFoodIntakeWithoutSocket (props) {
     var sausageRoll = {calories: 362, name:"Sausage Roll", group:"Protein"};
     var cheeseSandwich = {calories: 261, name:"Cheese Sandwich", group:"Carbohydrates"};
     var kitKat = {calories: 108, name:"KitKat", group:"Sugar"};
+    const [showSuccessMessage, setSuccessMessage] = React.useState(false);
+
+    const toggleSuccessMessage = () => setSuccessMessage(!showSuccessMessage);
 
     var foodList = [];
 
     function sendFoodToDB(){
-        props.socket.emit("recordFoodDiary", foodList);
-        document.getElementById("Food").textContent = "Today's Food: ";
-        foodList = [];
+        if(foodList.length != 0){
+            props.socket.emit("recordFoodDiary", foodList);
+            document.getElementById("Food").textContent = "Today's Food: ";
+            foodList = [];
+            setSuccessMessage(true);
+        }
     }
     
     function addFood(food){          
@@ -72,6 +78,16 @@ function PatientFoodIntakeWithoutSocket (props) {
                         <Button onClick={() => sendFoodToDB()}>Submit Food</Button>
                     </div>
                 </div>
+                {showSuccessMessage ?
+                    <Toast className="Toast" show={showSuccessMessage} onClose={toggleSuccessMessage}>
+                    <Toast.Header>
+                        <strong className="mr-auto">Food submitted</strong>
+                    </Toast.Header>
+                    <Toast.Body>{`Food submitted successfully`}</Toast.Body>
+                </Toast>
+                :
+                <></>
+                 }
             </div>
         </div>
         )

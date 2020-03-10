@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { BrowserRouter, Route, Switch} from "react-router-dom";
 import Login from "../Webpages/login";
 import PatientHome from "../Webpages/patienthome";
-import {DoctorHome} from "../Webpages/doctorhome";
+import DoctorHome from "../Webpages/doctorhome";
 import PatientDetails from "../Webpages/patientdetails";
 import PatientExercise from "../Webpages/patientexercise";
 import PatientFoodIntake from "../Webpages/patientfoodintake";

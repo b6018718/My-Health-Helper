@@ -48,13 +48,13 @@ io.on("connection", socket => {
     var databaseUser = await User.findOne({email: data.email}).exec();
     if(!databaseUser){
       // Email available
-      console.log(data)
+      //console.log(data)
       let tempPassword = data.password;
       data.password = Bcrypt.hashSync(data.password,10);
       // Save user to the database
       await connect.then(async function(db) {
         let user = new User(data);
-        console.log(user)
+        //console.log(user)
         await user.save();
       });
       // Emit the new doctor to any pages looking at doctors
@@ -188,23 +188,15 @@ io.on("connection", socket => {
         }
       }
     }
-  })
+  });
 
   socket.on("getMyPatientRecord",async(data)=>{
     if(authenticated){
       let isDoctor = await User.findOne({_id: userId},{_id: 1, doctor: 1}).exec();
-    // console.log(data)
-      //console.log(isDoctor)
-      if(isDoctor.doctor)
-      {
-      // console.log(data.selectedPatientID)
-      // console.log("doctor request patient data")
+      if(isDoctor.doctor){
         emitMyPatientRecord(socket,data.selectedPatientID);
         subscribeToUserUpdate(socket, data.selectedPatientID);
-      }
-      else
-      {
-        //console.log("patient request their data")
+      } else {
         emitMyPatientRecord(socket,userId);
         subscribeToUserUpdate(socket, userId);
       }
@@ -220,7 +212,7 @@ io.on("connection", socket => {
   }
 
   async function emitMyPatientRecord(socket, selectedPatientID){
-    console.log(selectedPatientID)
+    //console.log(selectedPatientID)
     let patientDetails = await User.findOne({_id: selectedPatientID},{_id: 1, forename: 1, surname: 1, email:1,sex:1,DoB:1,mobile:1,telephone:1,address:1,NHSnumber:1}).exec();
     let bloodSugarReadings = await User.findOne({_id: selectedPatientID},{_id: 0, fingerPrick: 1}).exec();
     let registeredDoctorID = await User.findOne({_id: selectedPatientID},{_id: 1, idAssignedDoctor: 1}).exec();
@@ -284,10 +276,10 @@ server.listen(port, () => console.log(`Health App Server running at http://local
 setInterval(updateFingerPrickInfo, 10000);
 
 async function updateFingerPrickInfo(){
-  console.log("Updating finger prick")
-  console.log(fingerPrickSubscribers);
+  //console.log("Updating finger prick")
+  //console.log(fingerPrickSubscribers);
   for(let id of fingerPrickSubscribers){
-    console.log("User found")
+    //console.log("User found")
     var user = await User.findOne({_id: id}).exec();
     user.fingerPrick.push({millimolesPerLitre: getRndInteger(1, 10)});
     await user.save();

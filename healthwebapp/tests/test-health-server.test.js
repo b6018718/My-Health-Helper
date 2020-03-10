@@ -227,6 +227,24 @@ describe("Web Health app Server", function () {
     socket_1.emit('logIn', DrLogin);
   });
 
+  //TEST Real time finger prick updates
+  it('Real time finger prick updates for patient', done => {
+    socket_1.on('getMyPatientRecordResults', function (data) {
+      socket_1.emit("subscribeToFingerPrick", {});
+    });
+
+    socket_1.on("realTimeFingerPrickData", function (data){
+      socket_1.emit("unsubPatientRecord", {});
+      socket_1.emit("unSubscribeFingerPrick", {});
+      done();
+    });
+
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit('getMyPatientRecord', {});
+    });
+    socket_1.emit('logIn', PatientLogin);
+  });
+
   //TEST remove doctor account
   it('Remove Doctor account', done => {
     socket_1.on('deleteAccountResults', function (data) {

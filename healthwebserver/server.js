@@ -184,23 +184,15 @@ io.on("connection", socket => {
         }
       }
     }
-  })
+  });
 
   socket.on("getMyPatientRecord",async(data)=>{
     if(authenticated){
       let isDoctor = await User.findOne({_id: userId},{_id: 1, doctor: 1}).exec();
-    // console.log(data)
-      //console.log(isDoctor)
-      if(isDoctor.doctor)
-      {
-      // console.log(data.selectedPatientID)
-      // console.log("doctor request patient data")
+      if(isDoctor.doctor){
         emitMyPatientRecord(socket,data.selectedPatientID);
         subscribeToUserUpdate(socket, data.selectedPatientID);
-      }
-      else
-      {
-        //console.log("patient request their data")
+      } else {
         emitMyPatientRecord(socket,userId);
         subscribeToUserUpdate(socket, userId);
       }

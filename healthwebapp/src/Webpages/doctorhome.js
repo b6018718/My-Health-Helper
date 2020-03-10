@@ -27,7 +27,7 @@ function DoctorHomeWithoutSocket(props) {
             </div>
             </div>
             </div>
-            
+
         </div>
     )
 }

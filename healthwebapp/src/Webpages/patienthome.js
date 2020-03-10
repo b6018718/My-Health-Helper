@@ -146,7 +146,7 @@ function PatientHomeWithoutSocket(props) {
                 </Modal>
 
                 <div class = "row"> 
-                    <div className="Paragraph"> Warnings: Lorem ipsum da </div>
+                    <div className="Paragraph">  </div>
                 </div>
             </div>
         </div>

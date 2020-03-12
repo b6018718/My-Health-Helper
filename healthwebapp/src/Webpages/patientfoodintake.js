@@ -16,10 +16,13 @@ function PatientFoodIntakeWithoutSocket (props) {
 
     var foodList = [];
 
+    // Send the food array to the database for processing
     function sendFoodToDB(){
         if(foodList.length != 0){
             console.log(Date.now());
+            // Emit to the database
             props.socket.emit("recordFoodDiary", foodList);
+            // Reset the form
             document.getElementById("Food").textContent = "Today's Food: ";
             foodList = [];
             setSuccessMessage(true);
@@ -27,6 +30,7 @@ function PatientFoodIntakeWithoutSocket (props) {
         }
     }
     
+    // Add the food item into the array
     function addFood(food){          
         document.getElementById("Food").textContent += '\r\n';  
         document.getElementById("Food").textContent += food.name;
@@ -95,6 +99,7 @@ function PatientFoodIntakeWithoutSocket (props) {
         )
     };
 
+// Export with the socket 
 const PatientFoodIntake = props => (
     <SocketContext.Consumer>
         {socket => <PatientFoodIntakeWithoutSocket {...props} socket={socket} />}

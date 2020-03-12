@@ -1,6 +1,5 @@
 import * as React from "react";
 import {Link} from "react-router-dom"
-//interface Props{}
 import {Button, Form, Toast} from "react-bootstrap";
 import '../css/Login.css';
 
@@ -19,6 +18,14 @@ function LoginWithoutSocket(props){
     React.useEffect(() => {
         props.appProps.isRegistering(false);
     }, [props.appProps.registering]);
+
+    /*
+    The user logs into the system by sending authentication details
+    to the server. The server then replies with if the users credentials
+    worked or not. If the user fails an error message Toast will be displayed.
+    If they pass then the user will be redirected to their appropriate
+    homepage, depending on if they are a patient or a doctor.
+    */
 
     React.useEffect(() => {
         // Calculates result from the back end
@@ -91,6 +98,7 @@ function LoginWithoutSocket(props){
      </div>);
 }
 
+// Export with the socket
 const Login = props => (
     <SocketContext.Consumer>
         {socket => <LoginWithoutSocket {...props} socket={socket} />}

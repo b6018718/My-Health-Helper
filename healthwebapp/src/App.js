@@ -7,6 +7,11 @@ import { BrowserRouter } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 
 import SocketContext from './components/socket';
+/*
+ These are the global variables for the
+ application that can be carried across pages
+ in the application.
+*/
 
 function userHasVerifiedDoctor(bool){
   this.setState({ isDoctor: bool});
@@ -41,9 +46,11 @@ function setCurrentSelectedPatient(patientID)
   this.setState({currentSelectedPatient: patientID})
 }
 
+// Connect to the back end that is running on the PC on port 5000
 const socket = socketIOClient("http://127.0.0.1:5000");
 
 function App(props) {
+  // Global variables
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isDoctor, userHasVerifiedDoctor ] = useState(false);
   const [registering, isRegistering] = useState(false);

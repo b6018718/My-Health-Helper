@@ -7,20 +7,22 @@ import "../css/header.css";
 
 export default function Header(props){
     function logOut(e){
+        // Log user out and set local authenticated value to false
         e.preventDefault();
         props.appProps.userHasAuthenticated(false);
     }
     return(
         <>
-            {props.appProps.isAuthenticated ? //(If someone is signed in)
+            {props.appProps.isAuthenticated ? // Check if user is signed in
                 <Navbar bg="primary" expand="lg" variant="dark" role="navigation">
                     <Image src={require('../images/logo.png')}  alt="logo"></Image>
                     <Navbar.Brand href="#">&nbsp; My Health Helper</Navbar.Brand>                    
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto" >
-                   
+                        
                         {!props.appProps.isDoctor ?
+                            // Patient Navigation Bar
                             <Nav>
                                 <LinkContainer to="/Patient/Homepage">
                                     <Nav.Link>Home</Nav.Link>
@@ -46,7 +48,7 @@ export default function Header(props){
                                     <Dropdown.Item href="#/action-1">Welcome to the Patient Hub!</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>                          
                             </Nav>
-                            : //if they are a doctor, change the header buttons
+                            : // Doctor Navigation Bar
                             <Nav>
                                 <LinkContainer to="/HealthCareProfessional/Homepage">
                                     <Nav.Link>Home</Nav.Link>
@@ -62,7 +64,6 @@ export default function Header(props){
                                 <Dropdown.Menu>
                                     <Dropdown.Item href="#/action-1">Welcome back, Doctor.</Dropdown.Item>
                                 </Dropdown.Menu></Dropdown>
-                                
                             </Nav>
                         }
                     </Nav>
@@ -75,6 +76,7 @@ export default function Header(props){
                 :
                 <>
                     {!props.appProps.registering ?
+                        // Log In Navigation Bar
                         <>
                         <Navbar bg="primary" variant="dark">
                             <Image src={require('../images/logo.png')}  alt="logo"></Image>
@@ -89,6 +91,7 @@ export default function Header(props){
                         </Navbar>
                         </>
                         :
+                        // Registration Navigation Bar
                         <>
                         <Navbar bg="primary" variant="dark">
                             <Image src={require('../images/logo.png')}  alt="logo"></Image>

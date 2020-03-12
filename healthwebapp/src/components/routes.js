@@ -9,9 +9,10 @@ import PatientFoodIntake from "../Webpages/patientfoodintake";
 import PatientList from "../Webpages/patientlist"
 import Register from "../Webpages/register";
 import SelectDoctor from "..//Webpages/patientselectdoctor"
-import AppliedRoute from "./appliedRoute";
 import AuthenticedRoute from "./authenticedRoute";
 import UnauthenticatedRoute from "./unauthenticedRoute";
+
+// Establishes the site map for the project
 
 function Routes({ appProps }) {
     return (

@@ -14,6 +14,12 @@ function PatientHomeWithoutSocket(props) {
     const handleClose = () => setShowModal(false);
     const handleShow = () => setShowModal(true);
 
+    /*
+    User clicks the register blood sugar device,
+    depending on the status of the button, either
+    the user is added to or removed from the
+    simulated sensor on the server.
+    */
     function clickRegisterDevice(){
         if(!fingerPrickActivated){
             props.socket.emit("subscribeToFingerPrick", {});
@@ -25,10 +31,12 @@ function PatientHomeWithoutSocket(props) {
     }
 
     React.useEffect(() => {
+        // Emit the request to the server to set the status of the button
         props.socket.emit("checkIfSubscribed", {});
     }, []);
 
     React.useEffect(() => {
+        // Check if already subscribed to set the button on page load
         props.socket.on("checkIfSubscribedResults", function (data){
             if(data.result != fingerPrickActivated)
                 setFingerPrickActivated(data.result);
@@ -39,6 +47,7 @@ function PatientHomeWithoutSocket(props) {
     }, []);
 
     React.useEffect(() => {
+        // Debug information for finger prick simulated sensor
         props.socket.on("fingerPrickData", function(data){ 
             console.log(data);
         });
@@ -50,18 +59,20 @@ function PatientHomeWithoutSocket(props) {
     var tick;
     var spinner;
     function bluetoothClicked(event){
+        // Set the button to be blue
         setBluetoothSelected(false);
         var buttonList = event.target.parentNode.childNodes;
         for (let button of buttonList){
             button.classList.remove("active");
         }
         
+        // Add the bootstrap active element to the button
         var button = event.target;
         button.classList.add("active");
-
         tick = event.target.childNodes[1];
         spinner = event.target.childNodes[2];
-
+        
+        // Add the spinner to simulate connecting to the sensor
         spinner.classList.remove("hide");
         setTimeout(function(){
             spinner.classList.add("hide");

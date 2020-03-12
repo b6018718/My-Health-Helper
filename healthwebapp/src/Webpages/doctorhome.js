@@ -4,8 +4,7 @@ import '../css/PatientHome.css';
 import { LinkContainer } from "react-router-bootstrap";
 import {Button} from "react-bootstrap";
 
-//interface Props{}
-
+// Doctor Homepage
 function DoctorHomeWithoutSocket(props) {
     let name = `${props.appProps.nAccLastName}`;
     return (
@@ -32,7 +31,7 @@ function DoctorHomeWithoutSocket(props) {
     )
 }
 
-
+// Export the home page with the socket
 const DoctorHome = props => (
     <SocketContext.Consumer>
         {socket => <DoctorHomeWithoutSocket {...props} socket={socket} />}

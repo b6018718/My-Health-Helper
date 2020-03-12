@@ -16,6 +16,7 @@ function PatientExerciseWithoutSocket (props) {
     var exerciseList = [];
 
     function sendExerciseToDB(){
+        // Emit the data to the database, then reset the page
         if(exerciseList.length != 0){
             console.log(Date.now());
             props.socket.emit("recordExerciseDiary", exerciseList);
@@ -26,6 +27,7 @@ function PatientExerciseWithoutSocket (props) {
     }
 
     function reset(){
+        // Reset all the inputs on the form
         document.getElementById("Exercise").textContent = "Today's Exercise:";
         exerciseList = [];
         document.getElementById("swimmingTime").value = "00:00";
@@ -37,7 +39,7 @@ function PatientExerciseWithoutSocket (props) {
     }
     
     function addExercise(exercise, time){
-
+        // Add an object into the exercise array
         if(time != ""){
             // Get minutes
             var time = time.split(':'); // split it at the colons
@@ -53,6 +55,7 @@ function PatientExerciseWithoutSocket (props) {
         }
     }
 
+    // Create a description of the time for the card
     function handleChangeSwim(time){
         var time = time.split(':');
         var minutes = (+time[0]) * 60 + (+time[1]);

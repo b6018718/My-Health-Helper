@@ -2,13 +2,9 @@ import * as React from "react";
 import { Link } from "react-router-dom"
 //interface Props{}
 import { ListGroup } from "react-bootstrap";
-//import '../css/Login.css';
 import '../css/PatientDetails.css';
-//import '../css/Login.css';
-//import '../css/Register.css';
 import SocketContext from '../components/socket'
 import { Chart } from "react-google-charts"
-
 
 //interface Props{}
 function DisplayPatientDetailsWithoutSocket(props) {
@@ -111,7 +107,6 @@ function DisplayPatientDetailsWithoutSocket(props) {
         var graphData = []
         graphData.push(["DateTime", "mmol/L"])
         var bloodSugarDataValues = bloodSugarData.fingerPrick;
-        //console.log(bloodSugarData)
         for (let bloodSugarDataValue of bloodSugarDataValues) {
             graphData.push(formatBloodSugarDataForGraph(bloodSugarDataValue))
         }
@@ -182,7 +177,6 @@ function DisplayPatientDetailsWithoutSocket(props) {
         if (dataList !== null && dataList !== "" && dataList[dataSetName] !== [] && dataList[dataSetName].length !== 0) {
             var list = createDataList(dataList, dataSetName, valueName, dateName, itemName, message)
             var graphs = createModuleGraphs(dataList, dataSetName, dateName, valueName, groupingName, dTitle, dXaxis, dYaxis, recentTitle)
-            // var bloodSugarGraph = createBloodSugarGraph(dataList)
             return (
                 <div>
                     <br />
@@ -206,7 +200,6 @@ function DisplayPatientDetailsWithoutSocket(props) {
         var i = 0;
         var listItemArray = [];
         var dataListValues = dataList[dataName].reverse();
-        //console.log(bloodSugarData)
         for (let dataListValue of dataListValues) {
             listItemArray.push(addItemToDataList(dataListValue, valueName, dateName, itemName, message, i));
             i++;
@@ -377,8 +370,6 @@ function DisplayPatientDetailsWithoutSocket(props) {
 
 
 }
-
-
 const PatientDetails = props => (
     <SocketContext.Consumer>
         {socket => <DisplayPatientDetailsWithoutSocket {...props} socket={socket} />}

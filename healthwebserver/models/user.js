@@ -1,7 +1,7 @@
-const  mongoose  = require("mongoose");
-const  Schema  =  mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const userSchema  =  new Schema(
+const userSchema = new Schema(
     {
         forename: {
             type: String,
@@ -23,33 +23,33 @@ const userSchema  =  new Schema(
             type: Boolean,
             required: true
         },
-        sex:{type:String,default:null},
-        DoB:{type:Date,default:null},
-        mobile:{type:String,default:null},
-        telephone:{type:String,default:null},
-        address:{type:String,default:null},
-        NHSnumber:{type:String,default:null},
-        idAssignedDoctor:{
+        sex: { type: String, default: null },
+        DoB: { type: Date, default: null },
+        mobile: { type: String, default: null },
+        telephone: { type: String, default: null },
+        address: { type: String, default: null },
+        NHSnumber: { type: String, default: null },
+        idAssignedDoctor: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: false
         },
         fingerPrick: [{
-            time: {type: Date, default: Date.now},
-            millimolesPerLitre: {type: Number}
+            time: { type: Date, default: Date.now },
+            millimolesPerLitre: { type: Number }
         }],
         foodRecord: [{
-            time: {type: Date, default: Date.now},
-            foodname: {type: String},
-            calories: {type: Number},
-            foodgroup: {type: String}
+            time: { type: Date, default: Date.now },
+            foodname: { type: String },
+            calories: { type: Number },
+            foodgroup: { type: String }
         }],
         exercise: [{
-            time: {type: Date, default: Date.now},
-            exercisename: {type: String},
-            exercisetype: {type: String},
-            exercisedurationmins: {type: Number}
-        }]     
+            time: { type: Date, default: Date.now },
+            exercisename: { type: String },
+            exercisetype: { type: String },
+            exercisedurationmins: { type: Number }
+        }]
     },
     { timestamps: true }
 );

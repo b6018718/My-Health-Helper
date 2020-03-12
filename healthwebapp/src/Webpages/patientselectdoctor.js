@@ -1,15 +1,12 @@
 import * as React from "react";
-import {Link} from "react-router-dom"
 //interface Props{}
-import {Button, Form, Col, Row} from "react-bootstrap";
+import { Button, } from "react-bootstrap";
 //import '../css/Login.css';
 import '../css/PatientSelectDoctor.css';
 import '../css/Login.css';
 import '../css/Register.css';
 import SocketContext from '../components/socket'
-
-
-function SelectDoctorWithoutSocket(props){
+function SelectDoctorWithoutSocket(props) {
     // Initialise doctor list
     const [doctorList, setDoctorList] = React.useState("");
     const [idSelected, setSelectedId] = React.useState("");
@@ -17,8 +14,8 @@ function SelectDoctorWithoutSocket(props){
     React.useEffect(() => {
         props.socket.emit("getMyDoctor", {});
         //props.socket.emit("getAllDoctors", {});
-        
-        props.socket.on("getAllDoctorsResults", function (data){
+
+        props.socket.on("getAllDoctorsResults", function (data) {
             console.log(data)
             setDoctorList(addDoctorList(data));
         });
@@ -28,7 +25,7 @@ function SelectDoctorWithoutSocket(props){
     }, []);
 
     React.useEffect(() => {
-        props.socket.on("getMyDoctorResults", function (data){
+        props.socket.on("getMyDoctorResults", function (data) {
             setDoctorList(addDoctorList(data));
         });
         return () => {
@@ -37,7 +34,7 @@ function SelectDoctorWithoutSocket(props){
     }, []);
 
     React.useEffect(() => {
-        props.socket.on("updateAssignedDoctorResult", function(data){ 
+        props.socket.on("updateAssignedDoctorResult", function (data) {
             props.history.push('/Patient/Homepage');
         });
 
@@ -46,25 +43,23 @@ function SelectDoctorWithoutSocket(props){
         };
     }, []);
 
-    
-    function addDoctorList(data)
-    {
+
+    function addDoctorList(data) {
         console.log(data)
         var i = 0;
-        var buttonArray =[];
+        var buttonArray = [];
         var doctors = data.doctors;
-        for(let doctor of doctors){
+        for (let doctor of doctors) {
             buttonArray.push(addButtonToList(doctor, i, data.idAssignedDoctor));
             i++;
         }
         return buttonArray;
     }
 
-    function addButtonToList(doctor, inc, assignedId)
-    {
-        if(assignedId != null && assignedId == doctor._id){
+    function addButtonToList(doctor, inc, assignedId) {
+        if (assignedId != null && assignedId === doctor._id) {
             var button = (<button type="button" key={inc} onClick={doctorClicked} value={doctor._id} className="list-group-item list-group-item-action active">{`${doctor.forename} ${doctor.surname}`}</button>)
-        
+
         } else {
             var button = (<button type="button" key={inc} onClick={doctorClicked} value={doctor._id} className="list-group-item list-group-item-action">{`${doctor.forename} ${doctor.surname}`}</button>)
         }
@@ -72,9 +67,9 @@ function SelectDoctorWithoutSocket(props){
         //document.getElementById("doctorList").appendChild(button);
     }
 
-    function doctorClicked(event){
+    function doctorClicked(event) {
         var buttonList = event.target.parentNode.childNodes;
-        for (let button of buttonList){
+        for (let button of buttonList) {
             button.classList.remove("active");
         }
 
@@ -83,31 +78,31 @@ function SelectDoctorWithoutSocket(props){
         button.classList.add("active");
     }
 
-    function handleSubmit(event){
+    function handleSubmit(event) {
         // Log in system designed around code from https://serverless-stack.com/chapters/redirect-on-login.html
-        if(idSelected != ""){
+        if (idSelected != "") {
             props.socket.emit("updateAssignedDoctor", idSelected);
         }
     }
 
 
-    return(
-    <div className = "selectDoctor">
-        <br></br>
-        <div className="docContain">
-        <div className="Title">Please select your doctor from the list below:</div>
-
-            <div className = "list-group">
-                {doctorList}
-            </div>
-
+    return (
+        <div className="selectDoctor">
             <br></br>
-            
-            <Button className="registerButton" variant="primary" type="submit" onClick={handleSubmit} value="patient">
-                        Select Doctor
+            <div className="docContain">
+                <div className="Title">Please select your doctor from the list below:</div>
+
+                <div className="list-group">
+                    {doctorList}
+                </div>
+
+                <br></br>
+
+                <Button className="registerButton" variant="primary" type="submit" onClick={handleSubmit} value="patient">
+                    Select Doctor
             </Button>
+            </div>
         </div>
-    </div>
     )
 }
 

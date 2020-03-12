@@ -11,9 +11,9 @@ export default function AuthenticatedRoute({ component: C, appProps, ...rest }) 
         appProps.appProps.isAuthenticated
           ? <C {...props} {...appProps} />
           : <Redirect
-              to={`/?redirect=${props.location.pathname}${props.location
-                .search}`}
-            />}
+            to={`/?redirect=${props.location.pathname}${props.location
+              .search}`}
+          />}
     />
   );
 }

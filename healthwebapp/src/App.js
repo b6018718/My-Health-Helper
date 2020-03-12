@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import './css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/header';
@@ -12,39 +12,6 @@ import SocketContext from './components/socket';
  application that can be carried across pages
  in the application.
 */
-
-function userHasVerifiedDoctor(bool){
-  this.setState({ isDoctor: bool});
-}
-
-function isRegistering(bool){
-  this.setState({ registering: bool });
-}
-
-function passUserFirstName(fname)
-{
-  this.setState({ nAccFirstName: fname});
-}
-
-function passUserLastName(lname)
-{
-this.setState({ nAccLastName: lname});
-}
-
-function passUserEmail(email)
-{
-this.setState({ nAccEmail: email});
-}
-
-function passUserPassword(password)
-{
-this.setState({ nAccPassword: password});
-}
-
-function setCurrentSelectedPatient(patientID)
-{
-  this.setState({currentSelectedPatient: patientID})
-}
 
 // Connect to the back end that is running on the PC on port 5000
 const socket = socketIOClient("http://127.0.0.1:5000");

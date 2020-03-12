@@ -25,14 +25,14 @@ To run Mongo DB on a Sheffield Hallam computer, go this link:[https://www.mongod
 
 Once downloaded, unzip the file on your desktop. Open the folder, you should see a bin folder and other files inside it. Take note of the location of the bin folder. Create a new folder inside it create a folder called "data". Inside that folder, create folder called "db".
 
-Open command prompt and run the following command to start running mongo DB "[file path to bin folder]"\mongod.exe --dbpath [file path to db folder you created].
+Open command prompt and run the following command to start running mongo DB "[file path to bin folder]\mongod.exe --dbpath [file path to db folder you created]".
 
 Once you have executed this command, Mongo DB should now be running on your computer.
 
 If you are not running this project on a Sheffield Hallam computer, you can choose to install the MSI package instead of the ZIP, and run the MSI installer to install Mongo DB on your computer have it run as service on your computer. Once you download the MSI package, all you need to do is run it and follow it's installation wizard.
 
 #### Mongo DB Compass (Optional)
-Mongo DB Compass is a GUI interface that can be installed to view the database objects stored in Mongo DB. It is not need to run the project, but can be useful for seeing what is happening inside the database.
+Mongo DB Compass is a GUI interface that can be installed to view the database objects stored in Mongo DB. It is not needed to run the project, but can be useful for seeing what is happening inside the database.
 
 If running the project on a Sheffield Hallam computer, Mongo DB can be found and run from AppsAnywere. If you are not running the project on a Sheffield Hallam computer, you can download and install Mongo DB Compass from the following link: [https://www.mongodb.com/download-center/compass](https://www.mongodb.com/download-center/compass). You will need to select you Operating System as the platform before downloading it.
 
@@ -52,7 +52,7 @@ Once npm i has finished installing the packages, type npm start and hit enter to
 
 ### Running the front end client
 
-To run the back end server, you will need to open the healthwebapp folder. Once in the folder, replace the file patch in the address bar with "cmd" and hit enter. This will open the folder in the command prompt.
+To run the front end client, you will need to open the healthwebapp folder. Once in the folder, replace the file patch in the address bar with "cmd" and hit enter. This will open the folder in the command prompt.
 
 You will then need to type npm i and hit enter to install the required Node JS packages to run the client.
 

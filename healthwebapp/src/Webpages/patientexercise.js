@@ -17,9 +17,11 @@ function PatientExerciseWithoutSocket (props) {
 
     function sendExerciseToDB(){
         if(exerciseList.length != 0){
+            console.log(Date.now());
             props.socket.emit("recordExerciseDiary", exerciseList);
             reset();
             setSuccessMessage(true);
+            console.log(Date.now());
         }
     }
 

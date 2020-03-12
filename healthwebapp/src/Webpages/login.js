@@ -78,7 +78,7 @@ function LoginWithoutSocket(props){
             </div>
         </Form>
         {showFailMessage ?
-            <Toast className="Toast" show={showFailMessage} onClose={toggleFailMessage}>
+            <Toast className="ToastLogin" show={showFailMessage} onClose={toggleFailMessage}>
                 <Toast.Header>
                 <strong className="mr-auto">Log In Error</strong>
                 </Toast.Header>

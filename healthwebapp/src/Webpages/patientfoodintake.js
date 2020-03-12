@@ -18,10 +18,12 @@ function PatientFoodIntakeWithoutSocket (props) {
 
     function sendFoodToDB(){
         if(foodList.length != 0){
+            console.log(Date.now());
             props.socket.emit("recordFoodDiary", foodList);
             document.getElementById("Food").textContent = "Today's Food: ";
             foodList = [];
             setSuccessMessage(true);
+            console.log(Date.now());
         }
     }
     

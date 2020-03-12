@@ -62,17 +62,23 @@ function DisplayPatientDetailsWithoutSocket(props)
         });
 
         props.socket.on("realTimeFingerPrickData", function (data){
+            console.log(Date.now());
             setBloodSugarModule(createBloodSugarModule(data));
+            console.log(Date.now());
         });
 
         props.socket.on("realTimeFood", function (data){
+            console.log(Date.now());
             setFoodDiaryModule(createListGraphModule(data,"foodRecord","time","calories","foodgroup","Daily Calorie Intake","Day","Calories",'Most recent diet vairety for: '
             ,"foodname"," calories from a ","My Food Diary: "));
+            console.log(Date.now());
         });
 
         props.socket.on("realTimeExercise", function (data){
+            console.log(Date.now());
             setExerciseDiaryModule(createListGraphModule(data, "exercise","time","exercisedurationmins","exercisetype","Daily exericse duration: ","Day","Exercise duration(minutes)",'Most recent exercise vairety for: '
             ,"exercisename"," min done by ","My Exercise Diary: "));
+            console.log(Date.now());
         });
 
         return () => {

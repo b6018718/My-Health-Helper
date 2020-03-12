@@ -5,9 +5,12 @@
 **Please read this document before running the project**
 
 To run the project, you will need to have to have the following installed and running on your computer: 
--MongoDB
--NodeJS
--Google Chrome
+
+* MongoDB
+
+* NodeJS
+
+* Google Chrome
 
 If you do not have these running on your computer, this document will go over the setup and installation process for these programs. Please note, this app is designed to be hosted from a computer running Windows 10.
 ## Installing required programs

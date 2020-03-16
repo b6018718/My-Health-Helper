@@ -12,6 +12,7 @@ const io = socketIo(server);
 const port = process.env.PORT || 5000;
 
 const User = require("./models/user");
+const PatientModule = require("./models/patinetmodule")
 const connect = require("./dbconnection");
 
 // Sanitize data
@@ -30,6 +31,48 @@ var userUpdateSubscribers = [];
  It requires the user to communicate in a two-way
  method that allows real time communication.
 */
+
+connect.then( function (db) {
+createBasePatientModueles()
+});
+
+async function createBasePatientModueles()
+{
+  mongoose.connection.db.listCollections().toArray(async function(err,names){
+    if(err)
+      { console.log(err)}
+    else
+    {
+      var patientModulesNotCreated = true
+      for (i= 0; i< names.length && patientModulesNotCreated;i++)
+      {
+        if(names[i].name == "patientmodules")
+        {
+          var documentCount = await PatientModule.countDocuments({}).exec()
+          console.log(documentCount)
+          if(documentCount != 0)
+          {
+          patientModulesNotCreated = false;
+          }
+        }
+        
+      }
+      console.log(patientModulesNotCreated)
+      if (patientModulesNotCreated)
+      {
+        var pModule = new PatientModule({moduleID:1,navBarName:"Record Diet",homePageName:"Record Diet",urlLink:"/Patient/Food-Intake",moduleName:"Diet", homePageFunctionCall: null});
+        pModule.save();
+        pModule = new PatientModule({moduleID:2,navBarName:"Record Exercise",homePageName:"Record Exercise",urlLink:"/Patient/Exercise",moduleName:"Exercise", homePageFunctionCall: null});
+        pModule.save();
+        pModule = new PatientModule({moduleID:3,navBarName:null,homePageName:"Register Finger Prick Device",urlLink:null,moduleName:"Blood sugar", homePageFunctionCall: "handleShow"});
+        pModule.save();
+      }
+    }
+    }
+    )
+}
+
+//Initialise patient module collection/document if it does not exist
 
 io.on("connection", socket => {
   //console.log("Client connected");

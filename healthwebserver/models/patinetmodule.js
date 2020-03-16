@@ -18,6 +18,9 @@ const patientModuleSchema = new Schema(
         },
         moduleName: {
             type: String
+        },
+        homePageFunctionCall: {
+            type: String
         }
 
     }

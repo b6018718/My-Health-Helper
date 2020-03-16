@@ -49,7 +49,12 @@ const userSchema = new Schema(
             exercisename: { type: String },
             exercisetype: { type: String },
             exercisedurationmins: { type: Number }
-        }]
+        }],
+        enabledModules: [{
+                moduleID: {type: Number},
+                moduleName: {type: String},
+                enabled: {type: Boolean}
+            }]
     },
     { timestamps: true }
 );

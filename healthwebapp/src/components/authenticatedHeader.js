@@ -1,3 +1,11 @@
+import * as React from "react";
+//interface Props{}
+import { Button, Form, Nav, Navbar, FormControl, NavItem, Dropdown, DropdownButton, ButtonGroup, Image } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
+import SocketContext from './socket'
+
+function AuthenticatedHeaderWithoutSocket(props)
+{
 const [bloodSugarModule, setBloodSugarModule] = React.useState(""); //stores the html section for the patient's blood sugar data
 React.useEffect(() => {
     if (props.appProps.isDoctor) { //Checks if user requesting record is a patient or doctor
@@ -7,13 +15,18 @@ React.useEffect(() => {
         props.socket.emit("getMyPatientRecord", {});//requests details for patient record from the back end server
     } //if user is a patient, the server  already knows their patient ID so we don't need to pass it to the server
     props.socket.on("getMyPatientRecordResults", function (data) { //listener for patiient details information back from back end server
-        setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
+        //setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
         return () => {
             props.socket.off("getMyPatientRecordResults"); //turns off listener sockets for receiving data
         }
     });
 }, []);
 
+function logOut(e) {
+    // Log user out and set local authenticated value to false
+    e.preventDefault();
+    props.appProps.userHasAuthenticated(false);
+}
 
 function DrNotifications() {
     return <Dropdown.Item href="#/action-1">Dr TEST!</Dropdown.Item>;
@@ -22,7 +35,7 @@ function userNotifications() {
     return <Dropdown.Item href="#/action-1">User TEST!</Dropdown.Item>;
 }
 
-
+return(
 <Navbar bg="primary" expand="lg" variant="dark" role="navigation">
 <Image src={require('../images/logo.png')} alt="logo"></Image>
 <Navbar.Brand href="#">&nbsp; My Health Helper</Navbar.Brand>
@@ -87,3 +100,12 @@ function userNotifications() {
     <Button onClick={logOut} variant="outline-light">Log out</Button>
 </Form>
 </Navbar>
+);
+}
+const AuthenticatedHeader = props => (
+    <SocketContext.Consumer>
+        {socket => <AuthenticatedHeaderWithoutSocket {...props} socket={socket} />}
+    </SocketContext.Consumer>
+)
+
+export default AuthenticatedHeader;

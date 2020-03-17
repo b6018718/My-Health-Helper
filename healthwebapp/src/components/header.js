@@ -2,10 +2,8 @@ import * as React from "react";
 //interface Props{}
 import { Button, Form, Nav, Navbar, FormControl, NavItem, Dropdown, DropdownButton, ButtonGroup, Image } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import SocketContext from '../components/socket'
 import "../css/header.css";
-import authenticatedHeader from "./authenticatedHeader";
-
+import AuthenticatedHeader from "./AuthenticatedHeader";
 
 export default function Header(props) {
     function logOut(e) {
@@ -16,7 +14,7 @@ export default function Header(props) {
     return (
         <>
             {props.appProps.isAuthenticated ? // Check if user is signed in       
-            <authenticatedHeader/>
+            <AuthenticatedHeader appProps = { props.appProps} />
                 :
                 <>
                     {!props.appProps.registering ?

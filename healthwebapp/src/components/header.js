@@ -11,6 +11,16 @@ export default function Header(props) {
         e.preventDefault();
         props.appProps.userHasAuthenticated(false);
     }
+
+    function DrNotifications()
+    {
+        return <Dropdown.Item href="#/action-1">Dr TEST!</Dropdown.Item>;
+    }
+    function userNotifications()
+    {
+return <Dropdown.Item href="#/action-1">User TEST!</Dropdown.Item>;
+    }
+
     return (
         <>
             {props.appProps.isAuthenticated ? // Check if user is signed in
@@ -39,13 +49,19 @@ export default function Header(props) {
                                     <LinkContainer to='/register/Select-Doctor'>
                                         <Nav.Link>Change My Doctor</Nav.Link>
                                     </LinkContainer>
+
+
+                                    {
+                                        //Notification Section for User
+                                    }
+
                                     <Dropdown as={ButtonGroup}>
                                         <Button type="button" className="NotificationButton" variant="light" className="pull-right">
                                             <span className="NotificationText">Notifications</span><span className="badge badge-danger ml-2">113</span>
                                         </Button>
                                         <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                         <Dropdown.Menu>
-                                            <Dropdown.Item href="#/action-1">Welcome to the Patient Hub!</Dropdown.Item>
+                                        {userNotifications()}
                                         </Dropdown.Menu></Dropdown>
                                 </Nav>
                                 : // Doctor Navigation Bar
@@ -56,13 +72,18 @@ export default function Header(props) {
                                     <LinkContainer to="/HealthCareProfessional/My-Patient-List">
                                         <Nav.Link>My Patients</Nav.Link>
                                     </LinkContainer>
+
+                                    {
+                                        //Notification Section for Dr
+                                    }
                                     <Dropdown as={ButtonGroup}>
                                         <Button type="button" className="NotificationButton" variant="light" >
                                             <span className="NotificationText">Notifications</span><span className="badge badge-danger ml-2">1</span>
                                         </Button>
                                         <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                         <Dropdown.Menu>
-                                            <Dropdown.Item href="#/action-1">Welcome back, Doctor.</Dropdown.Item>
+
+                                          {DrNotifications()}
                                         </Dropdown.Menu></Dropdown>
                                 </Nav>
                             }

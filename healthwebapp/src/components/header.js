@@ -8,34 +8,35 @@ import "../css/header.css";
 
 export default function Header(props) {
     const [bloodSugarModule, setBloodSugarModule] = React.useState(""); //stores the html section for the patient's blood sugar data
-    React.useEffect(() =>{
-        if (props.appProps.isDoctor) { //Checks if user requesting record is a patient or doctor
-            props.socket.emit("getMyPatientRecord", { selectedPatientID: props.appProps.currentSelectedPatient })//requests details for patient record from the back end server
-        }//if user is a doctor, we need to pass user ID of selected patient to the database when making the data request
-        else {
-            props.socket.emit("getMyPatientRecord", {});//requests details for patient record from the back end server
-        } //if user is a patient, the server  already knows their patient ID so we don't need to pass it to the server
-        props.socket.on("getMyPatientRecordResults", function (data) { //listener for patiient details information back from back end server
-            setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
-        });
-    },[]);
-    
-    
+    if (props.appProps.isAuthenticated == true) {
+        React.useEffect(() => {
+            if (props.appProps.isDoctor) { //Checks if user requesting record is a patient or doctor
+                props.socket.emit("getMyPatientRecord", { selectedPatientID: props.appProps.currentSelectedPatient })//requests details for patient record from the back end server
+            }//if user is a doctor, we need to pass user ID of selected patient to the database when making the data request
+            else {
+                props.socket.emit("getMyPatientRecord", {});//requests details for patient record from the back end server
+            } //if user is a patient, the server  already knows their patient ID so we don't need to pass it to the server
+            props.socket.on("getMyPatientRecordResults", function (data) { //listener for patiient details information back from back end server
+                setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
+                return () => {
+                    props.socket.off("getMyPatientRecordResults"); //turns off listener sockets for receiving data
+                }
+            });
+        }, []);
+    }
+
     function logOut(e) {
         // Log user out and set local authenticated value to false
         e.preventDefault();
         props.appProps.userHasAuthenticated(false);
     }
 
-    function DrNotifications()
-    {
+    function DrNotifications() {
         return <Dropdown.Item href="#/action-1">Dr TEST!</Dropdown.Item>;
     }
-    function userNotifications()
-    {
-return <Dropdown.Item href="#/action-1">User TEST!</Dropdown.Item>;
+    function userNotifications() {
+        return <Dropdown.Item href="#/action-1">User TEST!</Dropdown.Item>;
     }
-
     return (
         <>
             {props.appProps.isAuthenticated ? // Check if user is signed in
@@ -76,7 +77,7 @@ return <Dropdown.Item href="#/action-1">User TEST!</Dropdown.Item>;
                                         </Button>
                                         <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                         <Dropdown.Menu>
-                                        {userNotifications()}
+                                            {userNotifications()}
                                         </Dropdown.Menu></Dropdown>
                                 </Nav>
                                 : // Doctor Navigation Bar
@@ -98,7 +99,7 @@ return <Dropdown.Item href="#/action-1">User TEST!</Dropdown.Item>;
                                         <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                                         <Dropdown.Menu>
 
-                                          {DrNotifications()}
+                                            {DrNotifications()}
                                         </Dropdown.Menu></Dropdown>
                                 </Nav>
                             }

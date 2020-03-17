@@ -16,15 +16,14 @@ React.useEffect(() => {
     } //if user is a patient, the server  already knows their patient ID so we don't need to pass it to the server
     props.socket.on("getMyPatientRecordResults", function (data) { //listener for patiient details information back from back end server
         setBloodSugarWarning(createBloodSugarWarning(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
-        console.log(bloodSugarModuleWarning);
-        
+        console.log(bloodSugarModuleWarning);  
     });
     props.socket.on("realTimeFingerPrickData", function (data) { //refreshes blood sugar section if any changes are made to the data on the database 
         setBloodSugarWarning(createBloodSugarWarning(data));
     });
     return () => {
         props.socket.off("getMyPatientRecordResults"); //turns off listener sockets for receiving data
-        props.socket.off("realTimeFingerPrickData");
+        props.socket.off("realTimeFingerPrickData"); //turns off listener sockets for receiving data
     }
 }, []);
 
@@ -51,9 +50,12 @@ function createBloodSugarWarning(dataList) { //creates html section for blood su
 function createBloodSugarListWarning(bloodSugarData) { //creates list of blood sugar data values
     var i = 0;//incremented to give list objects unique key values
     var WarninglistItemArray = [];//used to store list values
-    var bloodSugarDataValues = bloodSugarData.fingerPrick.reverse(); //orders data so most recent data appears at the top of the list
+    var bloodSugarDataValues = JSON.parse(JSON.stringify(bloodSugarData.fingerPrick)); //orders data so most recent data appears at the top of the list
+    bloodSugarDataValues.reverse();
     for (let bloodSugarDataValue of bloodSugarDataValues) {
+        if(bloodSugarDataValue.millimolesPerLitre <= 3 || bloodSugarDataValue.millimolesPerLitre >= 9){
         WarninglistItemArray.push(addItemToBloodSugarListWarning(bloodSugarDataValue, i));//formats and pushs values into list
+        }
             i++; //increments unique key
     }
 var returnedlistItemArray = WarninglistItemArray.slice(0, 10);
@@ -61,14 +63,12 @@ console.log(returnedlistItemArray);
     return returnedlistItemArray; //returns list values
 }
 
-
 function addItemToBloodSugarListWarning(data, i) {
     var date = new Date(data.time) //formats date 
-       if(data.millimolesPerLitre <= 3 || data.millimolesPerLitre >= 9){// Checls if data is within the danger range 
-            return (<Dropdown.Item variant="danger" key={i} >{data.millimolesPerLitre}{"mmol/L"} </Dropdown.Item>)
-        }
+        var returnedData = <Dropdown.Item variant="danger" key={i} >{data.millimolesPerLitre}{"mmol/L"} </Dropdown.Item>
+            return (returnedData)
+      
 }
-
 
 return(
 <Navbar bg="primary" expand="lg" variant="dark" role="navigation">

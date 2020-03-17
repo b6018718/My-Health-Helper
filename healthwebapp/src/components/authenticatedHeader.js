@@ -17,13 +17,15 @@ React.useEffect(() => {
     props.socket.on("getMyPatientRecordResults", function (data) { //listener for patiient details information back from back end server
         setBloodSugarWarning(createBloodSugarWarning(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
         console.log(bloodSugarModuleWarning);
-        return () => {
-            props.socket.off("getMyPatientRecordResults"); //turns off listener sockets for receiving data
-        }
+        
     });
     props.socket.on("realTimeFingerPrickData", function (data) { //refreshes blood sugar section if any changes are made to the data on the database 
         setBloodSugarWarning(createBloodSugarWarning(data));
     });
+    return () => {
+        props.socket.off("getMyPatientRecordResults"); //turns off listener sockets for receiving data
+        props.socket.off("realTimeFingerPrickData");
+    }
 }, []);
 
 function logOut(e) {
@@ -48,13 +50,13 @@ function createBloodSugarWarning(dataList) { //creates html section for blood su
 
 function createBloodSugarListWarning(bloodSugarData) { //creates list of blood sugar data values
     var i = 0;//incremented to give list objects unique key values
-    var listItemArray = [];//used to store list values
+    var WarninglistItemArray = [];//used to store list values
     var bloodSugarDataValues = bloodSugarData.fingerPrick.reverse(); //orders data so most recent data appears at the top of the list
     for (let bloodSugarDataValue of bloodSugarDataValues) {
-            listItemArray.push(addItemToBloodSugarListWarning(bloodSugarDataValue, i));//formats and pushs values into list
+        WarninglistItemArray.push(addItemToBloodSugarListWarning(bloodSugarDataValue, i));//formats and pushs values into list
             i++; //increments unique key
     }
-var returnedlistItemArray = listItemArray.slice(0, 10);
+var returnedlistItemArray = WarninglistItemArray.slice(0, 10);
 console.log(returnedlistItemArray);
     return returnedlistItemArray; //returns list values
 }

@@ -23,6 +23,11 @@ function DoctorHomeWithoutSocket(props) {
                             <span className="LargeText"> View patients </span>
                         </Button>
                     </LinkContainer>
+                    <LinkContainer to="/HealthCareProfessional/Select-Patient-Modules"> 
+                        <Button variant="primary" type="submit" className="ModuleButton" >
+                            <span className="LargeText"> View patients modules</span>
+                        </Button>
+                    </LinkContainer>
                 </div>
                 </div>
             </div>

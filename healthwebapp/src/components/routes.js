@@ -11,7 +11,7 @@ import Register from "../Webpages/register";
 import SelectDoctor from "..//Webpages/patientselectdoctor"
 import AuthenticedRoute from "./authenticedRoute";
 import UnauthenticatedRoute from "./unauthenticedRoute";
-
+import PatientModulesList from "..//Webpages/selectpatientmodules"
 // Establishes the site map for the project
 
 function Routes({ appProps }) {
@@ -27,6 +27,7 @@ function Routes({ appProps }) {
             <AuthenticedRoute path='/HealthCareProfessional/Homepage' exact component={DoctorHome} appProps={{ appProps }} />
             <AuthenticedRoute path='/HealthCareProfessional/My-Patient-List' exact component={PatientList} appProps={{ appProps }} />
             <AuthenticedRoute path='/HealthCareProfessional/Patient-Details' exact component={PatientDetails} appProps={{ appProps }} />
+            <AuthenticedRoute path='/HealthCareProfessional/Select-Patient-Modules' exact component={PatientModulesList} appProps = {{appProps}}/>
             <Route path='/' render={() => <div> Error 404: page not found :(</div>} />
         </Switch>
     );

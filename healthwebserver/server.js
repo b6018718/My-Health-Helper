@@ -32,13 +32,14 @@ var userUpdateSubscribers = [];
  method that allows real time communication.
 */
 
+
+//Initialise patient module collection/documents if it does not exist
 connect.then( function (db) {
 createBasePatientModueles()
 });
-
 async function createBasePatientModueles()
 {
-  mongoose.connection.db.listCollections().toArray(async function(err,names){
+  mongoose.connection.db.listCollections().toArray(async function(err,names){ //get list of all mongo db collections
     if(err)
       { console.log(err)}
     else
@@ -46,19 +47,19 @@ async function createBasePatientModueles()
       var patientModulesNotCreated = true
       for (i= 0; i< names.length && patientModulesNotCreated;i++)
       {
-        if(names[i].name == "patientmodules")
+        if(names[i].name == "patientmodules") //check if patientmodule collection exists
         {
           var documentCount = await PatientModule.countDocuments({}).exec()
-          console.log(documentCount)
-          if(documentCount != 0)
+          //console.log(documentCount)
+          if(documentCount != 0) //check if collection is pop
           {
           patientModulesNotCreated = false;
           }
         }
         
       }
-      console.log(patientModulesNotCreated)
-      if (patientModulesNotCreated)
+     // console.log(patientModulesNotCreated)
+      if (patientModulesNotCreated) //if patient module is not created, populate collection with details for exercise, diet and blood sugar modules
       {
         var pModule = new PatientModule({moduleID:1,navBarName:"Record Diet",homePageName:"Record Diet",urlLink:"/Patient/Food-Intake",moduleName:"Diet", homePageFunctionCall: null});
         pModule.save();
@@ -72,7 +73,7 @@ async function createBasePatientModueles()
     )
 }
 
-//Initialise patient module collection/document if it does not exist
+
 
 io.on("connection", socket => {
   //console.log("Client connected");
@@ -220,6 +221,20 @@ io.on("connection", socket => {
       socket.emit("getMyPatientsResults", { myPatients: myPatients });
     }
   }
+
+    // Get all the patients and there modules for a doctor
+    socket.on("getMyPatientsModules", async (data) => {
+      emitMyPatientsModules(socket);
+    });
+  
+    async function emitMyPatientsModules(socket) {
+      if (authenticated) {
+        // Get all the patients and their modules that have the doctors user id as their doctor
+        let myPatients = await User.find({ idAssignedDoctor: userId }, { forename: 1, _id: 1, email: 1, surname: 1 }).sort({ forename: 1 }).exec();
+        // Emit the entire array to the socket
+        socket.emit("getMyPatientsModulesResults", { myPatients: myPatients });
+      }
+    }
 
   // Add an item of food for the user
   socket.on("recordFoodDiary", async (data) => {

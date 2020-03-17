@@ -56,6 +56,9 @@ export default function Header(props) {
                                     <LinkContainer to="/HealthCareProfessional/My-Patient-List">
                                         <Nav.Link>My Patients</Nav.Link>
                                     </LinkContainer>
+                                    <LinkContainer to="/HealthCareProfessional/Select-Patient-Modules"> 
+                                        <Nav.Link>Manage Paitent Modules</Nav.Link>
+                                    </LinkContainer>
                                     <Dropdown as={ButtonGroup}>
                                         <Button type="button" className="NotificationButton" variant="light" >
                                             <span className="NotificationText">Notifications</span><span className="badge badge-danger ml-2">1</span>

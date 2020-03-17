@@ -59,6 +59,7 @@ function createBloodSugarListWarning(bloodSugarData) { //creates list of blood s
             i++; //increments unique key
     }
 var returnedlistItemArray = WarninglistItemArray.slice(0, 10);
+
 console.log(returnedlistItemArray);
     return returnedlistItemArray; //returns list values
 }
@@ -101,7 +102,7 @@ return(
                 }
                 <Dropdown as={ButtonGroup}>
                     <Button type="button" className="NotificationButton" variant="light" className="pull-right">
-                        <span className="NotificationText">Recent Warnings</span><span className="badge badge-danger ml-2">ADD NUMBER HERE</span>
+            <span className="NotificationText">Recent Warnings</span><span className="badge badge-danger ml-2">{bloodSugarModuleWarning.length}</span>
                     </Button>
                     <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                     <Dropdown.Menu>

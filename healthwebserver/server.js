@@ -230,10 +230,39 @@ io.on("connection", socket => {
     async function emitMyPatientsModules(socket) {
       if (authenticated) {
         // Get all the patients and their modules that have the doctors user id as their doctor
-        let myPatients = await User.find({ idAssignedDoctor: userId }, { forename: 1, _id: 1, email: 1, surname: 1 }).sort({ forename: 1 }).exec();
+        let myPatients = await User.find({ idAssignedDoctor: userId }, { forename: 1, _id: 1, email: 1, surname: 1,enabledModules: 1}).sort({ forename: 1 }).exec();
+        //get list of all modules
+        allModules = await PatientModule.find({},{moduleID:1,moduleName:1}).sort({moduleID:  1}).lean().exec()
+        //add enabledmodules = false property to allmodules, used as default if module has not be assigned to patient before
+        allModules = allModules.map( module => {module.enabledModules = false; return module}) 
+        //goes through enabled moduled list for all patients, if a module from all list is not in their list, adds the module to to their list
+        for (let myPatient of myPatients)
+        {
+          for(let module of allModules)
+          {
+            let findModule = myPatient.enabledModules.find( pMod => pMod.moduleID == module.moduleID)
+            if(findModule == null)
+            {
+              myPatient.enabledModules.push(module)
+            }
+          }
+          //sorts modules by moduleID
+          //wait myPatient.enabledModules.sort(moduleSortByID)
+          //console.log(myPatient) 
+        }
         // Emit the entire array to the socket
         socket.emit("getMyPatientsModulesResults", { myPatients: myPatients });
       }
+    }
+    //compare modules based on moduleID, used to sort enabled modules
+    function moduleSortByID(m1,m2)
+    {
+      let mKey1 = m1.moduleID
+      let mKey2 = m2.moduleID
+      let comparison = 0
+      if(mKey1 > mKey2){comparison = 1}
+      if(mkey1 < mKey2){comparison = -1 }
+      return comparison
     }
 
   // Add an item of food for the user

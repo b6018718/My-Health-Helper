@@ -4,7 +4,8 @@ import * as React from "react";
 import '../css/SelectPatientModules.css';
 import '../css/Register.css';
 import SocketContext from '../components/socket'
-
+//import { ListGroup } from "react-bootstrap";
+import Table from 'react-bootstrap/Table'
 //interface Props{}
 
 function SelectPatientModulesWithoutSocket(props) {
@@ -34,28 +35,53 @@ function SelectPatientModulesWithoutSocket(props) {
     function addPatientList(data) {
         var i = 0; //increments for unique key for bootstrap list
         var buttonArray = []; //array to store select patient buttons
+        var tableHead = [];
         var patients = data.myPatients;
+        var patientList
         //console.log(patients.length);
         //console.log(patients.length == 0);
         if (patients.length == 0) { //checks if doctor has 0 patients, if a doctor has no patients, return appropriate message stating so
-            buttonArray.push(<p className="Paragraph">No patients have selected you as their registered doctor. If you believe any of your patients are using this app, and that they should be sharing their data with you, please tell your patient to select you as their registered doctor for their account.</p>)
+            patientList = (<p className="Paragraph">No patients have selected you as their registered doctor. If you believe any of your patients are using this app, and that they should be sharing their data with you, please tell your patient to select you as their registered doctor for their account.</p>)
         } else {
-            for (let patient of patients) { //for size of patients list, format and push patient to list
-                buttonArray.push(addButtonToList(patient, i));
-                i++;
+            const walk = patients[0].enabledModules.length//to increment inc based on number of modules to ensure all modules buttons have unique keys
+            tableHead.push(<th class = "tableAlignLeft">Patient name</th>)//create table heading
+            for(let module of patients[0].enabledModules)
+            {
+            tableHead.push(<th>{module.moduleName} module</th>)
             }
+            for (let patient of patients) { //for size of patients list, format and push patient to list
+                buttonArray.push(addPatientToList(patient, i));
+                i+= walk;
+            }
+            patientList =(<Table responsive striped bordered hover>
+                  <thead><tr>{tableHead}</tr></thead>
+                  <tbody>{buttonArray}</tbody>
+                  </Table>)
         } //return buttonArray for selecting patients
-        return buttonArray;
+        return patientList;
     }
 
-    function addButtonToList(patient, inc) { //formats patients details into a html button
-        var button = (<button type="button" key={inc} onClick={patientClicked}
-            value={patient._id} className="list-group-item list-group-item-action">{`${patient.forename} ${patient.surname}`}</button>)
-        return button;
-        //document.getElementById("doctorList").appendChild(button);
+    function addPatientToList(patient, inc) { //formats patients details into a html button
+        var toggleButtonList = []
+        for(let module of patient.enabledModules)
+        {
+            toggleButtonList.push(addModuleToPatient(patient._id,module,inc))
+            inc++
+        }
+        var button = (<button type="button" key={inc} onClick={patientModuleClicked}
+            value={patient._id} >{`${patient.forename} ${patient.surname}`}</button>)
+        return (
+        <tr><td class="tableAlignLeft">{`${patient.forename} ${patient.surname}`}</td>{toggleButtonList}</tr>
+        );
+
     }
 
-    function patientClicked(event) { //handles patient selection button being pressed
+    function addModuleToPatient(patientID,module,inc)
+    {
+    return (<td><button type="button" key = {inc} onClick={patientModuleClicked} value = { {patientID: patientID, moduleID: module.moduleID}}>{module.moduleName}</button></td>)
+    }
+
+    function patientModuleClicked(event) { //handles patient selection button being pressed
         var button = event.target; //gets patient id of button pressed
         //setSelectedId(button.value);
         //console.log(button.value);
@@ -64,15 +90,11 @@ function SelectPatientModulesWithoutSocket(props) {
     }
     //returns patient list html for react export
     return (
-        <div className="selectPatient">
+        <div class="selectPatient">
             <br></br>
-            <div className="patientContain">
-                <div className="Title">Please select the modules you want your patients to have access to from the list below:</div>
-
-                <div className="list-group">
+            <div class="patientContain">
+                <div class="Title">Please select the modules you want your patients to have access to from the list below:</div>
                     {patientModuleList}
-                </div>
-
                 <br></br>
             </div>
         </div>

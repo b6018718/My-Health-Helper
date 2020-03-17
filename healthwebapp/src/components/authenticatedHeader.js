@@ -1,5 +1,4 @@
 import * as React from "react";
-//interface Props{}
 import { Button, Form, Nav, Navbar, FormControl, NavItem, Dropdown, DropdownButton, ButtonGroup, Image } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import SocketContext from './socket'
@@ -50,17 +49,15 @@ function createBloodSugarWarning(dataList) { //creates html section for blood su
 function createBloodSugarListWarning(bloodSugarData) { //creates list of blood sugar data values
     var i = 0;//incremented to give list objects unique key values
     var WarninglistItemArray = [];//used to store list values
-    var bloodSugarDataValues = JSON.parse(JSON.stringify(bloodSugarData.fingerPrick)); //orders data so most recent data appears at the top of the list
-    bloodSugarDataValues.reverse();
+    var bloodSugarDataValues = JSON.parse(JSON.stringify(bloodSugarData.fingerPrick)); //Stringifys data
+    bloodSugarDataValues.reverse(); //flips copyed data
     for (let bloodSugarDataValue of bloodSugarDataValues) {
         if(bloodSugarDataValue.millimolesPerLitre <= 3 || bloodSugarDataValue.millimolesPerLitre >= 9){
         WarninglistItemArray.push(addItemToBloodSugarListWarning(bloodSugarDataValue, i));//formats and pushs values into list
         }
             i++; //increments unique key
     }
-var returnedlistItemArray = WarninglistItemArray.slice(0, 10);
-
-console.log(returnedlistItemArray);
+var returnedlistItemArray = WarninglistItemArray.slice(0, 10); // takes the top ten of the array of dangaer blood sugar levels
     return returnedlistItemArray; //returns list values
 }
 

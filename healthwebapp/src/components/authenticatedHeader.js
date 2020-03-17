@@ -15,10 +15,14 @@ React.useEffect(() => {
         props.socket.emit("getMyPatientRecord", {});//requests details for patient record from the back end server
     } //if user is a patient, the server  already knows their patient ID so we don't need to pass it to the server
     props.socket.on("getMyPatientRecordResults", function (data) { //listener for patiient details information back from back end server
-        //setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
+        setBloodSugarModule(createBloodSugarModule(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
+        console.log(bloodSugarModule);
         return () => {
             props.socket.off("getMyPatientRecordResults"); //turns off listener sockets for receiving data
         }
+    });
+    props.socket.on("realTimeFingerPrickData", function (data) { //refreshes blood sugar section if any changes are made to the data on the database 
+        setBloodSugarModule(createBloodSugarModule(data));
     });
 }, []);
 
@@ -34,6 +38,38 @@ function DrNotifications() {
 function userNotifications() {
     return <Dropdown.Item href="#/action-1">User TEST!</Dropdown.Item>;
 }
+
+function createBloodSugarModule(dataList) { //creates html section for blood sugar data
+    if (dataList !== null && dataList !== "" && dataList.fingerPrick !== [] && dataList.fingerPrick.length !== 0) { //checks data is not null
+        var bloodSugarList = createBloodSugarList(dataList) //creates and stores list of readings to be used in html section
+        return (bloodSugarList)
+    }
+    else {//if data is null, returns no data
+        return (<Dropdown.Item href="#/action-1">No Notifications!</Dropdown.Item>)
+    }
+}
+
+function createBloodSugarList(bloodSugarData) { //creates list of blood sugar data values
+    var i = 0;//incremented to give list objects unique key values
+    var listItemArray = [];//used to store list values
+    var bloodSugarDataValues = bloodSugarData.fingerPrick.reverse(); //orders data so most recent data appears at the top of the list
+    for (let bloodSugarDataValue of bloodSugarDataValues) {
+            listItemArray.push(addItemToBloodSugarList(bloodSugarDataValue, i));//formats and pushs values into list
+            i++; //increments unique key
+    }
+var returnedlistItemArray = listItemArray.slice(0, 10);
+
+    return returnedlistItemArray; //returns list values
+}
+
+
+function addItemToBloodSugarList(data, i) {
+    var date = new Date(data.time) //formats date 
+       if(data.millimolesPerLitre <= 3 || data.millimolesPerLitre >= 9){// Checls if data is within the danger range 
+            return (<Dropdown.Item variant="danger" key={i} >{data.millimolesPerLitre}{"mmol/L"} </Dropdown.Item>)
+        }
+}
+
 
 return(
 <Navbar bg="primary" expand="lg" variant="dark" role="navigation">
@@ -66,11 +102,12 @@ return(
                 }
                 <Dropdown as={ButtonGroup}>
                     <Button type="button" className="NotificationButton" variant="light" className="pull-right">
-                        <span className="NotificationText">Notifications</span><span className="badge badge-danger ml-2">113</span>
+                        <span className="NotificationText">Recent Warnings</span><span className="badge badge-danger ml-2">ADD NUMBER HERE</span>
                     </Button>
                     <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                     <Dropdown.Menu>
-                        {userNotifications()}
+                        
+                        {bloodSugarModule}
                     </Dropdown.Menu></Dropdown>
             </Nav>
             : // Doctor Navigation Bar
@@ -86,7 +123,7 @@ return(
                 }
                 <Dropdown as={ButtonGroup}>
                     <Button type="button" className="NotificationButton" variant="light" >
-                        <span className="NotificationText">Notifications</span><span className="badge badge-danger ml-2">1</span>
+                        <span className="NotificationText">Recent Warnings</span><span className="badge badge-danger ml-2">1</span>
                     </Button>
                     <Dropdown.Toggle split variant="light" id="dropdown-split-basic" />
                     <Dropdown.Menu>

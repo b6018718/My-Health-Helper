@@ -15,6 +15,12 @@ React.useEffect(() => {
 }, []);
 
 
+function DrNotifications() {
+    return <Dropdown.Item href="#/action-1">Dr TEST!</Dropdown.Item>;
+}
+function userNotifications() {
+    return <Dropdown.Item href="#/action-1">User TEST!</Dropdown.Item>;
+}
 
 
 <Navbar bg="primary" expand="lg" variant="dark" role="navigation">

@@ -66,7 +66,7 @@ console.log(returnedlistItemArray);
 
 function addItemToBloodSugarListWarning(data, i) {
     var date = new Date(data.time) //formats date 
-        var returnedData = <Dropdown.Item variant="danger" key={i} >{data.millimolesPerLitre}{"mmol/L"} </Dropdown.Item>
+        var returnedData = <Dropdown.Item variant="danger" key={i} >{data.millimolesPerLitre}{"mmol/L "} recorded at: {date.toUTCString()} </Dropdown.Item>
             return (returnedData)
       
 }

@@ -11,6 +11,10 @@ export default function Header(props) {
         e.preventDefault();
         props.appProps.userHasAuthenticated(false);
     }
+
+    React.useEffect (() => {
+        console.log(props.appProps)
+    },[props.appProps])
     return (
         <>
             {props.appProps.isAuthenticated ? // Check if user is signed in

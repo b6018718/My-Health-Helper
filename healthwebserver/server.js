@@ -76,11 +76,11 @@ async function createBasePatientModueles()
           altCondition: null});
         pModule.save();
         pModule = new PatientModule(
-          {moduleID:3,navBarName:null,homePageName:"Register Finger Prick Device",
+          {moduleID:3,navBarName:null,
           urlLink:null,moduleName:"Blood sugar", 
-          homePageFunctionCall: "handleShow",
-          homePageNameAlt: "Deactivate Finger Prick Device",homePageFunctionCallAlt: "clickRegisterDevice",
-          altCondition: "!fingerPrickActivated"});
+          homePageName: "Deactivate Finger Prick Device",homePageFunctionCall: "clickRegisterDevice",
+          homePageNameAlt:"Register Finger Prick Device",homePageFunctionCallAlt: "handleShow",
+          altCondition: "fingerPrickActivated"});
         pModule.save();
       }
     }

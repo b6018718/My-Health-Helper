@@ -2,7 +2,7 @@ import * as React from "react";
 import { Button, Modal, ListGroup, Spinner } from "react-bootstrap";
 import '../css/PatientHome.css';
 import { LinkContainer } from "react-router-bootstrap";
-
+import AltFunctionButton from "../components/patientHomeAltFunctionButton"
 // Socket provider
 import SocketContext from '../components/socket'
 
@@ -12,6 +12,8 @@ function PatientHomeWithoutSocket(props) {
     const [bluetoothSelected, setBluetoothSelected] = React.useState(false);
     const [homeLinkModuleButtons,setHomeLinkButtons] = React.useState(<div></div>)
     const [homeAltFunctionButtons,setHomeFunctionButtons] = React.useState(<div></div>)
+    
+
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => setShowModal(true);
@@ -32,32 +34,90 @@ function PatientHomeWithoutSocket(props) {
         setBluetoothSelected(false);
     }
 
+
+
     React.useEffect(() => {
         // Emit the request to the server to set the status of the button
         props.socket.emit("checkIfSubscribed", {});
-    }, []);
-
-    //Create home module buttons for approved modules
-    React.useEffect(() =>{
-        props.socket.emit("getMyPatientHomepageButtons")
-        props.socket.on("patientHomepageButtonsResults",function (data){
-            console.log(data)
-        });
-        return () => {
-            props.socket.off("patientHomepageButtonsResults")
-        }
-    },[]);
-
-    React.useEffect(() => {
         // Check if already subscribed to set the button on page load
         props.socket.on("checkIfSubscribedResults", function (data) {
             if (data.result != fingerPrickActivated)
                 setFingerPrickActivated(data.result);
+
+                
         });
         return () => {
             props.socket.off("checkIfSubscribedResults");
         }
     }, []);
+
+
+    //Create home module buttons for approved modules
+    React.useEffect(() =>{
+        props.socket.emit("getMyPatientHomepageButtons")
+        props.socket.on("patientHomepageButtonsResults",function (data){
+            setHomeLinkButtons(createLinkButtons(data.enabledLinkModules))
+            setHomeFunctionButtons(createAltFunctionButtons(data.enabledAltFunctionModules))
+        });
+        return () => {
+            props.socket.off("patientHomepageButtonsResults")
+        }
+    },[fingerPrickActivated]);
+
+
+    
+    //creates and returns list of link buttons using enabled link modules from the server
+    function createLinkButtons(data) 
+    {
+       let linkButtons = []
+       for(let module of data)
+       {
+           linkButtons.push(createLinkButton(module))
+       }
+        return (
+        <span>
+            {linkButtons}
+        </span>)
+    }
+    //creates individual link button
+    function createLinkButton(data)
+    {
+        return(
+            <LinkContainer to={data.urlLink} className="ModuleLinkContainer">
+                <Button variant="primary" type="submit" className="ModuleButton">
+                    <span className="LargeText">{data.homePageName}</span>
+                </Button>
+            </LinkContainer>
+        )
+    }
+
+    //creates and returns list of alternating function buttons using enabled alt functions modules from the server
+    function createAltFunctionButtons(data)
+    {
+        let altFunButtons = []
+
+        for(let module of data)
+        {
+            altFunButtons.push(createAltFunButton(module))
+        }
+        return (
+        <span>
+            {altFunButtons}
+        </span>)
+    }
+    //creates and returns individual alt function button
+    function createAltFunButton(data)
+    {
+        let toggleConditon = eval(data.altCondition)
+        let nameMain = data.homePageName
+        let functionMain = eval(data.homePageFunctionCall)
+        let nameAlt = data.homePageNameAlt
+        let functionAlt = eval(data.homePageFunctionCallAlt)
+    return(
+        <AltFunctionButton appProps = {{toggleConditon,nameMain,functionMain,nameAlt,functionAlt}}/>
+    )
+}
+
 
     React.useEffect(() => {
         // Debug information for finger prick simulated sensor
@@ -103,16 +163,7 @@ function PatientHomeWithoutSocket(props) {
                 <div className="Paragraph">Please select the module you want to use from the list below. The register doctor module allows you to select the doctors who you want to see your health records. The record diet module allows you to record the food you are eating and the record exercise module allows you to record any exercise you've done. The my details module allows you to view the data you have entered into My Health Helper. Finally, the register external device module allows you to register a compatible Bluetooth device that can automatically send data to My Health Helper </div>
 
                 <div class="row"> <div className="Modules">
-                    <LinkContainer to="/Patient/Food-Intake">
-                        <Button variant="primary" type="submit" className="ModuleButton" >
-                            <span className="LargeText"> Record Diet </span>
-                        </Button>
-                    </LinkContainer>
-                    <LinkContainer to="/Patient/Exercise" className="ModuleLinkContainer">
-                        <Button variant="primary" type="submit" className="ModuleButton">
-                            <span className="LargeText">Record Exercise</span>
-                        </Button>
-                    </LinkContainer>
+                    {homeLinkModuleButtons}
                     <LinkContainer to="/Patient/MyDetails" className="ModuleLinkContainer">
                         <Button variant="primary" type="submit" className="ModuleButton" >
                             <span className="LargeText"> My Details</span>
@@ -120,19 +171,7 @@ function PatientHomeWithoutSocket(props) {
                     </LinkContainer>
                 </div>
                     <div className='Modules'>
-                        {fingerPrickActivated ?
-                            <>
-                                <Button variant="primary" type="submit" className="ModuleButton" onClick={clickRegisterDevice}>
-                                    <span className="LargeText">Deactivate Finger Prick Device</span>
-                                </Button>
-                            </>
-                            :
-                            <>
-                                <Button variant="primary" type="submit" className="ModuleButton" onClick={handleShow}>
-                                    <span className="LargeText">Register Finger Prick Device</span>
-                                </Button>
-                            </>
-                        }
+                        {homeAltFunctionButtons}
                     </div>
                 </div>
 

@@ -137,14 +137,23 @@ describe("Web Health app Server", function () {
 
   //TEST Add food 
   it('Add food', done => {
-    socket_1.emit('signUp', LoginNopassword);
-    done();
+    socket_1.on('logInResult', function (data) {
+      var kitKat = {calories: 108, name:"KitKat", group:"Sugar"};
+      var food = [kitKat];
+      socket_1.emit("recordFoodDiary", food);
+      done();
+    });
+    socket_1.emit('logIn', PatientLogin);
   });
 
   //TEST add exersise
   it('add exersise', done => {
-    socket_1.emit('signUp', LoginNopassword);
-    done();
+    socket_1.on('logInResult', function (data) {
+      var cycling = {exercisetype: "High", exercisename:"Cycling"};
+      socket_1.emit("recordExerciseDiary", [cycling]);
+      done();
+    });
+    socket_1.emit('logIn', PatientLogin);
   });
 
 
@@ -225,6 +234,59 @@ describe("Web Health app Server", function () {
       socket_1.emit('getAllDoctors', {});
     });
     socket_1.emit('logIn', DrLogin);
+  });
+
+  //TEST Real time finger prick updates
+  it('Real time finger prick updates for patient', done => {
+    socket_1.on('getMyPatientRecordResults', function (data) {
+      socket_1.emit("subscribeToFingerPrick", {});
+    });
+
+    socket_1.on("realTimeFingerPrickData", function (data){
+      socket_1.emit("unsubPatientRecord", {});
+      socket_1.emit("unSubscribeFingerPrick", {});
+      done();
+    });
+
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit('getMyPatientRecord', {});
+    });
+    socket_1.emit('logIn', PatientLogin);
+  });
+
+  //TEST Real time food updates
+  it('Real time food updates for patient', done => {
+    socket_1.on('getMyPatientRecordResults', function (data) {
+      var kitKat = {calories: 108, name:"KitKat", group:"Sugar"};
+      var food = [kitKat];
+      socket_1.emit("recordFoodDiary", food);
+    });
+
+    socket_1.on("realTimeFood", function (data){
+      done();
+    });
+
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit('getMyPatientRecord', {});
+    });
+    socket_1.emit('logIn', PatientLogin);
+  });
+
+  // TEST Real time exercise updates
+  it('Real time exercise updates for patient', done => {
+    socket_1.on('getMyPatientRecordResults', function (data) {
+      var cycling = {exercisetype: "High", exercisename:"Cycling"};
+      socket_1.emit("recordExerciseDiary", [cycling]);
+    });
+
+    socket_1.on("realTimeExercise", function (data){
+      done();
+    });
+
+    socket_1.on('logInResult', function (data) {
+      socket_1.emit('getMyPatientRecord', {});
+    });
+    socket_1.emit('logIn', PatientLogin);
   });
 
   //TEST remove doctor account

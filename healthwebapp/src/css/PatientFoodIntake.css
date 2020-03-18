@@ -30,3 +30,10 @@
 .durationLabel{
     margin-right: 2%;
 }
+
+.Toast{
+    
+    top: 100%;
+    right: 60%;
+    width: 30%;
+}

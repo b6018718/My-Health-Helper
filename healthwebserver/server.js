@@ -61,11 +61,26 @@ async function createBasePatientModueles()
      // console.log(patientModulesNotCreated)
       if (patientModulesNotCreated) //if patient module is not created, populate collection with details for exercise, diet and blood sugar modules
       {
-        var pModule = new PatientModule({moduleID:1,navBarName:"Record Diet",homePageName:"Record Diet",urlLink:"/Patient/Food-Intake",moduleName:"Diet", homePageFunctionCall: null});
+        var pModule = new PatientModule(
+          {moduleID:1,navBarName:"Record Diet",homePageName:"Record Diet",
+          urlLink:"/Patient/Food-Intake",
+          moduleName:"Diet", homePageFunctionCall: null,
+          homePageNameAlt: null,homePageFunctionCallAlt: null,
+          altCondition: null});
         pModule.save();
-        pModule = new PatientModule({moduleID:2,navBarName:"Record Exercise",homePageName:"Record Exercise",urlLink:"/Patient/Exercise",moduleName:"Exercise", homePageFunctionCall: null});
+        pModule = new PatientModule(
+          {moduleID:2,navBarName:"Record Exercise",homePageName:"Record Exercise",
+          urlLink:"/Patient/Exercise",
+          moduleName:"Exercise", homePageFunctionCall: null,
+          homePageNameAlt: null,homePageFunctionCallAlt: null,
+          altCondition: null});
         pModule.save();
-        pModule = new PatientModule({moduleID:3,navBarName:null,homePageName:"Register Finger Prick Device",urlLink:null,moduleName:"Blood sugar", homePageFunctionCall: "handleShow"});
+        pModule = new PatientModule(
+          {moduleID:3,navBarName:null,homePageName:"Register Finger Prick Device",
+          urlLink:null,moduleName:"Blood sugar", 
+          homePageFunctionCall: "handleShow",
+          homePageNameAlt: "Deactivate Finger Prick Device",homePageFunctionCallAlt: "clickRegisterDevice",
+          altCondition: "!fingerPrickActivated"});
         pModule.save();
       }
     }

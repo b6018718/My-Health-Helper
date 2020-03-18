@@ -21,8 +21,16 @@ const patientModuleSchema = new Schema(
         },
         homePageFunctionCall: {
             type: String
+        },
+        homePageNameAlt: {
+            type: String
+        },
+        homePageFunctionCallAlt: {
+            type: String
+        },
+        altCondition:{
+            type: String
         }
-
     }
 
 

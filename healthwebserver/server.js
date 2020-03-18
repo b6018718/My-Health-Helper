@@ -234,7 +234,8 @@ io.on("connection", socket => {
         //get list of all modules
         allModules = await PatientModule.find({},{moduleID:1,moduleName:1}).sort({moduleID:  1}).lean().exec()
         //add enabledmodules = false property to allmodules, used as default if module has not be assigned to patient before
-        allModules = allModules.map( module => {module.enabledModules = false; return module}) 
+        allModules = allModules.map( module => {module.enabled = false; return module}) 
+        //console.log(allModules)
         //goes through enabled moduled list for all patients, if a module from all list is not in their list, adds the module to to their list
         for (let myPatient of myPatients)
         {

@@ -1,11 +1,12 @@
-import * as React from "react";
+import React, {useState} from 'react';
 //interface Props{}
 //import { Button, Form, Col, Row } from "react-bootstrap";
 import '../css/SelectPatientModules.css';
 import '../css/Register.css';
 import SocketContext from '../components/socket'
+import PatientModuleToggle from '../components/patientModuleToggle'
 //import { ListGroup } from "react-bootstrap";
-import Table from 'react-bootstrap/Table'
+import {Table,FormCheck} from 'react-bootstrap'
 //interface Props{}
 
 function SelectPatientModulesWithoutSocket(props) {
@@ -63,13 +64,12 @@ function SelectPatientModulesWithoutSocket(props) {
 
     function addPatientToList(patient, inc) { //formats patients details into a html button
         var toggleButtonList = []
+        //console.log(patient)
         for(let module of patient.enabledModules)
         {
             toggleButtonList.push(addModuleToPatient(patient._id,module,inc))
             inc++
         }
-        var button = (<button type="button" key={inc} onClick={patientModuleClicked}
-            value={patient._id} >{`${patient.forename} ${patient.surname}`}</button>)
         return (
         <tr><td class="tableAlignLeft">{`${patient.forename} ${patient.surname}`}</td>{toggleButtonList}</tr>
         );
@@ -77,29 +77,52 @@ function SelectPatientModulesWithoutSocket(props) {
     }
 
     function addModuleToPatient(patientID,module,inc)
-    {
-    return (<td><button type="button" key = {inc} onClick={patientModuleClicked} value = { {patientID: patientID, moduleID: module.moduleID}}>{module.moduleName}</button></td>)
+    {//        //<button type="button" key = {inc} onClick={patientModuleClicked} value = { {patientID: patientID, moduleID: module.moduleID}}>{module.moduleName}</button>
+    var myValue =  JSON.stringify({patientID: patientID, moduleData: {moduleID: module.moduleID, moduleName: module.moduleName, enabled: module.enabled}})   
+    /*
+    <td>
+
+        <FormCheck 
+    type="switch"
+    id={inc}
+    label={'ph'}
+    value = {myValue}
+    defaultChecked = {module.enabled}
+    onChange = {patientModuleChanged}
+    key = {inc} />
+  
+    </td>
+    */    
+    return (<td><PatientModuleToggle appProps={{patientID,inc,myValue}}/></td>)
+
+    
+
     }
 
-    function patientModuleClicked(event) { //handles patient selection button being pressed
-        var button = event.target; //gets patient id of button pressed
-        //setSelectedId(button.value);
-        //console.log(button.value);
-        props.appProps.setCurrentSelectedPatient(button.value); //sets selected to patient id to be passed into next react view
-        props.history.push('/HealthCareProfessional/Patient-Details'); //uses react router to go to patient details page
-    }
     //returns patient list html for react export
     return (
         <div class="selectPatient">
             <br></br>
             <div class="patientContain">
                 <div class="Title">Please select the modules you want your patients to have access to from the list below:</div>
-                    {patientModuleList}
+                {patientModuleList}
+
+
                 <br></br>
             </div>
         </div>
     )
 
+}
+
+function useToggleModuleEnabled(previousState,toggle)
+{
+    const [isEnabled,setToggleState] = useState(previousState)
+    if (toggle)
+    {
+        setToggleState(!previousState)
+    }
+    return isEnabled
 }
 
 const PatientModulesList = props => (

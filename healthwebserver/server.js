@@ -288,7 +288,7 @@ io.on("connection", socket => {
         }
       }
       await user.save()
-      console.log(user)
+      //console.log(user)
     }
 
 
@@ -298,21 +298,27 @@ io.on("connection", socket => {
     if (authenticated) {
       // Filter out data that could lead to no-SQL injection
       data = deepSanitize(data)
-      // Get the user
-      var user = await User.findOne({ _id: userId }).exec();
-      // Push each item in the list from the user into the users food record
-      for (let foodRecord of data) {
-        user.foodRecord.push({ foodname: foodRecord.name, calories: foodRecord.calories, foodgroup: foodRecord.group });
-      }
-      // Save the new data into the database
-      await user.save();
+      let approvedModuleList = await User.findOne({ _id: userId} ,{_id: 0, enabledModules:1}).exec()
+      //check food module is approved, only allow data entry if it is
+      if(checkIfApproved(1,approvedModuleList))
+      {
+        //console.log("food data entry approved")
+        // Get the user
+        var user = await User.findOne({ _id: userId }).exec();
+        // Push each item in the list from the user into the users food record
+        for (let foodRecord of data) {
+          user.foodRecord.push({ foodname: foodRecord.name, calories: foodRecord.calories, foodgroup: foodRecord.group });
+        }
+        // Save the new data into the database
+        await user.save();
 
-      // Real time updates
-      for (let sub of userUpdateSubscribers) {
-        // Check if there are any users watching the patient record
-        if (stringEquals(user._id, sub.userId)) {
-          // Send the new data to the client watching the patient record
-          sub.socket.emit("realTimeFood", { foodRecord: user.foodRecord });
+        // Real time updates
+        for (let sub of userUpdateSubscribers) {
+          // Check if there are any users watching the patient record
+          if (stringEquals(user._id, sub.userId)) {
+            // Send the new data to the client watching the patient record
+            sub.socket.emit("realTimeFood", { foodRecord: user.foodRecord });
+          }
         }
       }
     }
@@ -323,19 +329,25 @@ io.on("connection", socket => {
     if (authenticated) {
       // Filter the data to prevent no-SQL injection
       data = deepSanitize(data)
-      var user = await User.findOne({ _id: userId }).exec();
-      // Push the new data into the users exercise record
-      for (let exerciseRecord of data) {
-        user.exercise.push({ exercisename: exerciseRecord.exercisename, exercisetype: exerciseRecord.exercisetype, exercisedurationmins: exerciseRecord.exercisedurationmins });
-      }
-      await user.save();
+      let approvedModuleList = await User.findOne({ _id: userId} ,{_id: 0, enabledModules:1}).exec()
+      //check if exercise module is approved, only allow data entry if it is
+      if(checkIfApproved(2,approvedModuleList))
+      {
+        //console.log("exercise data entry approved")
+        var user = await User.findOne({ _id: userId }).exec();
+        // Push the new data into the users exercise record
+        for (let exerciseRecord of data) {
+          user.exercise.push({ exercisename: exerciseRecord.exercisename, exercisetype: exerciseRecord.exercisetype, exercisedurationmins: exerciseRecord.exercisedurationmins });
+        }
+        await user.save();
 
-      // Real time updates
-      for (let sub of userUpdateSubscribers) {
-        // Check if there are any users watching the patient record
-        if (stringEquals(user._id, sub.userId)) {
-          // Send the new data to the client watching the patient record
-          sub.socket.emit("realTimeExercise", { exercise: user.exercise });
+        // Real time updates
+        for (let sub of userUpdateSubscribers) {
+          // Check if there are any users watching the patient record
+          if (stringEquals(user._id, sub.userId)) {
+            // Send the new data to the client watching the patient record
+            sub.socket.emit("realTimeExercise", { exercise: user.exercise });
+          }
         }
       }
     }
@@ -375,13 +387,39 @@ io.on("connection", socket => {
   async function emitMyPatientRecord(socket, selectedPatientID) {
     //console.log(selectedPatientID)
     let patientDetails = await User.findOne({ _id: selectedPatientID }, { _id: 1, forename: 1, surname: 1, email: 1, sex: 1, DoB: 1, mobile: 1, telephone: 1, address: 1, NHSnumber: 1 }).exec();
-    let bloodSugarReadings = await User.findOne({ _id: selectedPatientID }, { _id: 0, fingerPrick: 1 }).exec();
     let registeredDoctorID = await User.findOne({ _id: selectedPatientID }, { _id: 1, idAssignedDoctor: 1 }).exec();
     let registeredDoctor = await User.findOne({ _id: registeredDoctorID.idAssignedDoctor }, { _id: 1, forename: 1, surname: 1, email: 1 }).exec()
-    let exercise = await User.findOne({ _id: selectedPatientID }, { _id: 0, exercise: 1 }).exec();
-    let foodDiary = await User.findOne({ _id: selectedPatientID }, { _id: 0, foodRecord: 1 }).exec();
+   
+     // get list of all aproved modules
+    let approvedModuleList = await User.findOne({ _id: selectedPatientID} ,{_id: 0, enabledModules:1}).exec()
+    //for each module, check if it approved
+    let isApprovedDiet = checkIfApproved(1,approvedModuleList)
+    let isApprovedExercise = checkIfApproved(2,approvedModuleList)
+    let isApprovedBloodSugar = checkIfApproved(3,approvedModuleList)
+   //if module is approved, return results for module, otherwise return null
+    let bloodSugarReadings = isApprovedBloodSugar? await User.findOne({ _id: selectedPatientID }, { _id: 0, fingerPrick: 1 }).exec():null;
+    let exercise =isApprovedExercise?await User.findOne({ _id: selectedPatientID }, { _id: 0, exercise: 1 }).exec():null;
+    let foodDiary = isApprovedDiet?await User.findOne({ _id: selectedPatientID }, { _id: 0, foodRecord: 1 }).exec():null;
     socket.emit("getMyPatientRecordResults", { registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings, exercise: exercise, foodDiary: foodDiary });
   }
+  //checks if module exists in patient module list, and then checks if it is currently set to be enabled/approved by the patient's doctor
+  function checkIfApproved(moduleIDCheck, userApprovedModules)
+  {
+    var approved = false
+    if (userApprovedModules.enabledModules.length > 0) //check there are modules in list, otherwise just return false
+    {
+      var foundIndex = userApprovedModules.enabledModules.findIndex(module => module.moduleID == moduleIDCheck)
+      if(foundIndex != -1) //if equal to -1, means the specific module is not in the list and we can just return false
+      {
+        if(userApprovedModules.enabledModules[foundIndex].enabled)//check if module is currently enabled, otherwise return false
+        {
+          approved = true //set approved to true if all 3 conditions are met
+        }
+      }
+    }
+    return approved
+  }
+
 
   // User logs in to the system
   async function logIn(data, socket) {

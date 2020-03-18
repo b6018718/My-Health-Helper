@@ -248,8 +248,8 @@ io.on("connection", socket => {
             }
           }
 
-          console.log(myPatient.enabledModules)
-              //compare modules based on moduleID, used to sort enabled modules after adding in non existant modules
+          //console.log(myPatient.enabledModules)
+          //compare modules based on moduleID, used to sort enabled modules after adding in non existant modules
           myPatient.enabledModules.sort((a,b) => (a.moduleID > b.moduleID)? 1:-1)
           //console.log(myPatient) 
         }
@@ -257,13 +257,38 @@ io.on("connection", socket => {
         socket.emit("getMyPatientsModulesResults", { myPatients: myPatients });
       }
     }
-
+    //list for toggle patient module request
     socket.on("togglePatientModule", async (data)=>{
+      if (authenticated) { //check user is logged in
       togglePatientModule(data)
+      }
     });
     async function togglePatientModule(data)
     {
-      console.log(data)
+      data = deepSanitize(data)//sanitize data before inputting it into the server
+      let user = await User.findOne({_id: data.toggledModule.patientID},{_id: 1, enabledModules: 1}).exec()
+      if (user.enabledModules.length == 0)//if no values are in the array, just push current value into the array
+      {
+        user.enabledModules.push(data.toggledModule.moduleData)
+      }
+      else
+      {
+        //check if module we are toggling exists in the array
+        existingIndex = user.enabledModules.findIndex(module => module.moduleID == data.toggledModule.moduleData.moduleID)
+        {
+          if (existingIndex == -1) //if module doesn't exist in the list, push it to the list
+          {
+            user.enabledModules.push(data.toggledModule.moduleData)
+            user.enabledModules.sort((a,b) => (a.moduleID > b.moduleID)? 1:-1) //sort array so values are in order after adding new item
+          }
+          else //replace value at existing index
+          {
+            user.enabledModules[existingIndex] = data.toggledModule.moduleData
+          }
+        }
+      }
+      await user.save()
+      console.log(user)
     }
 
 

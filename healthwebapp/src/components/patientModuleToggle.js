@@ -31,7 +31,8 @@ export default function PatientModuleToggle(props)
         //toggleSwitchPos(toggleSwitchPos.checkboxChecked)
         var myValue = JSON.parse(toggleSwitch.value)
         myValue.moduleData.enabled = newState
-        console.log(myValue)
+        //console.log(myValue)
+        props.appProps.mySocket.emit("togglePatientModule",{toggledModule: myValue})
     }
     
     function getEnabledDisabledText(enabled)

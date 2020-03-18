@@ -222,7 +222,7 @@ io.on("connection", socket => {
     }
   }
 
-    // Get all the patients and there modules for a doctor
+    // Get all the patients and their modules for a doctor
     socket.on("getMyPatientsModules", async (data) => {
       emitMyPatientsModules(socket);
     });
@@ -247,24 +247,26 @@ io.on("connection", socket => {
               myPatient.enabledModules.push(module)
             }
           }
-          //sorts modules by moduleID
-          //wait myPatient.enabledModules.sort(moduleSortByID)
+
+          console.log(myPatient.enabledModules)
+              //compare modules based on moduleID, used to sort enabled modules after adding in non existant modules
+          myPatient.enabledModules.sort((a,b) => (a.moduleID > b.moduleID)? 1:-1)
           //console.log(myPatient) 
         }
         // Emit the entire array to the socket
         socket.emit("getMyPatientsModulesResults", { myPatients: myPatients });
       }
     }
-    //compare modules based on moduleID, used to sort enabled modules
-    function moduleSortByID(m1,m2)
+
+    socket.on("togglePatientModule", async (data)=>{
+      togglePatientModule(data)
+    });
+    async function togglePatientModule(data)
     {
-      let mKey1 = m1.moduleID
-      let mKey2 = m2.moduleID
-      let comparison = 0
-      if(mKey1 > mKey2){comparison = 1}
-      if(mkey1 < mKey2){comparison = -1 }
-      return comparison
+      console.log(data)
     }
+
+
 
   // Add an item of food for the user
   socket.on("recordFoodDiary", async (data) => {

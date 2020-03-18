@@ -11,7 +11,7 @@ import {Table,FormCheck} from 'react-bootstrap'
 
 function SelectPatientModulesWithoutSocket(props) {
     const [patientModuleList, setPatientList] = React.useState("");//stores list of doctor's patients
-
+    
     React.useEffect(() => {
         props.socket.emit("getMyPatientsModules", {}); //requests list of patients from back end database
         props.socket.on("getMyPatientsModulesResults", function (data) { //listens for patient list to be return from server
@@ -79,21 +79,8 @@ function SelectPatientModulesWithoutSocket(props) {
     function addModuleToPatient(patientID,module,inc)
     {//        //<button type="button" key = {inc} onClick={patientModuleClicked} value = { {patientID: patientID, moduleID: module.moduleID}}>{module.moduleName}</button>
     var myValue =  JSON.stringify({patientID: patientID, moduleData: {moduleID: module.moduleID, moduleName: module.moduleName, enabled: module.enabled}})   
-    /*
-    <td>
-
-        <FormCheck 
-    type="switch"
-    id={inc}
-    label={'ph'}
-    value = {myValue}
-    defaultChecked = {module.enabled}
-    onChange = {patientModuleChanged}
-    key = {inc} />
-  
-    </td>
-    */    
-    return (<td><PatientModuleToggle appProps={{patientID,inc,myValue}}/></td>)
+    var mySocket = props.socket
+    return (<td><PatientModuleToggle appProps={{patientID,inc,myValue,mySocket}}/></td>)
 
     
 
@@ -115,15 +102,6 @@ function SelectPatientModulesWithoutSocket(props) {
 
 }
 
-function useToggleModuleEnabled(previousState,toggle)
-{
-    const [isEnabled,setToggleState] = useState(previousState)
-    if (toggle)
-    {
-        setToggleState(!previousState)
-    }
-    return isEnabled
-}
 
 const PatientModulesList = props => (
     <SocketContext.Consumer>

@@ -6,7 +6,7 @@ import {FormCheck,Button} from 'react-bootstrap'
 export default function AltFunctionButton(props)
 {
     React.useEffect(() => {
-        console.log(props.appProps)
+        //console.log(props.appProps)
     },[]);
     // console.log( props.appProps)
     return(
@@ -29,12 +29,12 @@ export default function AltFunctionButton(props)
 
     function handleMainAction()
     {
-        console.log(props.appProps.toggleConditon)
+        //console.log(props.appProps.toggleConditon)
         props.appProps.functionMain()
     }
     function handAltAction()
     {
-        console.log(props.appProps.toggleConditon)
+        //console.log(props.appProps.toggleConditon)
         props.appProps.functionAlt()
     }
 

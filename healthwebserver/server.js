@@ -318,7 +318,7 @@ io.on("connection", socket => {
     {
       //get list of current user's modules
       var patientsModules = await User.findOne({_id: userId},{_id: 0, enabledModules: 1}).exec()
-      //get list of all modules to get extended data
+      //get list of all enabled modules with extended data
       var enabledLinkModules = []
       var enabledAltFunctionModules = []
       for(let patientModule of patientsModules.enabledModules)
@@ -341,6 +341,35 @@ io.on("connection", socket => {
       }
       socket.emit("patientHomepageButtonsResults", {enabledLinkModules:enabledLinkModules,enabledAltFunctionModules:enabledAltFunctionModules})
     }
+
+    //Handle request for patient modules for header when patient logs in
+    socket.on("getMyPatientHeaderLinks", async data =>{
+      getMyPatientHeaderLinks(socket)
+    })
+    async function getMyPatientHeaderLinks (socket){
+            //get list of current user's modules
+            var patientsModules = await User.findOne({_id: userId},{_id: 0, enabledModules: 1,doctor: 1}).exec()
+            //only want to return nav hearders for patients, so we they aren't doctors
+            if(!patientsModules.doctor){
+            //to store list of enabled modules
+              var enabledHeaderNav = []
+              {
+                for(let patientModule of patientsModules.enabledModules)
+                {
+                  if(patientModule.enabled)
+                  {
+                    var enabledModule = await PatientModule.findOne({moduleID: patientModule.moduleID}).exec()
+                    if(enabledModule.urlLink!= null)
+                    {
+                      enabledHeaderNav.push({navBarName: enabledModule.navBarName, urlLink: enabledModule.urlLink})
+                    }
+                  }
+                }
+                socket.emit("myPatientHeaderLinksResult", {enabledHeaderNav:enabledHeaderNav})
+              }
+            }
+          }
+    
 
   // Add an item of food for the user
   socket.on("recordFoodDiary", async (data) => {

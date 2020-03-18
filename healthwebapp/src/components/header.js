@@ -3,18 +3,55 @@ import * as React from "react";
 import { Button, Form, Nav, Navbar, FormControl, NavItem, Dropdown, DropdownButton, ButtonGroup, Image } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import "../css/header.css";
+import SocketContext from '../components/socket'
 
+function DisplayHeaderWithoutSocket(props) {
+    const [myPatientHeader,setMyPatientHeader] = React.useState(<div></div>)
 
-export default function Header(props) {
     function logOut(e) {
         // Log user out and set local authenticated value to false
         e.preventDefault();
         props.appProps.userHasAuthenticated(false);
+        setMyPatientHeader(<div></div>) //resets user's module header upon logging out
     }
 
     React.useEffect (() => {
-        console.log(props.appProps)
-    },[props.appProps])
+        if(props.appProps.isAuthenticated)
+        {
+            props.socket.emit("getMyPatientHeaderLinks", {}) //request custom header from server based on patient's approved modules
+            props.socket.on("myPatientHeaderLinksResult", function (data) { 
+                setMyPatientHeader(createPatientHeaderLinks(data.enabledHeaderNav))
+            });
+            return () => {
+                props.socket.off("myPatientHeaderLinksResult"); //turns off listener sockets for receiving data
+            }
+        }
+         //creates and returns list of link buttons using enabled link modules from the server
+        function createPatientHeaderLinks(data)
+        {
+            
+            let linkButtons = []
+            for(let module of data)
+            {
+                linkButtons.push(createPatientHeaderLink(module))
+            }
+            return  (                
+            <>
+                {linkButtons}
+            </>
+            )
+             
+        }
+          //creates individual link button
+        function createPatientHeaderLink(data)
+        {
+            return(
+            <LinkContainer to={data.urlLink}>
+                <Nav.Link>{data.navBarName}</Nav.Link>
+            </LinkContainer>
+            )
+        }
+    },[props.appProps.isAuthenticated])
     return (
         <>
             {props.appProps.isAuthenticated ? // Check if user is signed in
@@ -31,12 +68,7 @@ export default function Header(props) {
                                     <LinkContainer to="/Patient/Homepage">
                                         <Nav.Link>Home</Nav.Link>
                                     </LinkContainer>
-                                    <LinkContainer to="/Patient/Food-Intake">
-                                        <Nav.Link>Record Diet</Nav.Link>
-                                    </LinkContainer>
-                                    <LinkContainer to="/Patient/Exercise">
-                                        <Nav.Link>Record Exercise</Nav.Link>
-                                    </LinkContainer>
+                                    {myPatientHeader}
                                     <LinkContainer to="/Patient/MyDetails">
                                         <Nav.Link>My Details</Nav.Link>
                                     </LinkContainer>
@@ -119,3 +151,10 @@ export default function Header(props) {
     );
 
 }
+
+const Header = props => ( //Calls function to create html page to be exported
+    <SocketContext.Consumer>
+        {socket => <DisplayHeaderWithoutSocket {...props} socket={socket} />}
+    </SocketContext.Consumer>
+)
+export default Header; //Exports header

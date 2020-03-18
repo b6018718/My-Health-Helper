@@ -173,7 +173,12 @@ io.on("connection", socket => {
 
   // Add the user to the array of users to have their blood sugar updated
   socket.on("subscribeToFingerPrick", async function (data) {
+    let approvedModuleList = await User.findOne({ _id: userId} ,{_id: 0, enabledModules:1}).exec()
+    //check blood sugard module is approved, only allow subscribing if it is approved
+    if(checkIfApproved(3,approvedModuleList))
+    {
     fingerPrickSubscribers.push(userId);
+    }
   });
 
   // Remove the user to the array of users to have their blood sugar updated
@@ -299,7 +304,7 @@ io.on("connection", socket => {
       // Filter out data that could lead to no-SQL injection
       data = deepSanitize(data)
       let approvedModuleList = await User.findOne({ _id: userId} ,{_id: 0, enabledModules:1}).exec()
-      //check food module is approved, only allow data entry if it is
+      //check food module is approved, only allow data entry if it is approved
       if(checkIfApproved(1,approvedModuleList))
       {
         //console.log("food data entry approved")
@@ -330,7 +335,7 @@ io.on("connection", socket => {
       // Filter the data to prevent no-SQL injection
       data = deepSanitize(data)
       let approvedModuleList = await User.findOne({ _id: userId} ,{_id: 0, enabledModules:1}).exec()
-      //check if exercise module is approved, only allow data entry if it is
+      //check if exercise module is approved, only allow data entry if it is approved
       if(checkIfApproved(2,approvedModuleList))
       {
         //console.log("exercise data entry approved")
@@ -491,23 +496,29 @@ async function updateFingerPrickInfo() {
   // Loop through the subscribers
   for (let id of fingerPrickSubscribers) {
     //console.log("User found")
-    // Get the users that has been subscribed
-    var user = await User.findOne({ _id: id }).exec();
-    // Generate a random finger prick value
-    user.fingerPrick.push({ millimolesPerLitre: getRndInteger(1, 10) });
-    await user.save();
+    let approvedModuleList = await User.findOne({ _id: id} ,{_id: 0, enabledModules:1}).exec()
+    //check blood sugard module is approved, only allow subscribing if it is approved
+    if(checkIfApproved(3,approvedModuleList))
+    {
 
-    // Emit real time data to subscribers
-    for (let sub of userUpdateSubscribers) {
-      if (stringEquals(user._id, sub.userId)) {
-        //console.log("Emitting real time to " + sub.userId)
-        sub.socket.emit("realTimeFingerPrickData", { fingerPrick: user.fingerPrick });
+      // Get the users that has been subscribed
+      var user = await User.findOne({ _id: id }).exec();
+      // Generate a random finger prick value
+      user.fingerPrick.push({ millimolesPerLitre: getRndInteger(1, 10) });
+      await user.save();
+
+      // Emit real time data to subscribers
+      for (let sub of userUpdateSubscribers) {
+        if (stringEquals(user._id, sub.userId)) {
+          //console.log("Emitting real time to " + sub.userId)
+          sub.socket.emit("realTimeFingerPrickData", { fingerPrick: user.fingerPrick });
+        }
       }
-    }
 
-    //socketContainer = allSockets.find(soc => user._id.toString().localeCompare(soc.id.toString()) == 0);
-    //if(socketContainer)
-    //socketContainer.socket.emit("fingerPrickData", user.fingerPrick);
+      //socketContainer = allSockets.find(soc => user._id.toString().localeCompare(soc.id.toString()) == 0);
+      //if(socketContainer)
+      //socketContainer.socket.emit("fingerPrickData", user.fingerPrick);
+    }
   }
 }
 

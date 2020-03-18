@@ -311,7 +311,36 @@ io.on("connection", socket => {
       //console.log(user)
     }
 
-
+    socket.on("getMyPatientHomepageButtons",async data=> {
+      emitHomepageModuleButtons(socket)
+    })
+    async function emitHomepageModuleButtons(socket)
+    {
+      //get list of current user's modules
+      var patientsModules = await User.findOne({_id: userId},{_id: 0, enabledModules: 1}).exec()
+      //get list of all modules to get extended data
+      var enabledLinkModules = []
+      var enabledAltFunctionModules = []
+      for(let patientModule of patientsModules.enabledModules)
+      {
+        if(patientModule.enabled)
+        {
+          var enabledModule = await PatientModule.findOne({moduleID: patientModule.moduleID}).exec()
+          if(enabledModule.urlLink!= null)
+          {
+          enabledLinkModules.push({homePageName: enabledModule.homePageName, urlLink: enabledModule.urlLink})
+          }
+          if(enabledModule.altCondition!=null)
+          {
+            enabledAltFunctionModules.push(
+              {homePageName: enabledModule.homePageName, homePageFunctionCall: enabledModule.homePageFunctionCall,
+              homePageNameAlt: enabledModule.homePageNameAlt, homePageFunctionCallAlt: enabledModule.homePageFunctionCallAlt,
+            altCondition: enabledModule.altCondition})
+          }
+        }
+      }
+      socket.emit("patientHomepageButtonsResults", {enabledLinkModules:enabledLinkModules,enabledAltFunctionModules:enabledAltFunctionModules})
+    }
 
   // Add an item of food for the user
   socket.on("recordFoodDiary", async (data) => {
@@ -422,24 +451,6 @@ io.on("connection", socket => {
     let foodDiary = isApprovedDiet?await User.findOne({ _id: selectedPatientID }, { _id: 0, foodRecord: 1 }).exec():null;
     socket.emit("getMyPatientRecordResults", { registeredDoctor: registeredDoctor, patientDetails: patientDetails, bloodSugarReadings: bloodSugarReadings, exercise: exercise, foodDiary: foodDiary });
   }
-  //checks if module exists in patient module list, and then checks if it is currently set to be enabled/approved by the patient's doctor
-  function checkIfApproved(moduleIDCheck, userApprovedModules)
-  {
-    var approved = false
-    if (userApprovedModules.enabledModules.length > 0) //check there are modules in list, otherwise just return false
-    {
-      var foundIndex = userApprovedModules.enabledModules.findIndex(module => module.moduleID == moduleIDCheck)
-      if(foundIndex != -1) //if equal to -1, means the specific module is not in the list and we can just return false
-      {
-        if(userApprovedModules.enabledModules[foundIndex].enabled)//check if module is currently enabled, otherwise return false
-        {
-          approved = true //set approved to true if all 3 conditions are met
-        }
-      }
-    }
-    return approved
-  }
-
 
   // User logs in to the system
   async function logIn(data, socket) {
@@ -556,3 +567,21 @@ function subscribeToUserUpdate(socket, id) {
 function getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+  //checks if module exists in patient module list, and then checks if it is currently set to be enabled/approved by the patient's doctor
+  function checkIfApproved(moduleIDCheck, userApprovedModules)
+  {
+    var approved = false
+    if (userApprovedModules.enabledModules.length > 0) //check there are modules in list, otherwise just return false
+    {
+      var foundIndex = userApprovedModules.enabledModules.findIndex(module => module.moduleID == moduleIDCheck)
+      if(foundIndex != -1) //if equal to -1, means the specific module is not in the list and we can just return false
+      {
+        if(userApprovedModules.enabledModules[foundIndex].enabled)//check if module is currently enabled, otherwise return false
+        {
+          approved = true //set approved to true if all 3 conditions are met
+        }
+      }
+    }
+    return approved
+  }

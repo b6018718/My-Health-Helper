@@ -10,6 +10,8 @@ function PatientHomeWithoutSocket(props) {
     const [fingerPrickActivated, setFingerPrickActivated] = React.useState(false);
     const [showModal, setShowModal] = React.useState(false);
     const [bluetoothSelected, setBluetoothSelected] = React.useState(false);
+    const [homeLinkModuleButtons,setHomeLinkButtons] = React.useState(<div></div>)
+    const [homeAltFunctionButtons,setHomeFunctionButtons] = React.useState(<div></div>)
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => setShowModal(true);
@@ -34,6 +36,17 @@ function PatientHomeWithoutSocket(props) {
         // Emit the request to the server to set the status of the button
         props.socket.emit("checkIfSubscribed", {});
     }, []);
+
+    //Create home module buttons for approved modules
+    React.useEffect(() =>{
+        props.socket.emit("getMyPatientHomepageButtons")
+        props.socket.on("patientHomepageButtonsResults",function (data){
+            console.log(data)
+        });
+        return () => {
+            props.socket.off("patientHomepageButtonsResults")
+        }
+    },[]);
 
     React.useEffect(() => {
         // Check if already subscribed to set the button on page load

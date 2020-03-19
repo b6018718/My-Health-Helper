@@ -339,9 +339,9 @@ it('Accept request', done => {
   
   socket_1.on('logInResult', async function (data) {
     socket_1.emit('getAllPatients', {});
-  })
-socket_1.emit('logIn', DrLogin);
-});
+  }) 
+  socket_1.emit('logIn', DrLogin);
+  });
 
 
 

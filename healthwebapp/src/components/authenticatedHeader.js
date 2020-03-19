@@ -11,10 +11,13 @@ React.useEffect(() => {
         props.socket.emit("getMyPatientRecord", { selectedPatientID: props.appProps.currentSelectedPatient })//requests details for patient record from the back end server
     }//if user is a doctor, we need to pass user ID of selected patient to the database when making the data request
     else {
-        props.socket.emit("getMyPatientRecord", {});//requests details for patient record from the back end server
+        props.socket.emit("getMyPatientRecord", {});
+        //requests details for patient record from the back end server
     } //if user is a patient, the server  already knows their patient ID so we don't need to pass it to the server
-    props.socket.on("getMyPatientRecordResults", function (data) { //listener for patiient details information back from back end server
-        setBloodSugarWarning(createBloodSugarWarning(data.bloodSugarReadings)); //creates and stores html section for blood sugar section
+    props.socket.on("getMyPatientRecordResults", function (data) { 
+        //listener for patiient details information back from back end server
+        setBloodSugarWarning(createBloodSugarWarning(data.bloodSugarReadings));
+         //creates and stores html section for blood sugar section
         console.log(bloodSugarModuleWarning);  
     });
     props.socket.on("realTimeFingerPrickData", function (data) { //refreshes blood sugar section if any changes are made to the data on the database 
@@ -38,7 +41,7 @@ function DrNotifications() {
 
 function createBloodSugarWarning(dataList) { //creates html section for blood sugar data
     if (dataList !== null && dataList !== "" && dataList.fingerPrick !== [] && dataList.fingerPrick.length !== 0) { //checks data is not null
-        var bloodSugarList = createBloodSugarListWarning(dataList) //creates and stores list of readings to be used in html section
+        var bloodSugarList = notificationWarning(dataList) //creates and stores list of readings to be used in html section
         return (bloodSugarList)
     }
     else {//if data is null, returns no data
@@ -46,11 +49,11 @@ function createBloodSugarWarning(dataList) { //creates html section for blood su
     }
 }
 
-function createBloodSugarListWarning(bloodSugarData) { //creates list of blood sugar data values
+function notificationWarning(bloodSugarData) { //creates list of blood sugar data values
     var i = 0;//incremented to give list objects unique key values
     var WarninglistItemArray = [];//used to store list values
-    var bloodSugarDataValues = JSON.parse(JSON.stringify(bloodSugarData.fingerPrick)); //Stringifys data
-    bloodSugarDataValues.reverse(); //flips copyed data
+    var bloodSugarDataValues = JSON.parse(JSON.stringify(bloodSugarData.fingerPrick)); //Stringifys data so that that it is adjusting a clone of the data
+    bloodSugarDataValues.reverse(); //flips copyed data so that the newest data is at the top
     for (let bloodSugarDataValue of bloodSugarDataValues) {
         if(bloodSugarDataValue.millimolesPerLitre <= 3 || bloodSugarDataValue.millimolesPerLitre >= 9){
         WarninglistItemArray.push(addItemToBloodSugarListWarning(bloodSugarDataValue, i));//formats and pushs values into list
@@ -63,7 +66,7 @@ var returnedlistItemArray = WarninglistItemArray.slice(0, 10); // takes the top 
 
 function addItemToBloodSugarListWarning(data, i) {
     var date = new Date(data.time) //formats date 
-        var returnedData = <Dropdown.Item variant="danger" key={i} >{data.millimolesPerLitre}{"mmol/L "} recorded at: {date.toUTCString()} </Dropdown.Item>
+        var returnedData = <Dropdown.Item variant="danger" key={i} >{data.millimolesPerLitre}{"mmol/L "} recorded at: {date.toUTCString()} </Dropdown.Item> //This is the format of the needed HTML for each item on the dropdown list
             return (returnedData)
       
 }

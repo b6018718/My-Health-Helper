@@ -17,3 +17,10 @@
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
+
+.Toast{
+    
+    top: 20%;
+    right: 2%;
+    width: 30%;
+}

@@ -101,6 +101,21 @@ io.on("connection", socket => {
     socket.emit("updateAssignedDoctorResult", "Success!");
   });
 
+  // Accept doctor request
+  socket.on("acceptDoctorRequest", async () => {
+    var user = await User.findOne({_id: userId}).exec();
+    var newDoc = user.requestedDoctorChange;
+    await User.findOneAndUpdate({_id: userId}, {idAssignedDoctor: newDoc});
+    await User.findOneAndUpdate({_id: userId}, {requestedDoctorChange: null});
+    socket.emit("acceptDoctorRequestResult", "Success!");
+  });
+
+  //cancel doctor request
+  socket.on("cancelDoctorRequest", async () => {
+    await User.findOneAndUpdate({_id: userId}, {requestedDoctorChange: null});
+    socket.emit("cancelDoctorRequestResult", "Success!");
+  })
+
   socket.on("getMyDoctor", async function (data){
     //console.log("Attempting to get patients doctor")
     if(authenticated){
@@ -118,7 +133,7 @@ io.on("connection", socket => {
       }
     }
   });
-
+  
   // When the socket times out, or the client closes the connection
   socket.on("disconnect", () => {
     // Remove the socket from the array of listeners of patient data
@@ -131,12 +146,12 @@ io.on("connection", socket => {
   socket.on("subscribeToFingerPrick", async function(data){
     fingerPrickSubscribers.push(userId);
   });
-
+  
   // Remove the user to the array of users to have their blood sugar updated
   socket.on("unSubscribeFingerPrick", async function(data){
     fingerPrickSubscribers = fingerPrickSubscribers.filter(id => userId.toString().localeCompare(id.toString()) != 0)
   });
-
+  
   // Check if the user is subscribed to blood sugar updates
   socket.on("checkIfSubscribed", async function(data){
     var subscribed = false;
@@ -146,23 +161,54 @@ io.on("connection", socket => {
     if(user){
       socket.emit("checkIfSubscribedResults", {result: true});
     } else {
-    //if(!subscribed){
-      socket.emit("checkIfSubscribedResults", {result: false});
-    }
-  });
-
-  // Get all the users with a doctor value of true
-  async function emitAllDoctors(socket, emitToAllSockets){
-    if(authenticated){
-      let doctors = await User.find({doctor: true}, {forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
-      // Echo data back or send to every socket on the network
-      if(!emitToAllSockets){
+      //if(!subscribed){
+        socket.emit("checkIfSubscribedResults", {result: false});
+      }
+    });
+    
+    // Get all the users with a doctor value of true
+    async function emitAllDoctors(socket, emitToAllSockets){
+      if(authenticated){
+        let doctors = await User.find({doctor: true}, {forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
+        // Echo data back or send to every socket on the network
+        if(!emitToAllSockets){
         socket.emit("getAllDoctorsResults", {doctors: doctors});
       } else {
         socket.broadcast.emit("getAllDoctorsResults", {doctors: doctors});
       }
     }
   }
+  
+
+  // Get all patients no registered to the logged in doctor
+  socket.on("getAllPatients", async => {
+    emitAllPatients(socket);
+  });
+  async function emitAllPatients(socket){
+    if(authenticated){ 
+      let patients = await User.find({doctor: false, idAssignedDoctor: { $ne: userId}}, {forename: 1, _id: 1, email: 1, surname: 1}).sort({ forename: 1}).exec();
+      socket.emit("getAllPatientsResults", {patients: patients});
+    }
+  }
+
+  // Sets the requested doctor change to a new doctor 
+  socket.on("sendDoctorRequest", async function(data) {
+    data = sanitize(data);
+    // Update users doctor
+    await User.findOneAndUpdate({_id: data}, {requestedDoctorChange: userId});
+    socket.emit("sendDoctorRequestResult", "Success!");
+
+  })
+
+  // Check if patient has a request to change doctor
+  socket.on("hasChangeRequest", async () => {
+    var user = await User.findOne({_id: userId}).exec();
+    var docId = user.requestedDoctorChange;
+    if (docId != null){
+      var doc = await User.findOne({_id: docId}).exec();
+      socket.emit("hasRequest", {doc});
+    }
+  })
 
   // Get all the patients for a doctor
   socket.on("getMyPatients", async (data) => {
@@ -231,7 +277,7 @@ io.on("connection", socket => {
       }
     }
   });
-
+  
   // User is watching now watching the patient record page
   socket.on("getMyPatientRecord",async(data)=>{
     if(authenticated){

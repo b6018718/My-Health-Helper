@@ -11,6 +11,7 @@ function DisplayPatientDetailsWithoutSocket(props) { //Main function that create
     const [foodDiaryModule, setFoodDiaryModule] = React.useState("");//stores the html section for the patient's food diary data
     const [exerciseDiaryModule, setExerciseDiaryModule] = React.useState("");//stores the html section for the patient's exercise data
     const [pageTitle, setPageTitle] = React.useState("");
+    const [enabledModulesList, setEnabledModules] = React.useState("")
     React.useEffect(() => {
         if (props.appProps.isDoctor) { //Checks if user requesting record is a patient or doctor
             props.socket.emit("getMyPatientRecord", { selectedPatientID: props.appProps.currentSelectedPatient })//requests details for patient record from the back end server
@@ -20,6 +21,7 @@ function DisplayPatientDetailsWithoutSocket(props) { //Main function that create
         } //if user is a patient, the server  already knows their patient ID so we don't need to pass it to the server
         props.socket.on("getMyPatientRecordResults", function (data) { //listener for patiient details information back from back end server
             setPatientDetails(data.patientDetails);//stores patient demographic details from server
+            setEnabledModules(createEnabledModuleList(data.patientDetails.enabledModules))
             setPageTitle(createPageTitle(data.patientDetails));//creates page title (varies if doctor request or patient request)
             if (data.registeredDoctor == null) { //handles null values if patient has no registered doctors
                 setPatientDoctor({ forename: "No doctor is registered,", surname: " please select a doctor using the change my doctor page", email: "N/A" })
@@ -67,6 +69,26 @@ function DisplayPatientDetailsWithoutSocket(props) { //Main function that create
             props.socket.emit("unsubPatientRecord", {}); //stops server from sending refresh data
         };
     }, []);
+
+    //creates text for enabled modules
+    function createEnabledModuleList(data){
+        //initialise moduleList to empty sting
+        let moduleList = "" 
+        //for each module in enabledModules, check if enabled is true
+        for(let module of data)
+        {
+            if(module.enabled)
+            {
+                moduleList = moduleList.concat(module.moduleName, "; ")
+            }
+        }
+        //if moduleList is still an empty string, set module list to display relavant message to user stating that they have no modules enabled
+        if (moduleList == "")
+        {
+            moduleList = "No data modules are currently enabled."
+        }
+        return moduleList
+    }
 
     function createBloodSugarModule(dataList) { //creates html section for blood sugar data
         if (dataList !== null && dataList !== "" && dataList.fingerPrick !== [] && dataList.fingerPrick.length !== 0) { //checks data is not null
@@ -343,6 +365,7 @@ function DisplayPatientDetailsWithoutSocket(props) { //Main function that create
                 <div>Mobile No: {handleNullDemographics(patientDetails.mobile)}</div>
                 <div>Address: {handleNullDemographics(patientDetails.address)}</div>
                 <div>NHS Number: {handleNullDemographics(patientDetails.NHSnumber)}</div>
+                <div>Enabled data modules: {enabledModulesList}</div>
                 <br />
                 <div className="SubTitle">Registered doctor's details: </div>
                 <div>Registered doctor: {patientDoctor.forename} {patientDoctor.surname} </div>

@@ -464,7 +464,7 @@ io.on("connection", socket => {
   // (Even though they are encrypted)
   async function emitMyPatientRecord(socket, selectedPatientID) {
     //console.log(selectedPatientID)
-    let patientDetails = await User.findOne({ _id: selectedPatientID }, { _id: 1, forename: 1, surname: 1, email: 1, sex: 1, DoB: 1, mobile: 1, telephone: 1, address: 1, NHSnumber: 1 }).exec();
+    let patientDetails = await User.findOne({ _id: selectedPatientID }, { _id: 1, forename: 1, surname: 1, email: 1, sex: 1, DoB: 1, mobile: 1, telephone: 1, address: 1, NHSnumber: 1,enabledModules: 1 }).exec();
     let registeredDoctorID = await User.findOne({ _id: selectedPatientID }, { _id: 1, idAssignedDoctor: 1 }).exec();
     let registeredDoctor = await User.findOne({ _id: registeredDoctorID.idAssignedDoctor }, { _id: 1, forename: 1, surname: 1, email: 1 }).exec()
    
